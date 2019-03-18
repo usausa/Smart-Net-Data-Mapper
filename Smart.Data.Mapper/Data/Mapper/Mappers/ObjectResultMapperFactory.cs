@@ -56,7 +56,8 @@ namespace Smart.Data.Mapper.Mappers
                 var setter = config.CreateSetter(pi);
                 var defaultValue = pi.PropertyType.GetDefaultValue();
 
-                if (pi.PropertyType == column.Type)
+                if ((pi.PropertyType == column.Type) ||
+                    (pi.PropertyType.IsNullableType() && (Nullable.GetUnderlyingType(pi.PropertyType) == column.Type)))
                 {
                     list.Add(new MapEntry(i, (obj, value) => setter(obj, value is DBNull ? defaultValue : value)));
                 }
