@@ -1,7 +1,6 @@
 namespace Smart.Data.Mapper
 {
     using System;
-    using System.Collections.Generic;
     using System.Data;
 
     using Microsoft.Data.Sqlite;
@@ -10,11 +9,11 @@ namespace Smart.Data.Mapper
 
     using Xunit;
 
-    public class DictionaryParameterTest
+    public class DynamicParameterTest
     {
         [Fact]
 
-        public void ParameterByDictionary()
+        public void ParameterByDynamicParameter()
         {
             SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
             {
@@ -26,12 +25,10 @@ namespace Smart.Data.Mapper
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text, Date int)");
 
-                var parameter = new Dictionary<string, object>
-                {
-                    { "Id", 1 },
-                    { "Name", null },
-                    { "Date", new DateTime(2000, 1, 1) },
-                };
+                var parameter = new DynamicParameter();
+                parameter.Add("Id", 1);
+                parameter.Add("Name", null, DbType.StringFixedLength, 10);
+                parameter.Add("Date", new DateTime(2000, 1, 1));
                 con.Execute("INSERT INTO Data (Id, Name, Date) VALUES (@Id, @Name, @Date)", parameter);
 
                 var entity = con.QueryFirstOrDefault<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
