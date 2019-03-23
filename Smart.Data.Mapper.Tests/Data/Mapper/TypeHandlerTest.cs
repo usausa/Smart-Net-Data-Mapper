@@ -1,0 +1,63 @@
+namespace Smart.Data.Mapper
+{
+    using System;
+    using System.Data;
+
+    using Microsoft.Data.Sqlite;
+
+    using Smart.Data.Mapper.Handlers;
+
+    using Xunit;
+
+    public class TypeHandlerTest
+    {
+        [Fact]
+
+        public void ExecuteScalarByObjectParameter()
+        {
+            SqlMapperConfig.Default.ResetTypeHandlers();
+            SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
+            {
+                config[typeof(DateTime)] = new DateTimeTypeHandler();
+            });
+
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                con.Open();
+                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Date int)");
+
+                var date = new DateTime(2000, 1, 1);
+                con.Execute("INSERT INTO Data (Id, Date) VALUES (@Id, @Date)", new Data { Id = 1, Date = date });
+
+                var entity = con.QueryFirstOrDefault<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
+
+                Assert.Equal(date, entity.Date);
+
+                var rawValue = con.ExecuteScalar<long>("SELECT Date FROM Data WHERE Id = @Id", new { Id = 1 });
+
+                Assert.Equal(date.Ticks, rawValue);
+            }
+        }
+
+        protected class Data
+        {
+            public int Id { get; set; }
+
+            public DateTime Date { get; set; }
+        }
+
+        protected class DateTimeTypeHandler : TypeHandler<DateTime>
+        {
+            public override void SetValue(IDbDataParameter parameter, DateTime value)
+            {
+                parameter.DbType = DbType.Int64;
+                parameter.Value = value.Ticks;
+            }
+
+            public override DateTime Parse(object value)
+            {
+                return new DateTime((long)value);
+            }
+        }
+    }
+}

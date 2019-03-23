@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper
 {
     using System.Linq;
+    using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
 
@@ -28,6 +29,28 @@ namespace Smart.Data.Mapper
                 Assert.Equal("test2", list[1].Name);
             }
         }
+
+        // TODO
+        //[Fact]
+
+        //public async Task QueryAsync()
+        //{
+        //    using (var con = new SqliteConnection("Data Source=:memory:"))
+        //    {
+        //        con.Open();
+        //        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        //        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        //        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+
+        //        var list = (await con.QueryAsync<Data>("SELECT * FROM Data ORDER BY Id")).ToList();
+
+        //        Assert.Equal(2, list.Count);
+        //        Assert.Equal(1, list[0].Id);
+        //        Assert.Equal("test1", list[0].Name);
+        //        Assert.Equal(2, list[1].Id);
+        //        Assert.Equal("test2", list[1].Name);
+        //    }
+        //}
 
         protected class Data
         {
