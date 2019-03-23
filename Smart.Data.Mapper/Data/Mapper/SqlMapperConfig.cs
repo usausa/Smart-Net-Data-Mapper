@@ -107,7 +107,7 @@ namespace Smart.Data.Mapper
             return this;
         }
 
-        public SqlMapperConfig ConfigureBuilderFactory(Action<IList<IParameterBuilderFactory>> action)
+        public SqlMapperConfig ConfigureParameterBuilderFactories(Action<IList<IParameterBuilderFactory>> action)
         {
             var list = new List<IParameterBuilderFactory>(parameterBuilderFactories);
             action(list);
@@ -116,14 +116,14 @@ namespace Smart.Data.Mapper
             return this;
         }
 
-        public SqlMapperConfig ResetResultMappers()
+        public SqlMapperConfig ResetResultMapperFactories()
         {
             resultMapperFactories = DefaultResultMapperFactories;
             resultMapperCache.Clear();
             return this;
         }
 
-        public SqlMapperConfig ConfigureMapperFactory(Action<IList<IResultMapperFactory>> action)
+        public SqlMapperConfig ConfigureResultMapperFactories(Action<IList<IResultMapperFactory>> action)
         {
             var list = new List<IResultMapperFactory>(resultMapperFactories);
             action(list);
