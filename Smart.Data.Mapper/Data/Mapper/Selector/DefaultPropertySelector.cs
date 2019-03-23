@@ -4,6 +4,7 @@ namespace Smart.Data.Mapper.Selector
     using System.Linq;
     using System.Reflection;
 
+    using Smart.Data.Mapper.Attributes;
     using Smart.Text;
 
     public sealed class DefaultPropertySelector : IPropertySelector
@@ -16,16 +17,31 @@ namespace Smart.Data.Mapper.Selector
 
         public PropertyInfo Select(PropertyInfo[] properties, string name)
         {
-            var pi = properties.FirstOrDefault(x => String.Equals(x.Name, name, StringComparison.Ordinal)) ??
-                     properties.FirstOrDefault(x => String.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
+            var pi = properties.FirstOrDefault(x => IsMatchName(x, name, false)) ??
+                     properties.FirstOrDefault(x => IsMatchName(x, name, true));
             if (pi != null)
             {
                 return pi;
             }
 
             var pascalName = Inflector.Pascalize(name);
-            return properties.FirstOrDefault(x => String.Equals(x.Name, pascalName, StringComparison.Ordinal)) ??
-                   properties.FirstOrDefault(x => String.Equals(x.Name, pascalName, StringComparison.OrdinalIgnoreCase));
+            if (pascalName != name)
+            {
+                pi = properties.FirstOrDefault(x => IsMatchName(x, pascalName, false)) ??
+                     properties.FirstOrDefault(x => IsMatchName(x, pascalName, true));
+                if (pi != null)
+                {
+                    return pi;
+                }
+            }
+
+            return null;
+        }
+
+        private static bool IsMatchName(PropertyInfo pi, string name, bool ignoreCase)
+        {
+            var propertyName = pi.GetCustomAttribute<NameAttribute>()?.Name ?? pi.Name;
+            return String.Equals(propertyName, name, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal);
         }
     }
 }

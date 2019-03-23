@@ -1,7 +1,6 @@
 namespace Smart.Data.Mapper
 {
     using System.Linq;
-    using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
 
