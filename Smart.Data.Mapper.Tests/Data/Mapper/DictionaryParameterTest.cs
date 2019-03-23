@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper
 {
     using System;
+    using System.Collections.Generic;
     using System.Data;
 
     using Microsoft.Data.Sqlite;
@@ -9,7 +10,7 @@ namespace Smart.Data.Mapper
 
     using Xunit;
 
-    public class TypeHandlerTest
+    public class DictionaryParameterTest
     {
         [Fact]
 
@@ -23,24 +24,29 @@ namespace Smart.Data.Mapper
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Date int)");
+                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text, Date int)");
 
-                var date = new DateTime(2000, 1, 1);
-                con.Execute("INSERT INTO Data (Id, Date) VALUES (@Id, @Date)", new Data { Id = 1, Date = date });
+                var parameter = new Dictionary<string, object>
+                {
+                    { "Id", 1 },
+                    { "Name", null },
+                    { "Date", new DateTime(2000, 1, 1) },
+                };
+                con.Execute("INSERT INTO Data (Id, Name, Date) VALUES (@Id, @Name, @Date)", parameter);
 
                 var entity = con.QueryFirstOrDefault<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
-                Assert.Equal(date, entity.Date);
-
-                var rawValue = con.ExecuteScalar<long>("SELECT Date FROM Data WHERE Id = @Id", new { Id = 1 });
-
-                Assert.Equal(date.Ticks, rawValue);
+                Assert.Equal(1L, entity.Id);
+                Assert.Null(entity.Name);
+                Assert.Equal(new DateTime(2000, 1, 1), entity.Date);
             }
         }
 
         protected class Data
         {
             public int Id { get; set; }
+
+            public string Name { get; set; }
 
             public DateTime Date { get; set; }
         }
