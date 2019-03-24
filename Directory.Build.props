@@ -1,10 +1,10 @@
-﻿<Project>
+<Project>
 
   <PropertyGroup>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
     <NullableContextOptions>Enable</NullableContextOptions>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
