@@ -228,7 +228,7 @@ namespace Smart.Data.Mapper
             }
 
             var type = typeof(T);
-            for (var i = 0; i < columnInfoPool.Length; i++)
+            for (var i = 0; i < reader.FieldCount; i++)
             {
                 columnInfoPool[i] = new ColumnInfo(reader.GetName(i), reader.GetFieldType(i));
             }
