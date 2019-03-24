@@ -36,6 +36,9 @@ namespace Smart.Data.Mapper
             [Size(10)]
             [Direction(ParameterDirection.InputOutput)]
             public int Value { get; set; }
+
+            [Ignore]
+            public string Ignore { get; set; }
         }
     }
 }

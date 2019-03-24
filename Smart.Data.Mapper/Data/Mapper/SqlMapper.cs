@@ -76,17 +76,6 @@ namespace Smart.Data.Mapper
             throw new SqlMapperException("Async operation is not supported.");
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void Cleanup(bool wasClosed, IDbConnection con, IDbCommand cmd)
-        {
-            cmd.Dispose();
-
-            if (wasClosed)
-            {
-                con.Close();
-            }
-        }
-
         //--------------------------------------------------------------------------------
         // Execute
         //--------------------------------------------------------------------------------
@@ -114,7 +103,10 @@ namespace Smart.Data.Mapper
                 }
                 finally
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -148,7 +140,10 @@ namespace Smart.Data.Mapper
                 }
                 finally
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -197,7 +192,10 @@ namespace Smart.Data.Mapper
                 }
                 finally
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -242,7 +240,10 @@ namespace Smart.Data.Mapper
                 }
                 finally
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -260,28 +261,41 @@ namespace Smart.Data.Mapper
         public static IDataReader ExecuteReader(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+            var cmd = default(IDbCommand);
+            var reader = default(IDataReader);
+            var close = true;
+            try
             {
+                cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
 
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        con.Open();
-                    }
-
-                    var reader = cmd.ExecuteReader(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior);
-                    wasClosed = false;
-
-                    builder.PostProcess?.Invoke(cmd, param);
-
-                    return reader;
+                    con.Open();
                 }
-                finally
+
+                reader = cmd.ExecuteReader(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior);
+                wasClosed = false;
+
+                builder.PostProcess?.Invoke(cmd, param);
+
+                var wrapped = new WrappedReader(cmd, reader);
+                close = false;
+
+                return wrapped;
+            }
+            finally
+            {
+                if (close)
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    reader?.Dispose();
+                    cmd?.Dispose();
+                }
+
+                if (wasClosed)
+                {
+                    con.Close();
                 }
             }
         }
@@ -292,37 +306,50 @@ namespace Smart.Data.Mapper
             return ExecuteReader(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior);
         }
 
-        public static async Task<DbDataReader> ExecuteReaderAsync(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken token = default)
+        public static async Task<IDataReader> ExecuteReaderAsync(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken token = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType))
+            var cmd = default(DbCommand);
+            var reader = default(IDataReader);
+            var close = true;
+            try
             {
+                cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType);
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
 
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        await OpenAsync(con, token).ConfigureAwait(false);
-                    }
-
-                    var reader = await cmd.ExecuteReaderAsync(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior, token);
-                    wasClosed = false;
-
-                    builder.PostProcess?.Invoke(cmd, param);
-
-                    return reader;
+                    await OpenAsync(con, token).ConfigureAwait(false);
                 }
-                finally
+
+                reader = await cmd.ExecuteReaderAsync(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior, token);
+                wasClosed = false;
+
+                builder.PostProcess?.Invoke(cmd, param);
+
+                var wrapped = new WrappedReader(cmd, reader);
+                close = false;
+
+                return wrapped;
+            }
+            finally
+            {
+                if (close)
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    reader?.Dispose();
+                    cmd?.Dispose();
+                }
+
+                if (wasClosed)
+                {
+                    con.Close();
                 }
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<DbDataReader> ExecuteReaderAsync(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken token = default)
+        public static Task<IDataReader> ExecuteReaderAsync(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken token = default)
         {
             return ExecuteReaderAsync(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior, token);
         }
@@ -353,7 +380,6 @@ namespace Smart.Data.Mapper
                         builder.PostProcess?.Invoke(cmd, param);
 
                         var mapper = config.CreateMapper<T>(reader);
-
                         while (reader.Read())
                         {
                             yield return mapper(reader);
@@ -362,7 +388,10 @@ namespace Smart.Data.Mapper
                 }
                 finally
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -376,43 +405,55 @@ namespace Smart.Data.Mapper
         public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken token = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType))
+            var cmd = default(DbCommand);
+            var reader = default(DbDataReader);
+            var close = true;
+            try
             {
+                cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType);
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
 
-                var reader = default(DbDataReader);
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        await OpenAsync(con, token).ConfigureAwait(false);
-                    }
-
-                    reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryWithClose : CommandBehaviorQuery, token);
-                    wasClosed = false;
-
-                    builder.PostProcess?.Invoke(cmd, param);
-
-                    var mapper = config.CreateMapper<T>(reader);
-
-                    var deferred = ExecuteReaderSync(reader, mapper);
-                    reader = null;
-                    return deferred;
+                    await OpenAsync(con, token).ConfigureAwait(false);
                 }
-                finally
+
+                reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryWithClose : CommandBehaviorQuery, token);
+                wasClosed = false;
+
+                builder.PostProcess?.Invoke(cmd, param);
+
+                var mapper = config.CreateMapper<T>(reader);
+                var deferred = ExecuteReaderSync(cmd, reader, mapper);
+                close = false;
+
+                return deferred;
+            }
+            finally
+            {
+                if (close)
                 {
                     reader?.Dispose();
-                    Cleanup(wasClosed, con, cmd);
+                    cmd?.Dispose();
+                }
+
+                if (wasClosed)
+                {
+                    con.Close();
                 }
             }
         }
 
-        private static IEnumerable<T> ExecuteReaderSync<T>(IDataReader reader, Func<IDataRecord, T> mapper)
+        private static IEnumerable<T> ExecuteReaderSync<T>(IDbCommand cmd, IDataReader reader, Func<IDataRecord, T> mapper)
         {
-            while (reader.Read())
+            using (cmd)
+            using (reader)
             {
-                yield return mapper(reader);
+                while (reader.Read())
+                {
+                    yield return mapper(reader);
+                }
             }
         }
 
@@ -454,7 +495,10 @@ namespace Smart.Data.Mapper
                 }
                 finally
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
@@ -493,7 +537,10 @@ namespace Smart.Data.Mapper
                 }
                 finally
                 {
-                    Cleanup(wasClosed, con, cmd);
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
                 }
             }
         }
