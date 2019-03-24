@@ -1,13 +1,58 @@
 namespace Smart.Data.Mapper
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data;
+
     using Smart.Converter;
     using Smart.Data.Mapper.Selector;
+    using Smart.Mock.Data;
     using Smart.Reflection;
 
     using Xunit;
 
     public class SqlMapperConfigTest
     {
+        [Fact]
+        public void CreateParserFailed()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureTypeHandlers(opt => opt.Clear());
+            config.ConfigureTypeMap(opt => opt.Clear());
+            config.Converter = new DummyObjectConverter();
+
+            Assert.Null(((ISqlMapperConfig)config).CreateParser(typeof(int), typeof(long)));
+        }
+
+        [Fact]
+        public void LookupTypeHandleFailed()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureTypeHandlers(opt => opt.Clear());
+            config.ConfigureTypeMap(opt => opt.Clear());
+
+            Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).LookupTypeHandle(typeof(ParameterDirection)));
+        }
+
+        [Fact]
+        public void CreateMapperFailed()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureResultMapperFactories(opt => opt.Clear());
+
+            var reader = new MockDataReader(new[] { new MockColumn(typeof(int), "Id") }, new List<object[]>());
+            Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).CreateMapper<object>(reader));
+        }
+
+        [Fact]
+        public void CreateParameterBuilderFailed()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureParameterBuilderFactories(opt => opt.Clear());
+
+            Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).CreateParameterBuilder(typeof(object)));
+        }
+
         [Fact]
         public void CoverageFix()
         {
@@ -33,6 +78,21 @@ namespace Smart.Data.Mapper
 
             config.PropertySelector = DefaultPropertySelector.Instance;
             Assert.Equal(DefaultPropertySelector.Instance, config.PropertySelector);
+        }
+
+        protected class DummyObjectConverter : IObjectConverter
+        {
+            public bool CanConvert<T>(object value) => false;
+
+            public bool CanConvert(object value, Type targetType) => false;
+
+            public bool CanConvert(Type sourceType, Type targetType) => false;
+
+            public T Convert<T>(object value) => default;
+
+            public object Convert(object value, Type targetType) => null;
+
+            public Func<object, object> CreateConverter(Type sourceType, Type targetType) => null;
         }
     }
 }

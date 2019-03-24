@@ -1,5 +1,6 @@
 namespace Smart.Data.Mapper
 {
+    using System.Data;
     using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
@@ -8,6 +9,30 @@ namespace Smart.Data.Mapper
 
     public class SqlMapperExecuteTest
     {
+        [Fact]
+
+        public void WithoutOpen()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                con.Execute("PRAGMA AUTO_VACUUM=1");
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task WithoutOpenAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1");
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
         [Fact]
 
         public void ExecuteByObjectParameter()
