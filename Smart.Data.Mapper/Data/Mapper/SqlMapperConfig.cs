@@ -13,8 +13,6 @@ namespace Smart.Data.Mapper
     using Smart.Data.Mapper.Selector;
     using Smart.Reflection;
 
-    // TODO Clear cache ?
-
     public sealed class SqlMapperConfig : ISqlMapperConfig
     {
         private static readonly IParameterBuilderFactory[] DefaultParameterBuilderFactories =

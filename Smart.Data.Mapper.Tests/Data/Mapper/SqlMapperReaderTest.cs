@@ -1,5 +1,6 @@
 namespace Smart.Data.Mapper
 {
+    using System.Data;
     using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
@@ -8,6 +9,36 @@ namespace Smart.Data.Mapper
 
     public class SqlMapperReaderTest
     {
+        [Fact]
+
+        public void WithoutOpen()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                using (var reader = con.ExecuteReader("SELECT 1, 'test1'"))
+                {
+                    Assert.Equal(ConnectionState.Open, con.State);
+                    Assert.True(reader.Read());
+                    Assert.False(reader.Read());
+                }
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        //[Fact]
+
+        //public async Task WithoutOpenAsync()
+        //{
+        //    using (var con = new SqliteConnection("Data Source=:memory:"))
+        //    {
+        //        var list = (await con.QueryAsync<Data>("SELECT 1, 'test1'")).ToList();
+
+        //        Assert.Single(list);
+        //        Assert.Equal(ConnectionState.Closed, con.State);
+        //    }
+        //}
+
         [Fact]
 
         public void Reader()
