@@ -9,29 +9,9 @@ namespace Smart.Data.Mapper
 
     public class SqlMapperQueryFirstOrDefaultTest
     {
-        [Fact]
-
-        public void WithoutOpen()
-        {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.QueryFirstOrDefault<Data>("SELECT 1, 'test1'");
-
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
-        }
-
-        [Fact]
-
-        public async Task WithoutOpenAsync()
-        {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                await con.QueryFirstOrDefaultAsync<Data>("SELECT 1, 'test1'");
-
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
-        }
+        //--------------------------------------------------------------------------------
+        // Query
+        //--------------------------------------------------------------------------------
 
         [Fact]
 
@@ -74,6 +54,34 @@ namespace Smart.Data.Mapper
                 entity = await con.QueryFirstOrDefaultAsync<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 });
 
                 Assert.Null(entity);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Open
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public void WithoutOpen()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                con.QueryFirstOrDefault<Data>("SELECT 1, 'test1'");
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task WithoutOpenAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                await con.QueryFirstOrDefaultAsync<Data>("SELECT 1, 'test1'");
+
+                Assert.Equal(ConnectionState.Closed, con.State);
             }
         }
 

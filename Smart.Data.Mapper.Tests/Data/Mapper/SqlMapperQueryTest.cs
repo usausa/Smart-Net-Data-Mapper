@@ -10,33 +10,9 @@ namespace Smart.Data.Mapper
 
     public class SqlMapperQueryTest
     {
-        [Fact]
-
-        public void WithoutOpen()
-        {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                var list = con.Query<Data>("SELECT 1, 'test1'");
-
-                Assert.Equal(ConnectionState.Closed, con.State);
-                Assert.Single(list.ToList());
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
-        }
-
-        [Fact]
-
-        public async Task WithoutOpenAsync()
-        {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                var list = await con.QueryAsync<Data>("SELECT 1, 'test1'");
-
-                Assert.Equal(ConnectionState.Open, con.State);
-                Assert.Single(list.ToList());
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
-        }
+        //--------------------------------------------------------------------------------
+        // Query
+        //--------------------------------------------------------------------------------
 
         [Fact]
 
@@ -77,6 +53,38 @@ namespace Smart.Data.Mapper
                 Assert.Equal("test1", list[0].Name);
                 Assert.Equal(2, list[1].Id);
                 Assert.Equal("test2", list[1].Name);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Open
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public void WithoutOpen()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                var list = con.Query<Data>("SELECT 1, 'test1'");
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+                Assert.Single(list.ToList());
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task WithoutOpenAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                var list = await con.QueryAsync<Data>("SELECT 1, 'test1'");
+
+                Assert.Equal(ConnectionState.Open, con.State);
+                Assert.Single(list.ToList());
+                Assert.Equal(ConnectionState.Closed, con.State);
             }
         }
 
