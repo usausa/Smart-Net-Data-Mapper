@@ -60,7 +60,7 @@ namespace Smart.Data.Mapper
 
         private readonly ResultMapperCache resultMapperCache = new ResultMapperCache();
 
-        private readonly ThreadsafeTypeHashArrayMap<TypeHandleEntry> typeHandleEntries = new ThreadsafeTypeHashArrayMap<TypeHandleEntry>();
+        private readonly ThreadsafeTypeHashArrayMap<TypeHandleEntry> typeHandleEntriesCache = new ThreadsafeTypeHashArrayMap<TypeHandleEntry>();
 
         private IParameterBuilderFactory[] parameterBuilderFactories;
 
@@ -93,6 +93,22 @@ namespace Smart.Data.Mapper
             typeMap = DefaultTypeMap;
             typeHandlers = DefaultTypeHandlers;
         }
+
+        //--------------------------------------------------------------------------------
+        // Cache
+        //--------------------------------------------------------------------------------
+
+        public int CountParameterBuilderCache => parameterBuilderCache.Count;
+
+        public int CountResultMapperCache => resultMapperCache.Count;
+
+        public int CountTypeHandleEntriesCache => typeHandleEntriesCache.Count;
+
+        public void ClearParameterBuilderCache() => parameterBuilderCache.Clear();
+
+        public void ClearResultMapperCache() => resultMapperCache.Clear();
+
+        public void ClearTypeHandleEntriesCache() => typeHandleEntriesCache.Clear();
 
         //--------------------------------------------------------------------------------
         // Config
@@ -133,7 +149,7 @@ namespace Smart.Data.Mapper
         public SqlMapperConfig ResetTypeMap()
         {
             typeMap = DefaultTypeMap;
-            typeHandleEntries.Clear();
+            typeHandleEntriesCache.Clear();
             return this;
         }
 
@@ -142,14 +158,14 @@ namespace Smart.Data.Mapper
             var dictionary = new Dictionary<Type, DbType>(typeMap);
             action(dictionary);
             typeMap = dictionary;
-            typeHandleEntries.Clear();
+            typeHandleEntriesCache.Clear();
             return this;
         }
 
         public SqlMapperConfig ResetTypeHandlers()
         {
             typeHandlers = DefaultTypeHandlers;
-            typeHandleEntries.Clear();
+            typeHandleEntriesCache.Clear();
             return this;
         }
 
@@ -158,7 +174,7 @@ namespace Smart.Data.Mapper
             var dictionary = new Dictionary<Type, ITypeHandler>(typeHandlers);
             action(dictionary);
             typeHandlers = dictionary;
-            typeHandleEntries.Clear();
+            typeHandleEntriesCache.Clear();
             return this;
         }
 
@@ -176,9 +192,9 @@ namespace Smart.Data.Mapper
 
         Func<object, object> ISqlMapperConfig.CreateParser(Type sourceType, Type destinationType)
         {
-            if (!typeHandleEntries.TryGetValue(destinationType, out var entry))
+            if (!typeHandleEntriesCache.TryGetValue(destinationType, out var entry))
             {
-                entry = typeHandleEntries.AddIfNotExist(destinationType, CreateTypeHandleInternal);
+                entry = typeHandleEntriesCache.AddIfNotExist(destinationType, CreateTypeHandleInternal);
             }
 
             if (entry.TypeHandler != null)
@@ -191,9 +207,9 @@ namespace Smart.Data.Mapper
 
         TypeHandleEntry ISqlMapperConfig.LookupTypeHandle(Type type)
         {
-            if (!typeHandleEntries.TryGetValue(type, out var entry))
+            if (!typeHandleEntriesCache.TryGetValue(type, out var entry))
             {
-                entry = typeHandleEntries.AddIfNotExist(type, CreateTypeHandleInternal);
+                entry = typeHandleEntriesCache.AddIfNotExist(type, CreateTypeHandleInternal);
             }
 
             if (!entry.CanUseAsParameter)

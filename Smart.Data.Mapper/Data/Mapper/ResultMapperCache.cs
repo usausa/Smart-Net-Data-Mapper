@@ -6,7 +6,7 @@ namespace Smart.Data.Mapper
     using System.Threading;
 
     [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
-    public sealed class ResultMapperCache
+    internal sealed class ResultMapperCache
     {
         private const int InitialSize = 256;
 
