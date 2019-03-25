@@ -1,10 +1,10 @@
 namespace Smart.Data.Mapper
 {
-    using System;
     using System.Collections.Generic;
     using System.Data;
 
     using Smart.Converter;
+    using Smart.Data.Mapper.Mocks;
     using Smart.Data.Mapper.Selector;
     using Smart.Mock.Data;
     using Smart.Reflection;
@@ -78,21 +78,6 @@ namespace Smart.Data.Mapper
 
             config.PropertySelector = DefaultPropertySelector.Instance;
             Assert.Equal(DefaultPropertySelector.Instance, config.PropertySelector);
-        }
-
-        protected class DummyObjectConverter : IObjectConverter
-        {
-            public bool CanConvert<T>(object value) => false;
-
-            public bool CanConvert(object value, Type targetType) => false;
-
-            public bool CanConvert(Type sourceType, Type targetType) => false;
-
-            public T Convert<T>(object value) => default;
-
-            public object Convert(object value, Type targetType) => null;
-
-            public Func<object, object> CreateConverter(Type sourceType, Type targetType) => null;
         }
     }
 }

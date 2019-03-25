@@ -2,11 +2,10 @@ namespace Smart.Data.Mapper
 {
     using System;
     using System.Collections.Generic;
-    using System.Data;
 
     using Microsoft.Data.Sqlite;
 
-    using Smart.Data.Mapper.Handlers;
+    using Smart.Data.Mapper.Mocks;
 
     using Xunit;
 
@@ -49,20 +48,6 @@ namespace Smart.Data.Mapper
             public string Name { get; set; }
 
             public DateTime Date { get; set; }
-        }
-
-        protected class DateTimeTypeHandler : TypeHandler<DateTime>
-        {
-            public override void SetValue(IDbDataParameter parameter, DateTime value)
-            {
-                parameter.DbType = DbType.Int64;
-                parameter.Value = value.Ticks;
-            }
-
-            public override DateTime Parse(object value)
-            {
-                return new DateTime((long)value);
-            }
         }
     }
 }
