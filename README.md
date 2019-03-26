@@ -39,10 +39,8 @@ var result = parameter.OutParam;
 
 ## TODO
 
-* Test(;・∀・)
 * SqlBuilder
 * Xamarin example
-* Clear cache option ?
 
 ## NuGet
 
