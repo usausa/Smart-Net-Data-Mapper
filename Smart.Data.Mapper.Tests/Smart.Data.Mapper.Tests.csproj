@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Smart.Data.Mapper.Builder\Smart.Data.Mapper.Builder.csproj" />
     <ProjectReference Include="..\Smart.Data.Mapper\Smart.Data.Mapper.csproj" />
   </ItemGroup>
 

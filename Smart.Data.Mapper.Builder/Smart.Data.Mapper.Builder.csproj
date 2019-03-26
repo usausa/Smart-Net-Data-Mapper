@@ -15,4 +15,8 @@
     <PackageReference Include="Usa.Smart.Core" Version="1.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Smart.Data.Mapper\Smart.Data.Mapper.csproj" />
+  </ItemGroup>
+
 </Project>
