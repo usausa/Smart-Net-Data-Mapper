@@ -1,6 +1,33 @@
 namespace Smart.Data.Mapper.Builder
 {
-    public static class Select
+    using System.Text;
+
+    using Smart.Data.Mapper.Builder.Metadata;
+
+    public static class Select<T>
     {
+        private static readonly string ByKeySql;
+
+        private static readonly string ByConditionSqlBase;
+
+        static Select()
+        {
+            var tableInfo = Metadata<T>.Table;
+            var sql = new StringBuilder(256);
+
+            sql.Append("SELECT * FROM ");
+            sql.Append(tableInfo.Name);
+            sql.Append(" WHERE ");
+
+            ByConditionSqlBase = sql.ToString();
+
+            BuildHelper.BuildKeyCondition(sql, tableInfo);
+
+            ByKeySql = sql.ToString();
+        }
+
+        public static string ByKey() => ByKeySql;
+
+        public static string By(string condition) => ByConditionSqlBase + condition;
     }
 }
