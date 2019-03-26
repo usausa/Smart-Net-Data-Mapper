@@ -235,7 +235,7 @@ namespace Smart.Data.Mapper
             return new TypeHandleEntry(findDbType || (handler != null), dbType, handler);
         }
 
-        Func<IDataRecord, T> ISqlMapperConfig.CreateMapper<T>(IDataReader reader)
+        Func<IDataRecord, T> ISqlMapperConfig.CreateResultMapper<T>(IDataReader reader)
         {
             var fieldCount = reader.FieldCount;
             if ((columnInfoPool == null) || (columnInfoPool.Length < fieldCount))

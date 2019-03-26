@@ -22,6 +22,6 @@ namespace Smart.Data.Mapper
 
         ParameterBuilder CreateParameterBuilder(Type type);
 
-        Func<IDataRecord, T> CreateMapper<T>(IDataReader reader);
+        Func<IDataRecord, T> CreateResultMapper<T>(IDataReader reader);
     }
 }

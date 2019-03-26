@@ -14,6 +14,45 @@ namespace Smart.Data.Mapper
     public class SqlMapperConfigTest
     {
         [Fact]
+        public void CountParameterBuilderCache()
+        {
+            var config = new SqlMapperConfig();
+            ((ISqlMapperConfig)config).CreateParameterBuilder(typeof(object));
+
+            Assert.Equal(1, config.CountParameterBuilderCache);
+
+            config.ClearParameterBuilderCache();
+
+            Assert.Equal(0, config.CountParameterBuilderCache);
+        }
+
+        [Fact]
+        public void CountResultMapperCache()
+        {
+            var config = new SqlMapperConfig();
+            ((ISqlMapperConfig)config).CreateResultMapper<object>(new MockDataReader(new[] { new MockColumn(typeof(int), "Id") }, new List<object[]>()));
+
+            Assert.Equal(1, config.CountResultMapperCache);
+
+            config.ClearResultMapperCache();
+
+            Assert.Equal(0, config.CountResultMapperCache);
+        }
+
+        [Fact]
+        public void CountTypeHandleEntriesCache()
+        {
+            var config = new SqlMapperConfig();
+            ((ISqlMapperConfig)config).LookupTypeHandle(typeof(int));
+
+            Assert.Equal(1, config.CountTypeHandleEntriesCache);
+
+            config.ClearTypeHandleEntriesCache();
+
+            Assert.Equal(0, config.CountTypeHandleEntriesCache);
+        }
+
+        [Fact]
         public void CreateParserFailed()
         {
             var config = new SqlMapperConfig();
@@ -41,7 +80,7 @@ namespace Smart.Data.Mapper
             config.ConfigureResultMapperFactories(opt => opt.Clear());
 
             var reader = new MockDataReader(new[] { new MockColumn(typeof(int), "Id") }, new List<object[]>());
-            Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).CreateMapper<object>(reader));
+            Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).CreateResultMapper<object>(reader));
         }
 
         [Fact]

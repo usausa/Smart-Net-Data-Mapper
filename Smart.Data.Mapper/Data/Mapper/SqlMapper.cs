@@ -379,7 +379,7 @@ namespace Smart.Data.Mapper
 
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateMapper<T>(reader);
+                        var mapper = config.CreateResultMapper<T>(reader);
                         while (reader.Read())
                         {
                             yield return mapper(reader);
@@ -424,7 +424,7 @@ namespace Smart.Data.Mapper
 
                 builder.PostProcess?.Invoke(cmd, param);
 
-                var mapper = config.CreateMapper<T>(reader);
+                var mapper = config.CreateResultMapper<T>(reader);
                 var deferred = ExecuteReaderSync(cmd, reader, mapper);
                 close = false;
 
@@ -488,7 +488,7 @@ namespace Smart.Data.Mapper
 
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateMapper<T>(reader);
+                        var mapper = config.CreateResultMapper<T>(reader);
 
                         return reader.Read() ? mapper(reader) : default;
                     }
@@ -530,7 +530,7 @@ namespace Smart.Data.Mapper
 
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateMapper<T>(reader);
+                        var mapper = config.CreateResultMapper<T>(reader);
 
                         return await reader.ReadAsync(token).ConfigureAwait(false) ? mapper(reader) : default;
                     }
