@@ -18,7 +18,7 @@ namespace Smart.Data.Mapper.Builders
             var tableInfo = Metadata<T>.Table;
             var sql = new StringBuilder(256);
 
-            UpdateSql = $"UPDATE {tableInfo} SET ";
+            UpdateSql = $"UPDATE {tableInfo.Name} SET ";
 
             sql.Append(" WHERE ");
             BuildHelper.BuildKeyCondition(sql, tableInfo);
@@ -35,6 +35,7 @@ namespace Smart.Data.Mapper.Builders
                 sql.Append(column.Property.Name);
                 sql.Append(", ");
             }
+            sql.Length = sql.Length - 2;
             sql.Append(KeyConditionSql);
 
             ByKeySql = sql.ToString();
