@@ -2,14 +2,14 @@ namespace Smart.Data.Mapper.Builders
 {
     using Xunit;
 
-    public class SelectTest
+    public class SqlSelectTest
     {
         [Fact]
         public void ByKey()
         {
             Assert.Equal(
                 "SELECT * FROM Table WHERE Key1 = @Key1 AND SubKey = @Key2",
-                Select<Entity>.ByKey());
+                SqlSelect<Entity>.ByKey());
         }
 
         [Fact]
@@ -17,7 +17,7 @@ namespace Smart.Data.Mapper.Builders
         {
             Assert.Equal(
                 "SELECT * FROM Table WHERE Key1 = @Key1",
-                Select<Entity>.By("Key1 = @Key1"));
+                SqlSelect<Entity>.By("Key1 = @Key1"));
         }
     }
 }

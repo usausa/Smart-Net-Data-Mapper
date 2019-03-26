@@ -4,28 +4,29 @@ namespace Smart.Data.Mapper.Builders
 
     using Smart.Data.Mapper.Builders.Metadata;
 
-    public static class Count<T>
+    public static class SqlSelect<T>
     {
-        private static readonly string AllSql;
+        private static readonly string ByKeySql;
 
         private static readonly string ByConditionSqlBase;
 
-        static Count()
+        static SqlSelect()
         {
             var tableInfo = Metadata<T>.Table;
             var sql = new StringBuilder(256);
 
-            sql.Append("SELECT COUNT(*) FROM ");
+            sql.Append("SELECT * FROM ");
             sql.Append(tableInfo.Name);
-
-            AllSql = sql.ToString();
-
             sql.Append(" WHERE ");
 
             ByConditionSqlBase = sql.ToString();
+
+            BuildHelper.BuildKeyCondition(sql, tableInfo);
+
+            ByKeySql = sql.ToString();
         }
 
-        public static string All() => AllSql;
+        public static string ByKey() => ByKeySql;
 
         public static string By(string condition) => ByConditionSqlBase + condition;
     }

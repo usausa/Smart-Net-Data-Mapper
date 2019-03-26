@@ -4,29 +4,28 @@ namespace Smart.Data.Mapper.Builders
 
     using Smart.Data.Mapper.Builders.Metadata;
 
-    public static class Delete<T>
+    public static class SqlCount<T>
     {
-        private static readonly string ByKeySql;
+        private static readonly string AllSql;
 
         private static readonly string ByConditionSqlBase;
 
-        static Delete()
+        static SqlCount()
         {
             var tableInfo = Metadata<T>.Table;
             var sql = new StringBuilder(256);
 
-            sql.Append("DELETE FROM ");
+            sql.Append("SELECT COUNT(*) FROM ");
             sql.Append(tableInfo.Name);
+
+            AllSql = sql.ToString();
+
             sql.Append(" WHERE ");
 
             ByConditionSqlBase = sql.ToString();
-
-            BuildHelper.BuildKeyCondition(sql, tableInfo);
-
-            ByKeySql = sql.ToString();
         }
 
-        public static string ByKey() => ByKeySql;
+        public static string All() => AllSql;
 
         public static string By(string condition) => ByConditionSqlBase + condition;
     }

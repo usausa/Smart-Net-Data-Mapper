@@ -4,11 +4,11 @@ namespace Smart.Data.Mapper.Builders
 
     using Smart.Data.Mapper.Builders.Metadata;
 
-    public static class Insert<T>
+    public static class SqlInsert<T>
     {
         private static readonly string ValuesSql;
 
-        static Insert()
+        static SqlInsert()
         {
             var tableInfo = Metadata<T>.Table;
             var sql = new StringBuilder(256);

@@ -5,7 +5,7 @@ namespace Smart.Data.Mapper.Builders
 
     using Smart.Data.Mapper.Builders.Metadata;
 
-    public static class Update<T>
+    public static class SqlUpdate<T>
     {
         private static readonly string ByKeySql;
 
@@ -13,7 +13,7 @@ namespace Smart.Data.Mapper.Builders
 
         private static readonly string KeyConditionSql;
 
-        static Update()
+        static SqlUpdate()
         {
             var tableInfo = Metadata<T>.Table;
             var sql = new StringBuilder(256);

@@ -18,6 +18,11 @@ namespace Smart.Data.Mapper.Builders
         public bool IsEnable { get; set; }
 
         [Ignore]
-        public int Value { get; set; }
+        public int IgnoreValue { get; set; }
+
+        public int WriteOnlyValue
+        {
+            set => IgnoreValue = value;
+        }
     }
 }
