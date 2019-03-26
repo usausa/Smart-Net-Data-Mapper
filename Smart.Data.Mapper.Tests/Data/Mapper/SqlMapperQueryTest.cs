@@ -1,5 +1,6 @@
 namespace Smart.Data.Mapper
 {
+    using System;
     using System.Data;
     using System.Linq;
     using System.Threading.Tasks;
@@ -86,6 +87,65 @@ namespace Smart.Data.Mapper
 
                 Assert.Equal(ConnectionState.Open, con.State);
                 Assert.Single(list.ToList());
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Close
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public void ClosedConnectionMustClosedWhenQueryError()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                Assert.Throws<SqliteException>(() => con.Query<Data>("x").ToList());
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryAsync<Data>("x"));
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
+        {
+            using (var con = new CommandUnsupportedConnection())
+            {
+                await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<Data>("x"));
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureParameterBuilderFactories(opt =>
+            {
+                opt.Clear();
+                opt.Add(new PostProcessErrorParameterBuilderFactory());
+            });
+
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<Data>(config, "SELECT 1, 'test1'", new object()));
+
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
         }

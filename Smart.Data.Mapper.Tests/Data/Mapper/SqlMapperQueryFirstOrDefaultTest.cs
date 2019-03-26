@@ -88,6 +88,34 @@ namespace Smart.Data.Mapper
         }
 
         //--------------------------------------------------------------------------------
+        // Close
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public void ClosedConnectionMustClosedWhenQueryError()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                Assert.Throws<SqliteException>(() => con.QueryFirstOrDefault<Data>("x"));
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryFirstOrDefaultAsync<Data>("x"));
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
         // Parameter
         //--------------------------------------------------------------------------------
 

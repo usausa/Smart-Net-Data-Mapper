@@ -1,5 +1,6 @@
 namespace Smart.Data.Mapper
 {
+    using System;
     using System.Data;
     using System.Threading.Tasks;
 
@@ -100,6 +101,126 @@ namespace Smart.Data.Mapper
                     Assert.True(reader.Read());
                     Assert.False(reader.Read());
                 }
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Close
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public void ClosedConnectionMustClosedWhenQueryError()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                Assert.Throws<SqliteException>(() =>
+                {
+                    using (con.ExecuteReader("x"))
+                    {
+                    }
+                });
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public void ClosedConnectionMustClosedWhenWhenCommandError()
+        {
+            using (var con = new CommandUnsupportedConnection())
+            {
+                Assert.Throws<NotSupportedException>(() =>
+                {
+                    using (con.ExecuteReader("x"))
+                    {
+                    }
+                });
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public void ClosedConnectionMustClosedWhenPostProcessError()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureParameterBuilderFactories(opt =>
+            {
+                opt.Clear();
+                opt.Add(new PostProcessErrorParameterBuilderFactory());
+            });
+
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                Assert.Throws<NotSupportedException>(() =>
+                {
+                    using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
+                    {
+                    }
+                });
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                await Assert.ThrowsAsync<SqliteException>(async () =>
+                {
+                    using (await con.ExecuteReaderAsync("x"))
+                    {
+                    }
+                });
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
+        {
+            using (var con = new CommandUnsupportedConnection())
+            {
+                await Assert.ThrowsAsync<NotSupportedException>(async () =>
+                {
+                    using (await con.ExecuteReaderAsync("x"))
+                    {
+                    }
+                });
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureParameterBuilderFactories(opt =>
+            {
+                opt.Clear();
+                opt.Add(new PostProcessErrorParameterBuilderFactory());
+            });
+
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                await Assert.ThrowsAsync<NotSupportedException>(async () =>
+                {
+                    using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
+                    {
+                    }
+                });
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }

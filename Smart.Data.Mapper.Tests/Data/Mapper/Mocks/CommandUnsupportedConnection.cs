@@ -3,10 +3,8 @@ namespace Smart.Data.Mapper.Mocks
     using System;
     using System.Data;
 
-    public sealed class AsyncUnsupportedConnection : IDbConnection
+    public sealed class CommandUnsupportedConnection : IDbConnection
     {
-        private readonly bool commandSupport;
-
         public string ConnectionString { get; set; }
 
         public int ConnectionTimeout { get; set; }
@@ -14,11 +12,6 @@ namespace Smart.Data.Mapper.Mocks
         public string Database { get; set; }
 
         public ConnectionState State { get; private set; }
-
-        public AsyncUnsupportedConnection(bool commandSupport = false)
-        {
-            this.commandSupport = commandSupport;
-        }
 
         public void Dispose()
         {
@@ -36,7 +29,7 @@ namespace Smart.Data.Mapper.Mocks
 
         public IDbCommand CreateCommand()
         {
-            return commandSupport ? (IDbCommand)new AsyncSupportedCommand() : new AsyncUnsupportedCommand();
+            throw new NotSupportedException();
         }
 
         public IDbTransaction BeginTransaction() => throw new NotSupportedException();
