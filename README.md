@@ -39,7 +39,6 @@ var result = parameter.OutParam;
 
 ## TODO
 
-* SqlBuilder
 * Xamarin example
 
 ## NuGet
