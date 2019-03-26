@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Usa.Smart.Data.Mapper.Builder</id>
+    <id>Usa.Smart.Data.Mapper.Builders</id>
     <version>0.9.0</version>
-    <title>Smart.Data.Mapper.Builder .NET</title>
+    <title>Smart.Data.Mapper.Builders .NET</title>
     <authors>machi_pon</authors>
     <owners>machi_pon</owners>
     <description>Smart data mapper library builder option for .NET</description>
@@ -22,6 +22,6 @@
   </metadata>
   <files>
     <!-- netstandard2.0 -->
-    <file src="Smart.Data.Mapper.Builder\bin\Release\netstandard2.0\Smart.Data.Mapper.Builder.dll" target="lib\netstandard2.0" />
+    <file src="Smart.Data.Mapper.Builders\bin\Release\netstandard2.0\Smart.Data.Mapper.Builders.dll" target="lib\netstandard2.0" />
   </files>
 </package>

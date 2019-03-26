@@ -1,8 +1,8 @@
-namespace Smart.Data.Mapper.Builder
+namespace Smart.Data.Mapper.Builders
 {
     using System.Text;
 
-    using Smart.Data.Mapper.Builder.Metadata;
+    using Smart.Data.Mapper.Builders.Metadata;
 
     public static class Select<T>
     {

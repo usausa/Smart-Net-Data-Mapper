@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper.Builder.Metadata
+namespace Smart.Data.Mapper.Builders.Metadata
 {
     public static class Metadata
     {
