@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
 {
     public static class Metadata
     {
-        public static IMetadataFactory Factory { get; } = DefaultMetadataFactory.Instance;
+        public static IMetadataFactory Factory { get; } = StandardMetadataFactory.Default;
     }
 
     public static class Metadata<T>

@@ -6,13 +6,11 @@ namespace Smart.Data.Mapper.Builders.Metadata
 
     using Smart.Data.Mapper.Attributes;
 
-    public sealed class DefaultMetadataFactory : IMetadataFactory
+    public sealed class StandardMetadataFactory : IMetadataFactory
     {
-        public static DefaultMetadataFactory Instance { get; } = new DefaultMetadataFactory();
+        public static StandardMetadataFactory Default { get; } = new StandardMetadataFactory();
 
-        private DefaultMetadataFactory()
-        {
-        }
+        public string[] RemoveSuffix { get; set; } = { "Entity" };
 
         public TableInfo CreateTableInfo(Type type)
         {
@@ -38,7 +36,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
             return pi.CanRead && (pi.GetCustomAttribute<IgnoreAttribute>() == null);
         }
 
-        private static string ResolveName(MemberInfo mi)
+        private string ResolveName(MemberInfo mi)
         {
             var attribute = mi.GetCustomAttribute<NameAttribute>();
             if (attribute != null)
@@ -47,7 +45,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
             }
 
             var name = mi.Name;
-            foreach (var suffix in new[] { "Entity" })
+            foreach (var suffix in RemoveSuffix)
             {
                 if (name.EndsWith(suffix))
                 {
