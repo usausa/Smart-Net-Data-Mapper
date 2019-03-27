@@ -21,9 +21,16 @@ namespace Smart.Data.Mapper.Builders
 
             ByConditionSqlBase = sql.ToString();
 
-            BuildHelper.BuildKeyCondition(sql, tableInfo);
+            if (tableInfo.KeyColumns.Count > 0)
+            {
+                BuildHelper.BuildKeyCondition(sql, tableInfo);
 
-            ByKeySql = sql.ToString();
+                ByKeySql = sql.ToString();
+            }
+            else
+            {
+                ByKeySql = null;
+            }
         }
 
         public static string ByKey() => ByKeySql;
