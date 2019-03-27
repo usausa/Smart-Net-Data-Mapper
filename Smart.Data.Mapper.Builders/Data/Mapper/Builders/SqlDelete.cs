@@ -8,7 +8,7 @@ namespace Smart.Data.Mapper.Builders
     {
         private static readonly string ByKeySql;
 
-        private static readonly string ByConditionSqlBase;
+        private static readonly string WhereSqlBase;
 
         static SqlDelete()
         {
@@ -19,7 +19,7 @@ namespace Smart.Data.Mapper.Builders
             sql.Append(tableInfo.Name);
             sql.Append(" WHERE ");
 
-            ByConditionSqlBase = sql.ToString();
+            WhereSqlBase = sql.ToString();
 
             if (tableInfo.KeyColumns.Count > 0)
             {
@@ -35,6 +35,6 @@ namespace Smart.Data.Mapper.Builders
 
         public static string ByKey() => ByKeySql;
 
-        public static string By(string condition) => ByConditionSqlBase + condition;
+        public static string Where(string condition) => WhereSqlBase + condition;
     }
 }

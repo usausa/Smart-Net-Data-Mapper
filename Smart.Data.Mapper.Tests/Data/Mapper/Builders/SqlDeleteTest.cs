@@ -17,11 +17,11 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
-        public void By()
+        public void Where()
         {
             Assert.Equal(
                 "DELETE FROM Table WHERE Key1 = @Key1",
-                SqlDelete<Entity>.By("Key1 = @Key1"));
+                SqlDelete<Entity>.Where("Key1 = @Key1"));
         }
 
         //--------------------------------------------------------------------------------
@@ -37,11 +37,11 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
-        public void KeyOnlyBy()
+        public void KeyOnlyWhere()
         {
             Assert.Equal(
                 "DELETE FROM KeyOnly WHERE Key1 = @Key1",
-                SqlDelete<KeyOnlyEntity>.By("Key1 = @Key1"));
+                SqlDelete<KeyOnlyEntity>.Where("Key1 = @Key1"));
         }
 
         //--------------------------------------------------------------------------------
@@ -56,11 +56,11 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
-        public void NonKeyBy()
+        public void NonKeyWhere()
         {
             Assert.Equal(
                 "DELETE FROM NonKey WHERE Key1 = @Key1",
-                SqlDelete<NonKeyEntity>.By("Key1 = @Key1"));
+                SqlDelete<NonKeyEntity>.Where("Key1 = @Key1"));
         }
     }
 }

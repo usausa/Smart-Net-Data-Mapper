@@ -50,10 +50,10 @@ namespace Smart.Data.Mapper.Builders
             }
         }
 
-        public static string SetByKey() => ByKeySql;
+        public static string ByKey() => ByKeySql;
 
-        public static string SetByKey(string set) => KeyConditionSql != null ? String.Concat(UpdateSql, set, KeyConditionSql) : null;
+        public static string ByKey(string set) => KeyConditionSql != null ? String.Concat(UpdateSql, set, KeyConditionSql) : null;
 
-        public static string SetBy(string set, string condition) => String.Concat(UpdateSql, set, " WHERE ", condition);
+        public static string Set(string set, string condition) => String.Concat(UpdateSql, set, " WHERE ", condition);
     }
 }

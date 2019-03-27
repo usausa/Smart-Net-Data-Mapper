@@ -17,11 +17,11 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
-        public void By()
+        public void Where()
         {
             Assert.Equal(
                 "SELECT * FROM Table WHERE Key1 = @Key1",
-                SqlSelect<Entity>.By("Key1 = @Key1"));
+                SqlSelect<Entity>.Where("Key1 = @Key1"));
         }
 
         //--------------------------------------------------------------------------------
@@ -37,11 +37,11 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
-        public void KeyOnlyBy()
+        public void KeyOnlyWhere()
         {
             Assert.Equal(
                 "SELECT * FROM KeyOnly WHERE Key1 = @Key1",
-                SqlSelect<KeyOnlyEntity>.By("Key1 = @Key1"));
+                SqlSelect<KeyOnlyEntity>.Where("Key1 = @Key1"));
         }
 
         //--------------------------------------------------------------------------------
@@ -56,11 +56,11 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
-        public void NonKeyBy()
+        public void NonKeyWhere()
         {
             Assert.Equal(
                 "SELECT * FROM NonKey WHERE Key1 = @Key1",
-                SqlSelect<NonKeyEntity>.By("Key1 = @Key1"));
+                SqlSelect<NonKeyEntity>.Where("Key1 = @Key1"));
         }
     }
 }

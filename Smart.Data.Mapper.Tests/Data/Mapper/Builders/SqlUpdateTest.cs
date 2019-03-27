@@ -9,27 +9,27 @@ namespace Smart.Data.Mapper.Builders
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void SetByKey()
+        public void ByKey()
         {
             Assert.Equal(
                 "UPDATE Table SET Name = @Name, Flag = @IsEnable WHERE Key1 = @Key1 AND SubKey = @Key2",
-                SqlUpdate<Entity>.SetByKey());
+                SqlUpdate<Entity>.ByKey());
         }
 
         [Fact]
-        public void SetByKeyWithCondition()
+        public void ByKeyWithCondition()
         {
             Assert.Equal(
                 "UPDATE Table SET Name = @Name WHERE Key1 = @Key1 AND SubKey = @Key2",
-                SqlUpdate<Entity>.SetByKey("Name = @Name"));
+                SqlUpdate<Entity>.ByKey("Name = @Name"));
         }
 
         [Fact]
-        public void SetBy()
+        public void Set()
         {
             Assert.Equal(
                 "UPDATE Table SET Name = @Name WHERE Key1 = @Key1",
-                SqlUpdate<Entity>.SetBy("Name = @Name", "Key1 = @Key1"));
+                SqlUpdate<Entity>.Set("Name = @Name", "Key1 = @Key1"));
         }
 
         //--------------------------------------------------------------------------------
@@ -37,25 +37,25 @@ namespace Smart.Data.Mapper.Builders
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void KeyOnlySetByKey()
+        public void KeyOnlyByKey()
         {
             Assert.Null(
-                SqlUpdate<KeyOnlyEntity>.SetByKey());
+                SqlUpdate<KeyOnlyEntity>.ByKey());
         }
 
         [Fact]
-        public void KeyOnlySetByKeyWithCondition()
+        public void KeyOnlyByKeyWithCondition()
         {
             Assert.Null(
-                SqlUpdate<KeyOnlyEntity>.SetByKey("Key2 = @Key2"));
+                SqlUpdate<KeyOnlyEntity>.ByKey("Key2 = @Key2"));
         }
 
         [Fact]
-        public void KeyOnlySetBy()
+        public void KeyOnlySet()
         {
             Assert.Equal(
                 "UPDATE KeyOnly SET Key2 = @Key2 WHERE Key1 = @Key1",
-                SqlUpdate<KeyOnlyEntity>.SetBy("Key2 = @Key2", "Key1 = @Key1"));
+                SqlUpdate<KeyOnlyEntity>.Set("Key2 = @Key2", "Key1 = @Key1"));
         }
 
         //--------------------------------------------------------------------------------
@@ -63,25 +63,25 @@ namespace Smart.Data.Mapper.Builders
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void NonKeySetByKey()
+        public void NonKeyByKey()
         {
             Assert.Null(
-                SqlUpdate<NonKeyEntity>.SetByKey());
+                SqlUpdate<NonKeyEntity>.ByKey());
         }
 
         [Fact]
-        public void NonKeySetByKeyWithCondition()
+        public void NonKeyByKeyWithCondition()
         {
             Assert.Null(
-                SqlUpdate<NonKeyEntity>.SetByKey("Key2 = @Key2"));
+                SqlUpdate<NonKeyEntity>.ByKey("Key2 = @Key2"));
         }
 
         [Fact]
-        public void NonKeySetBy()
+        public void NonKeySet()
         {
             Assert.Equal(
                 "UPDATE NonKey SET Key2 = @Key2 WHERE Key1 = @Key1",
-                SqlUpdate<NonKeyEntity>.SetBy("Key2 = @Key2", "Key1 = @Key1"));
+                SqlUpdate<NonKeyEntity>.Set("Key2 = @Key2", "Key1 = @Key1"));
         }
     }
 }
