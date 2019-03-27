@@ -4,6 +4,10 @@ namespace Smart.Data.Mapper.Builders
 
     public class SqlSelectTest
     {
+        //--------------------------------------------------------------------------------
+        // Entity
+        //--------------------------------------------------------------------------------
+
         [Fact]
         public void ByKey()
         {
@@ -18,6 +22,45 @@ namespace Smart.Data.Mapper.Builders
             Assert.Equal(
                 "SELECT * FROM Table WHERE Key1 = @Key1",
                 SqlSelect<Entity>.By("Key1 = @Key1"));
+        }
+
+        //--------------------------------------------------------------------------------
+        // KeyOnly
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+        public void KeyOnlyByKey()
+        {
+            Assert.Equal(
+                "SELECT * FROM KeyOnly WHERE Key1 = @Key1 AND Key2 = @Key2",
+                SqlSelect<KeyOnlyEntity>.ByKey());
+        }
+
+        [Fact]
+        public void KeyOnlyBy()
+        {
+            Assert.Equal(
+                "SELECT * FROM KeyOnly WHERE Key1 = @Key1",
+                SqlSelect<KeyOnlyEntity>.By("Key1 = @Key1"));
+        }
+
+        //--------------------------------------------------------------------------------
+        // KeyOnly
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+        public void NonKeyByKey()
+        {
+            Assert.Null(
+                SqlSelect<NonKeyEntity>.ByKey());
+        }
+
+        [Fact]
+        public void NonKeyBy()
+        {
+            Assert.Equal(
+                "SELECT * FROM NonKey WHERE Key1 = @Key1",
+                SqlSelect<NonKeyEntity>.By("Key1 = @Key1"));
         }
     }
 }

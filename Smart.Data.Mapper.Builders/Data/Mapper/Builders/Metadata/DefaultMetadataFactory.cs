@@ -18,7 +18,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
         {
             var columns = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(IsTargetProperty)
-                .Select(x => new ColumnInfo(x, ResolveName(x)))
+                .Select(x => new ColumnInfo(x, x.GetCustomAttribute<NameAttribute>()?.Name ?? x.Name))
                 .ToArray();
             var keyColumns = columns
                 .Select(x => new { Column = x, Attribute = x.Property.GetCustomAttribute<PrimaryKeyAttribute>() })
@@ -38,9 +38,24 @@ namespace Smart.Data.Mapper.Builders.Metadata
             return pi.CanRead && (pi.GetCustomAttribute<IgnoreAttribute>() == null);
         }
 
-        private static string ResolveName(MemberInfo pi)
+        private static string ResolveName(MemberInfo mi)
         {
-            return pi.GetCustomAttribute<NameAttribute>()?.Name ?? pi.Name;
+            var attribute = mi.GetCustomAttribute<NameAttribute>();
+            if (attribute != null)
+            {
+                return attribute.Name;
+            }
+
+            var name = mi.Name;
+            foreach (var suffix in new[] { "Entity" })
+            {
+                if (name.EndsWith(suffix))
+                {
+                    return name.Substring(0, name.Length - suffix.Length);
+                }
+            }
+
+            return name;
         }
     }
 }
