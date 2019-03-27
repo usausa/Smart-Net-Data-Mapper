@@ -13,11 +13,11 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
-        public void By()
+        public void Where()
         {
             Assert.Equal(
                 "SELECT COUNT(*) FROM Table WHERE Key1 = @Key1",
-                SqlCount<Entity>.By("Key1 = @Key1"));
+                SqlCount<Entity>.Where("Key1 = @Key1"));
         }
     }
 }

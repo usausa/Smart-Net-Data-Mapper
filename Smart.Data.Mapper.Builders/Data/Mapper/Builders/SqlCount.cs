@@ -27,6 +27,6 @@ namespace Smart.Data.Mapper.Builders
 
         public static string All() => AllSql;
 
-        public static string By(string condition) => ByConditionSqlBase + condition;
+        public static string Where(string condition) => ByConditionSqlBase + condition;
     }
 }

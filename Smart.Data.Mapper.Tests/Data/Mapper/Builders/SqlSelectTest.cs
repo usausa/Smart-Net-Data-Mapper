@@ -62,5 +62,19 @@ namespace Smart.Data.Mapper.Builders
                 "SELECT * FROM NonKey WHERE Key1 = @Key1",
                 SqlSelect<NonKeyEntity>.Where("Key1 = @Key1"));
         }
+
+        //--------------------------------------------------------------------------------
+        // Build
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+        public void BuildDefault()
+        {
+            Assert.Equal(
+                "SELECT * FROM Table ORDER BY Key1, SubKey",
+                SqlSelect<Entity>.Build());
+        }
+
+        // TODO
     }
 }
