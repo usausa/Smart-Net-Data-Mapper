@@ -17,10 +17,18 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
+        public void All()
+        {
+            Assert.Equal(
+                "SELECT * FROM Table ORDER BY Key1, SubKey",
+                SqlSelect<Entity>.All());
+        }
+
+        [Fact]
         public void Where()
         {
             Assert.Equal(
-                "SELECT * FROM Table WHERE Key1 = @Key1",
+                "SELECT * FROM Table WHERE Key1 = @Key1 ORDER BY Key1, SubKey",
                 SqlSelect<Entity>.Where("Key1 = @Key1"));
         }
 
@@ -40,7 +48,7 @@ namespace Smart.Data.Mapper.Builders
         public void KeyOnlyWhere()
         {
             Assert.Equal(
-                "SELECT * FROM KeyOnly WHERE Key1 = @Key1",
+                "SELECT * FROM KeyOnly WHERE Key1 = @Key1 ORDER BY Key1, Key2",
                 SqlSelect<KeyOnlyEntity>.Where("Key1 = @Key1"));
         }
 
