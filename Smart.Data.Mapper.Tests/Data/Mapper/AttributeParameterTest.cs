@@ -21,7 +21,7 @@ namespace Smart.Data.Mapper
                 con.Execute("PROC", parameter, commandType: CommandType.StoredProcedure);
 
                 var cmd = con.Commands[0];
-                Assert.Equal(1, cmd.Parameters.Count);
+                Assert.Single(cmd.Parameters);
 
                 var param = (MockDbParameter)cmd.Parameters[0];
                 Assert.Equal(DbType.Int64, param.DbType);

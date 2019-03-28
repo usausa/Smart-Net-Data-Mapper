@@ -2,7 +2,6 @@ namespace Smart.Data.Mapper
 {
     using System;
     using System.Data;
-    using System.Linq;
 
     using Smart.Data.Mapper.Attributes;
     using Smart.Mock.Data;
@@ -21,20 +20,20 @@ namespace Smart.Data.Mapper
                 cmd.Executing = ec =>
                 {
                     Assert.Equal(13, ec.Parameters.Count);
-                    Assert.Equal(1, ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Value1)).Value);
-                    Assert.Equal(1, ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Value2)).Value);
-                    Assert.Equal(DBNull.Value, ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Value3)).Value);
-                    Assert.Equal(Value.One, ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Value4)).Value);
-                    Assert.Equal(Value.One, ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Value5)).Value);
-                    Assert.Equal(DBNull.Value, ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Value6)).Value);
+                    Assert.Equal(1, ec.Parameters[nameof(Parameter.Value1)].Value);
+                    Assert.Equal(1, ec.Parameters[nameof(Parameter.Value2)].Value);
+                    Assert.Equal(DBNull.Value, ec.Parameters[nameof(Parameter.Value3)].Value);
+                    Assert.Equal(Value.One, ec.Parameters[nameof(Parameter.Value4)].Value);
+                    Assert.Equal(Value.One, ec.Parameters[nameof(Parameter.Value5)].Value);
+                    Assert.Equal(DBNull.Value, ec.Parameters[nameof(Parameter.Value6)].Value);
 
-                    ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Output1)).Value = 1;
-                    ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Output2)).Value = DBNull.Value;
-                    ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Output3)).Value = 1;
-                    ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Output4)).Value = DBNull.Value;
-                    ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Output5)).Value = 1;
-                    ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Output6)).Value = DBNull.Value;
-                    ec.Parameters.First(x => x.ParameterName == nameof(Parameter.Output7)).Value = 1;
+                    ec.Parameters[nameof(Parameter.Output1)].Value = 1;
+                    ec.Parameters[nameof(Parameter.Output2)].Value = DBNull.Value;
+                    ec.Parameters[nameof(Parameter.Output3)].Value = 1;
+                    ec.Parameters[nameof(Parameter.Output4)].Value = DBNull.Value;
+                    ec.Parameters[nameof(Parameter.Output5)].Value = 1;
+                    ec.Parameters[nameof(Parameter.Output6)].Value = DBNull.Value;
+                    ec.Parameters[nameof(Parameter.Output7)].Value = 1;
                 };
                 con.SetupCommand(cmd);
 
