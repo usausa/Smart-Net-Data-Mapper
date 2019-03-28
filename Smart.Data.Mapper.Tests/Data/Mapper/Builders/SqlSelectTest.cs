@@ -45,6 +45,14 @@ namespace Smart.Data.Mapper.Builders
         }
 
         [Fact]
+        public void KeyOnlyAll()
+        {
+            Assert.Equal(
+                "SELECT * FROM KeyOnly ORDER BY Key1, Key2",
+                SqlSelect<KeyOnlyEntity>.All());
+        }
+
+        [Fact]
         public void KeyOnlyWhere()
         {
             Assert.Equal(
@@ -61,6 +69,14 @@ namespace Smart.Data.Mapper.Builders
         {
             Assert.Null(
                 SqlSelect<NonKeyEntity>.ByKey());
+        }
+
+        [Fact]
+        public void NonKeyAll()
+        {
+            Assert.Equal(
+                "SELECT * FROM NonKey",
+                SqlSelect<NonKeyEntity>.All());
         }
 
         [Fact]
@@ -83,6 +99,16 @@ namespace Smart.Data.Mapper.Builders
                 SqlSelect<Entity>.Build());
         }
 
-        // TODO
+        [Fact]
+        public void BuildAllOption()
+        {
+            Assert.Equal(
+                "SELECT Key1, MAX(SubKey) FROM Table WHERE Key1 > @Key1 GROUP BY Key1 ORDER BY Key1",
+                SqlSelect<Entity>.Build(
+                    column: "Key1, MAX(SubKey)",
+                    condition: "Key1 > @Key1",
+                    order: "Key1",
+                    group: "Key1"));
+        }
     }
 }

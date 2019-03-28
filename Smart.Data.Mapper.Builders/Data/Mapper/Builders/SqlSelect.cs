@@ -9,9 +9,7 @@ namespace Smart.Data.Mapper.Builders
     {
         private static readonly string ByKeySql;
 
-        private static readonly string AllSql;
-
-        private static readonly string WhereSqlBase;
+        private static readonly string SelectSqlBase;
 
         private static readonly string OrderSqlBase;
 
@@ -22,12 +20,12 @@ namespace Smart.Data.Mapper.Builders
 
             sql.Append("SELECT * FROM ");
             sql.Append(tableInfo.Name);
-            sql.Append(" WHERE ");
 
-            WhereSqlBase = sql.ToString();
+            SelectSqlBase = sql.ToString();
 
             if (tableInfo.KeyColumns.Count > 0)
             {
+                sql.Append(" WHERE ");
                 BuildHelper.BuildKeyCondition(sql, tableInfo);
 
                 ByKeySql = sql.ToString();
@@ -49,44 +47,36 @@ namespace Smart.Data.Mapper.Builders
                 ByKeySql = null;
                 OrderSqlBase = null;
             }
-
-            sql.Clear();
-            sql.Append("SELECT * FROM ");
-            sql.Append(tableInfo.Name);
-            if (!String.IsNullOrEmpty(OrderSqlBase))
-            {
-                sql.Append(OrderSqlBase);
-            }
-
-            AllSql = sql.ToString();
         }
 
         public static string ByKey() => ByKeySql;
 
-        public static string All() => AllSql;
+        public static string All() =>
+            !String.IsNullOrEmpty(OrderSqlBase)
+                ? SelectSqlBase + OrderSqlBase
+                : SelectSqlBase;
 
         public static string Where(string condition) =>
             !String.IsNullOrEmpty(OrderSqlBase)
-                ? WhereSqlBase + condition + OrderSqlBase
-                : WhereSqlBase + condition;
+                ? SelectSqlBase + " WHERE " + condition + OrderSqlBase
+                : SelectSqlBase + " WHERE " + condition;
 
-        public static string Build(string condition = null, string order = null, string column = null, string group = null, string table = null)
+        public static string Build(string condition = null, string order = null, string column = null, string group = null)
         {
-            var tableInfo = Metadata<T>.Table;
             var sql = new StringBuilder(256);
 
-            if (String.IsNullOrEmpty(column))
+            if (!String.IsNullOrEmpty(column))
             {
-                sql.Append("SELECT * FROM ");
-            }
-            else
-            {
+                var tableInfo = Metadata<T>.Table;
                 sql.Append("SELECT ");
                 sql.Append(column);
                 sql.Append(" FROM ");
+                sql.Append(tableInfo.Name);
             }
-
-            sql.Append(String.IsNullOrEmpty(table) ? tableInfo.Name : table);
+            else
+            {
+                sql.Append(SelectSqlBase);
+            }
 
             if (!String.IsNullOrEmpty(condition))
             {
@@ -100,17 +90,14 @@ namespace Smart.Data.Mapper.Builders
                 sql.Append(group);
             }
 
-            if (String.IsNullOrEmpty(order))
-            {
-                if (!String.IsNullOrEmpty(OrderSqlBase))
-                {
-                    sql.Append(OrderSqlBase);
-                }
-            }
-            else
+            if (!String.IsNullOrEmpty(order))
             {
                 sql.Append(" ORDER BY ");
                 sql.Append(order);
+            }
+            else if (!String.IsNullOrEmpty(OrderSqlBase))
+            {
+                sql.Append(OrderSqlBase);
             }
 
             return sql.ToString();
