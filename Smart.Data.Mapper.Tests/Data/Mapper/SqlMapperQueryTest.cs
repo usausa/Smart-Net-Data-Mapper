@@ -81,6 +81,7 @@ namespace Smart.Data.Mapper
 
         public async Task WithoutOpenAsync()
         {
+            // TODO
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 var list = await con.QueryAsync<Data>("SELECT 1, 'test1'");

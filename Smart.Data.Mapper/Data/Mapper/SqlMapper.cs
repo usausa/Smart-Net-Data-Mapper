@@ -4,6 +4,7 @@ namespace Smart.Data.Mapper
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
+    using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
@@ -358,7 +359,7 @@ namespace Smart.Data.Mapper
         // Query
         //--------------------------------------------------------------------------------
 
-        public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
@@ -380,10 +381,18 @@ namespace Smart.Data.Mapper
                         builder.PostProcess?.Invoke(cmd, param);
 
                         var mapper = config.CreateResultMapper<T>(reader);
-                        while (reader.Read())
+                        if (buffered)
                         {
-                            yield return mapper(reader);
+                            var list = new List<T>();
+                            while (reader.Read())
+                            {
+                                list.Add(mapper(reader));
+                            }
+
+                            return list;
                         }
+
+                        return Defer(reader, mapper);
                     }
                 }
                 finally
@@ -397,12 +406,21 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IEnumerable<T> Query<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        private static IEnumerable<T> Defer<T>(IDataReader reader, Func<IDataReader, T> mapper)
         {
-            return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
+            while (reader.Read())
+            {
+                yield return mapper(reader);
+            }
         }
 
-        public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken token = default)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IEnumerable<T> Query<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, buffered, commandTimeout, commandType);
+        }
+
+        public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null, CancellationToken token = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(DbCommand);
@@ -428,7 +446,7 @@ namespace Smart.Data.Mapper
                 var deferred = ExecuteReaderSync(cmd, reader, mapper);
                 close = false;
 
-                return deferred;
+                return buffered ? deferred.ToList() : deferred;
             }
             finally
             {
@@ -458,9 +476,9 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken token = default)
+        public static Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null, CancellationToken token = default)
         {
-            return QueryAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, token);
+            return QueryAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, buffered, commandTimeout, commandType, token);
         }
 
         //--------------------------------------------------------------------------------
