@@ -1,0 +1,13 @@
+﻿<Project>
+
+  <PropertyGroup>
+    <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
+    <NullableContextOptions>Enable</NullableContextOptions>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+</Project>

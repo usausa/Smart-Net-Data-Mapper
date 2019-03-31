@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ContentView x:Class="DataAccess.FormsApp.Modules.MenuView"
+             xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:resolver="clr-namespace:Smart.Forms.Resolver;assembly=Smart.Forms"
+             xmlns:shell="clr-namespace:DataAccess.FormsApp.Shell;assembly=DataAccess.FormsApp"
+             xmlns:modules="clr-namespace:DataAccess.FormsApp.Modules;assembly=DataAccess.FormsApp"
+             BindingContext="{Binding Source={x:Static modules:MenuViewModel.DesignInstance}}"
+             resolver:BindingContextResolver.Type="{x:Type modules:MenuViewModel}"
+             shell:ShellProperty.Title="🐰 Menu">
+
+    <Grid Style="{StaticResource MenuGrid}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Button Grid.Row="0" Grid.Column="0" Style="{StaticResource DefinitionButton}"
+                Text="🍣 Create" Command="{Binding CreateCommand}"/>
+        <Button Grid.Row="0" Grid.Column="1" Style="{StaticResource DefinitionButton}"
+                Text="🍺 Drop" Command="{Binding DropCommand}"/>
+
+        <Button Grid.Row="1" Grid.Column="0" Style="{StaticResource ActionButton}"
+                Text="🍇 Insert" Command="{Binding InsertCommand}"/>
+        <Button Grid.Row="1" Grid.Column="1" Style="{StaticResource ActionButton}"
+                Text="🍌 Update" Command="{Binding UpdateCommand}"/>
+
+        <Button Grid.Row="2" Grid.Column="0" Style="{StaticResource ActionButton}"
+                Text="🍓 Delete" Command="{Binding DeleteCommand}"/>
+        <Button Grid.Row="2" Grid.Column="1" Style="{StaticResource ActionButton}"
+                Text="🍍 Count" Command="{Binding CountCommand}"/>
+
+        <Button Grid.Row="3" Grid.Column="0" Style="{StaticResource ActionButton}"
+                Text="🍏 Select1" Command="{Binding Select1Command}"/>
+        <Button Grid.Row="3" Grid.Column="1" Style="{StaticResource ActionButton}"
+                Text="🍎 SelectAll" Command="{Binding SelectAllCommand}"/>
+
+        <Button Grid.Row="4" Grid.Column="0" Style="{StaticResource ActionButton}"
+                Text="🍑 InsertBulk" Command="{Binding InsertBulkCommand}"/>
+        <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource ActionButton}"
+                Text="🍒 DeleteAll" Command="{Binding DeleteAllCommand}"/>
+
+        <Button Grid.Row="5" Grid.Column="0" Style="{StaticResource MemoryButton}"
+                Text="🍈 InsertBulk" Command="{Binding MemoryInsertBulkCommand}"/>
+        <Button Grid.Row="5" Grid.Column="1" Style="{StaticResource MemoryButton}"
+                Text="🥝 DeleteAll" Command="{Binding MemoryDeleteAllCommand}"/>
+
+    </Grid>
+
+</ContentView>
