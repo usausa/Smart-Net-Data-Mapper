@@ -37,10 +37,6 @@ con.Execute("TestProc", parameter, commandType: CommandType.StoredProcedure);
 var result = parameter.OutParam;
 ```
 
-## TODO
-
-* Xamarin example
-
 ## NuGet
 
 | Id                    |
