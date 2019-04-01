@@ -4,7 +4,6 @@ namespace Smart.Data.Mapper
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
-    using System.Linq;
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
@@ -264,7 +263,6 @@ namespace Smart.Data.Mapper
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(IDbCommand);
             var reader = default(IDataReader);
-            var close = true;
             try
             {
                 cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
@@ -276,24 +274,23 @@ namespace Smart.Data.Mapper
                     con.Open();
                 }
 
-                reader = cmd.ExecuteReader(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior);
+                reader = cmd.ExecuteReader(wasClosed
+                    ? commandBehavior | CommandBehavior.CloseConnection
+                    : commandBehavior);
                 wasClosed = false;
 
                 builder.PostProcess?.Invoke(cmd, param);
 
-                var wrapped = new WrappedReader(cmd, reader);
-                close = false;
-
-                return wrapped;
+                return new WrappedReader(cmd, reader);
+            }
+            catch (Exception)
+            {
+                reader?.Dispose();
+                cmd?.Dispose();
+                throw;
             }
             finally
             {
-                if (close)
-                {
-                    reader?.Dispose();
-                    cmd?.Dispose();
-                }
-
                 if (wasClosed)
                 {
                     con.Close();
@@ -312,7 +309,6 @@ namespace Smart.Data.Mapper
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(DbCommand);
             var reader = default(IDataReader);
-            var close = true;
             try
             {
                 cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType);
@@ -329,19 +325,16 @@ namespace Smart.Data.Mapper
 
                 builder.PostProcess?.Invoke(cmd, param);
 
-                var wrapped = new WrappedReader(cmd, reader);
-                close = false;
-
-                return wrapped;
+                return new WrappedReader(cmd, reader);
+            }
+            catch (Exception)
+            {
+                reader?.Dispose();
+                cmd?.Dispose();
+                throw;
             }
             finally
             {
-                if (close)
-                {
-                    reader?.Dispose();
-                    cmd?.Dispose();
-                }
-
                 if (wasClosed)
                 {
                     con.Close();
@@ -359,58 +352,73 @@ namespace Smart.Data.Mapper
         // Query
         //--------------------------------------------------------------------------------
 
-        public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IEnumerable<T> ReaderToList<T>(IDataReader reader, Func<IDataReader, T> mapper)
         {
-            var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+            var list = new List<T>();
+            while (reader.Read())
             {
-                var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param);
+                list.Add(mapper(reader));
+            }
 
-                try
+            return list;
+        }
+
+        private static IEnumerable<T> ReaderToDefer<T>(IDbCommand cmd, IDataReader reader, Func<IDataRecord, T> mapper)
+        {
+            using (cmd)
+            using (reader)
+            {
+                while (reader.Read())
                 {
-                    if (wasClosed)
-                    {
-                        con.Open();
-                    }
-
-                    using (var reader = cmd.ExecuteReader(wasClosed ? CommandBehaviorQueryWithClose : CommandBehaviorQuery))
-                    {
-                        wasClosed = false;
-
-                        builder.PostProcess?.Invoke(cmd, param);
-
-                        var mapper = config.CreateResultMapper<T>(reader);
-                        if (buffered)
-                        {
-                            var list = new List<T>();
-                            while (reader.Read())
-                            {
-                                list.Add(mapper(reader));
-                            }
-
-                            return list;
-                        }
-
-                        return Defer(reader, mapper);
-                    }
-                }
-                finally
-                {
-                    if (wasClosed)
-                    {
-                        con.Close();
-                    }
+                    yield return mapper(reader);
                 }
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IEnumerable<T> Defer<T>(IDataReader reader, Func<IDataReader, T> mapper)
+        public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
         {
-            while (reader.Read())
+            var wasClosed = con.State == ConnectionState.Closed;
+            var cmd = default(IDbCommand);
+            var reader = default(IDataReader);
+            try
             {
-                yield return mapper(reader);
+                cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+                var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+                builder.Build?.Invoke(cmd, param);
+
+                if (wasClosed)
+                {
+                    con.Open();
+                }
+
+                reader = cmd.ExecuteReader(wasClosed ? CommandBehaviorQueryWithClose : CommandBehaviorQuery);
+                wasClosed = false;
+
+                builder.PostProcess?.Invoke(cmd, param);
+
+                var mapper = config.CreateResultMapper<T>(reader);
+                if (buffered)
+                {
+                    return ReaderToList(reader, mapper);
+                }
+                else
+                {
+                    var deferred = ReaderToDefer(cmd, reader, mapper);
+                    cmd = null;
+                    reader = null;
+                    return deferred;
+                }
+            }
+            finally
+            {
+                reader?.Dispose();
+                cmd?.Dispose();
+
+                if (wasClosed)
+                {
+                    con.Close();
+                }
             }
         }
 
@@ -425,7 +433,6 @@ namespace Smart.Data.Mapper
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(DbCommand);
             var reader = default(DbDataReader);
-            var close = true;
             try
             {
                 cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType);
@@ -443,34 +450,26 @@ namespace Smart.Data.Mapper
                 builder.PostProcess?.Invoke(cmd, param);
 
                 var mapper = config.CreateResultMapper<T>(reader);
-                var deferred = ExecuteReaderSync(cmd, reader, mapper);
-                close = false;
-
-                return buffered ? deferred.ToList() : deferred;
+                if (buffered)
+                {
+                    return ReaderToList(reader, mapper);
+                }
+                else
+                {
+                    var deferred = ReaderToDefer(cmd, reader, mapper);
+                    cmd = null;
+                    reader = null;
+                    return deferred;
+                }
             }
             finally
             {
-                if (close)
-                {
-                    reader?.Dispose();
-                    cmd?.Dispose();
-                }
+                reader?.Dispose();
+                cmd?.Dispose();
 
                 if (wasClosed)
                 {
                     con.Close();
-                }
-            }
-        }
-
-        private static IEnumerable<T> ExecuteReaderSync<T>(IDbCommand cmd, IDataReader reader, Func<IDataRecord, T> mapper)
-        {
-            using (cmd)
-            using (reader)
-            {
-                while (reader.Read())
-                {
-                    yield return mapper(reader);
                 }
             }
         }

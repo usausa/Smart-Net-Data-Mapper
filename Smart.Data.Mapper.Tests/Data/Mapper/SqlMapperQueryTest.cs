@@ -79,12 +79,39 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
+        public void WithoutOpenUnbufferd()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                var list = con.Query<Data>("SELECT 1, 'test1'", buffered: false);
+
+                Assert.Equal(ConnectionState.Open, con.State);
+                Assert.Single(list.ToList());
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
         public async Task WithoutOpenAsync()
         {
-            // TODO
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 var list = await con.QueryAsync<Data>("SELECT 1, 'test1'");
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+                Assert.Single(list.ToList());
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public async Task WithoutOpenAsyncUnbufferd()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                var list = await con.QueryAsync<Data>("SELECT 1, 'test1'", buffered: false);
 
                 Assert.Equal(ConnectionState.Open, con.State);
                 Assert.Single(list.ToList());
@@ -103,6 +130,37 @@ namespace Smart.Data.Mapper
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 Assert.Throws<SqliteException>(() => con.Query<Data>("x").ToList());
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public void ClosedConnectionMustClosedWhenCreateCommandError()
+        {
+            using (var con = new CommandUnsupportedConnection())
+            {
+                Assert.Throws<NotSupportedException>(() => con.Query<Data>("x"));
+
+                Assert.Equal(ConnectionState.Closed, con.State);
+            }
+        }
+
+        [Fact]
+
+        public void ClosedConnectionMustClosedWhenPostProcessError()
+        {
+            var config = new SqlMapperConfig();
+            config.ConfigureParameterBuilderFactories(opt =>
+            {
+                opt.Clear();
+                opt.Add(new PostProcessErrorParameterBuilderFactory());
+            });
+
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                Assert.Throws<NotSupportedException>(() => con.Query<Data>(config, "SELECT 1, 'test1'", new object()));
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
