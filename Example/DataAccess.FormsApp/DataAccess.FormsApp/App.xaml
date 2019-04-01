@@ -71,6 +71,13 @@
                 <Setter Property="Margin" Value="3" />
             </Style>
 
+            <Style x:Key="BulkButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource MetroOrange}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="{StaticResource BigSize}" />
+                <Setter Property="Margin" Value="3" />
+            </Style>
+
             <Style x:Key="MemoryButton" TargetType="Button">
                 <Setter Property="BackgroundColor" Value="{StaticResource MetroMagenta}" />
                 <Setter Property="TextColor" Value="White" />

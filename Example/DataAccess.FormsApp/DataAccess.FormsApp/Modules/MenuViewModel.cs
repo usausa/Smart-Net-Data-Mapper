@@ -69,7 +69,7 @@ namespace DataAccess.FormsApp.Modules
             Select1Command = MakeAsyncCommand(Select1, () => IsCreated.Value).Observe(IsCreated);
             SelectAllCommand = MakeAsyncCommand(SelectAll, () => IsCreated.Value).Observe(IsCreated);
             InsertBulkCommand = MakeAsyncCommand(InsertBulk, () => !IsInserted.Value).Observe(IsInserted);
-            DeleteAllCommand = MakeAsyncCommand(DeleteAll, () => IsInserted.Value).Observe(IsCreated);
+            DeleteAllCommand = MakeAsyncCommand(DeleteAll, () => IsInserted.Value).Observe(IsInserted);
             MemoryInsertBulkCommand = MakeAsyncCommand(MemoryInsertBulk, () => !IsMemoryInserted.Value).Observe(IsMemoryInserted);
             MemoryDeleteAllCommand = MakeAsyncCommand(MemoryDeleteAll, () => IsMemoryInserted.Value).Observe(IsMemoryInserted);
 
@@ -241,11 +241,11 @@ namespace DataAccess.FormsApp.Modules
         {
             var watch = Stopwatch.StartNew();
 
-            // TODO
             var list = (await connectionFactory.UsingAsync(async con =>
-                (await con.QueryAsync<TestEntity>(
-                    //SqlSelect<TestEntity>.All())).ToList()));
-                    "SELECT * FROM Test ORDER BY Id")).ToList()));
+                await con.QueryAsync<TestEntity>(
+                    //SqlSelect<TestEntity>.All())))
+                    "SELECT * FROM Benchmark ORDER BY Id")))
+                .ToList();
 
             await dialogs.Information($"Count={list.Count}\r\nElapsed={watch.ElapsedMilliseconds}");
         }

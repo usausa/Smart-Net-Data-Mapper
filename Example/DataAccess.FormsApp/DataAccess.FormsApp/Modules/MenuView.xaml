@@ -40,12 +40,12 @@
 
         <Button Grid.Row="3" Grid.Column="0" Style="{StaticResource ActionButton}"
                 Text="🍏 Select1" Command="{Binding Select1Command}"/>
-        <Button Grid.Row="3" Grid.Column="1" Style="{StaticResource ActionButton}"
+        <Button Grid.Row="3" Grid.Column="1" Style="{StaticResource BulkButton}"
                 Text="🍎 SelectAll" Command="{Binding SelectAllCommand}"/>
 
-        <Button Grid.Row="4" Grid.Column="0" Style="{StaticResource ActionButton}"
+        <Button Grid.Row="4" Grid.Column="0" Style="{StaticResource BulkButton}"
                 Text="🍑 InsertBulk" Command="{Binding InsertBulkCommand}"/>
-        <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource ActionButton}"
+        <Button Grid.Row="4" Grid.Column="1" Style="{StaticResource BulkButton}"
                 Text="🍒 DeleteAll" Command="{Binding DeleteAllCommand}"/>
 
         <Button Grid.Row="5" Grid.Column="0" Style="{StaticResource MemoryButton}"
