@@ -2,7 +2,7 @@ namespace DataAccess.FormsApp.iOS
 {
     using UIKit;
 
-    public class Application
+    public static class Application
     {
         // This is the main entry point of the application.
         public static void Main(string[] args)
