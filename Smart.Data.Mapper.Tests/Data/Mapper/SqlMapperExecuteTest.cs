@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper
 {
     using System.Data;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
@@ -42,6 +43,29 @@ namespace Smart.Data.Mapper
                 var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" }).ConfigureAwait(false);
 
                 Assert.Equal(1, effect);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Cancel
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public async Task ExecuteCancelAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                con.Open();
+                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+
+                var cancel = new CancellationToken(true);
+                await Assert.ThrowsAsync<TaskCanceledException>(async () =>
+                        await con.ExecuteAsync(
+                            "INSERT INTO Data (Id, Name) VALUES (@Id, @Name)",
+                            new { Id = 1, Name = "test" },
+                            cancel: cancel).ConfigureAwait(false))
+                    .ConfigureAwait(false);
             }
         }
 

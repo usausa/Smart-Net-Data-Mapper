@@ -3,6 +3,7 @@ namespace Smart.Data.Mapper
     using System;
     using System.Data;
     using System.Linq;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
@@ -56,6 +57,30 @@ namespace Smart.Data.Mapper
                 Assert.Equal("test1", list[0].Name);
                 Assert.Equal(2, list[1].Id);
                 Assert.Equal("test2", list[1].Name);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Cancel
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public async Task QueryCancelAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                con.Open();
+                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+
+                await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+                {
+                    var cancel = new CancellationToken(true);
+                    await con.QueryAsync<DataEntity>(
+                        "SELECT * FROM Data ORDER BY Id",
+                        cancel: cancel)
+                        .ConfigureAwait(false);
+                }).ConfigureAwait(false);
             }
         }
 

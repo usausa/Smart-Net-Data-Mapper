@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper
 {
     using System.Data;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
@@ -102,6 +103,29 @@ namespace Smart.Data.Mapper
                 var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
 
                 Assert.Equal("0", value);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Cancel
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public async Task ExecuteScalarCancelAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                con.Open();
+                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+
+                var cancel = new CancellationToken(true);
+                await Assert.ThrowsAsync<TaskCanceledException>(async () =>
+                        await con.ExecuteScalarAsync<long>(
+                            "SELECT COUNT(*) FROM Data WHERE Id = @Id",
+                            new { Id = 1 },
+                            cancel: cancel).ConfigureAwait(false))
+                    .ConfigureAwait(false);
             }
         }
 

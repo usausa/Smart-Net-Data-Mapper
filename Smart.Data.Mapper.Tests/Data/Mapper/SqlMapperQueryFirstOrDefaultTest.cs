@@ -1,6 +1,8 @@
 namespace Smart.Data.Mapper
 {
+    using System;
     using System.Data;
+    using System.Threading;
     using System.Threading.Tasks;
 
     using Microsoft.Data.Sqlite;
@@ -56,6 +58,28 @@ namespace Smart.Data.Mapper
                 entity = await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 }).ConfigureAwait(false);
 
                 Assert.Null(entity);
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Cancel
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+
+        public async Task QueryFirstOrDefaultCancelAsync()
+        {
+            using (var con = new SqliteConnection("Data Source=:memory:"))
+            {
+                con.Open();
+
+                var cancel = new CancellationToken(true);
+                await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+                        await con.QueryFirstOrDefaultAsync<DataEntity>(
+                            "SELECT * FROM Data WHERE Id = @Id",
+                            new { Id = 1 },
+                            cancel: cancel).ConfigureAwait(false))
+                    .ConfigureAwait(false);
             }
         }
 
