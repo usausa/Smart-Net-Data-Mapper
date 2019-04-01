@@ -66,14 +66,18 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Task OpenAsync(IDbConnection con, CancellationToken token)
+        private static async Task OpenAsync(IDbConnection con, CancellationToken token)
         {
             if (con is DbConnection dbConnection)
             {
-                return dbConnection.OpenAsync(token);
+#pragma warning disable CA2007 // Do not directly await a Task
+                await dbConnection.OpenAsync(token);
+#pragma warning restore CA2007 // Do not directly await a Task
             }
-
-            throw new SqlMapperException("Async operation is not supported.");
+            else
+            {
+                throw new SqlMapperException("Async operation is not supported.");
+            }
         }
 
         //--------------------------------------------------------------------------------
@@ -132,7 +136,7 @@ namespace Smart.Data.Mapper
                         await OpenAsync(con, token).ConfigureAwait(false);
                     }
 
-                    var result = await cmd.ExecuteNonQueryAsync(token);
+                    var result = await cmd.ExecuteNonQueryAsync(token).ConfigureAwait(false);
 
                     builder.PostProcess?.Invoke(cmd, param);
 
@@ -221,7 +225,7 @@ namespace Smart.Data.Mapper
                         await OpenAsync(con, token).ConfigureAwait(false);
                     }
 
-                    var result = await cmd.ExecuteScalarAsync(token);
+                    var result = await cmd.ExecuteScalarAsync(token).ConfigureAwait(false);
 
                     builder.PostProcess?.Invoke(cmd, param);
 
@@ -320,7 +324,7 @@ namespace Smart.Data.Mapper
                     await OpenAsync(con, token).ConfigureAwait(false);
                 }
 
-                reader = await cmd.ExecuteReaderAsync(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior, token);
+                reader = await cmd.ExecuteReaderAsync(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior, token).ConfigureAwait(false);
                 wasClosed = false;
 
                 builder.PostProcess?.Invoke(cmd, param);
@@ -444,7 +448,7 @@ namespace Smart.Data.Mapper
                     await OpenAsync(con, token).ConfigureAwait(false);
                 }
 
-                reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryWithClose : CommandBehaviorQuery, token);
+                reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryWithClose : CommandBehaviorQuery, token).ConfigureAwait(false);
                 wasClosed = false;
 
                 builder.PostProcess?.Invoke(cmd, param);
@@ -541,7 +545,7 @@ namespace Smart.Data.Mapper
                         await OpenAsync(con, token).ConfigureAwait(false);
                     }
 
-                    using (var reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryFirstOrDefaultWithClose : CommandBehaviorQueryFirstOrDefault, token))
+                    using (var reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryFirstOrDefaultWithClose : CommandBehaviorQueryFirstOrDefault, token).ConfigureAwait(false))
                     {
                         wasClosed = false;
 

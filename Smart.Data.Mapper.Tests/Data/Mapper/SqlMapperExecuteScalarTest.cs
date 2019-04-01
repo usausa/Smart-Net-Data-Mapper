@@ -43,7 +43,7 @@ namespace Smart.Data.Mapper
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-                var count = await con.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
+                var count = await con.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 }).ConfigureAwait(false);
 
                 Assert.Equal(1L, count);
             }
@@ -71,7 +71,7 @@ namespace Smart.Data.Mapper
             {
                 con.Open();
 
-                var value = await con.ExecuteScalarAsync<long>("SELECT NULL");
+                var value = await con.ExecuteScalarAsync<long>("SELECT NULL").ConfigureAwait(false);
 
                 Assert.Equal(default, value);
             }
@@ -99,7 +99,7 @@ namespace Smart.Data.Mapper
             {
                 con.Open();
 
-                var value = await con.ExecuteScalarAsync<string>("SELECT 0");
+                var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
 
                 Assert.Equal("0", value);
             }
@@ -128,7 +128,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                var value = await con.ExecuteScalarAsync<long>("SELECT 1");
+                var value = await con.ExecuteScalarAsync<long>("SELECT 1").ConfigureAwait(false);
 
                 Assert.Equal(1L, value);
                 Assert.Equal(ConnectionState.Closed, con.State);
@@ -195,7 +195,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object());
+                await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object()).ConfigureAwait(false);
 
                 Assert.True(factory.BuildCalled);
                 Assert.True(factory.PostProcessCalled);
@@ -216,7 +216,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.ExecuteScalarAsync<long>(config, "SELECT 1");
+                await con.ExecuteScalarAsync<long>(config, "SELECT 1").ConfigureAwait(false);
 
                 Assert.False(factory.BuildCalled);
                 Assert.False(factory.PostProcessCalled);

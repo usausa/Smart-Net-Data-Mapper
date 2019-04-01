@@ -14,9 +14,9 @@ namespace Smart.Data.Mapper.Benchmark
 
     public static class Program
     {
-        public static void Main(string[] args)
+        public static void Main()
         {
-            BenchmarkRunner.Run<Benchmark>();
+            BenchmarkRunner.Run<DataMapperBenchmark>();
         }
     }
 
@@ -31,7 +31,9 @@ namespace Smart.Data.Mapper.Benchmark
     }
 
     [Config(typeof(BenchmarkConfig))]
-    public class Benchmark
+#pragma warning disable CA1001 // Types that own disposable fields should be disposable
+    public class DataMapperBenchmark
+#pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private MockDbConnection mockExecute;
 
@@ -93,6 +95,15 @@ namespace Smart.Data.Mapper.Benchmark
                 }).ToList())));
         }
 
+        [IterationCleanup]
+        public void IterationCleanup()
+        {
+            mockExecute.Dispose();
+            mockExecuteScalar.Dispose();
+            mockQuery.Dispose();
+            mockQueryFirst.Dispose();
+        }
+
         //--------------------------------------------------------------------------------
         // Execute
         //--------------------------------------------------------------------------------
@@ -119,26 +130,26 @@ namespace Smart.Data.Mapper.Benchmark
         [Benchmark]
         public void DapperExecuteWithParameter10()
         {
-            Dapper.SqlMapper.Execute(mockExecute, ExecuteWithParameter10Sql, new LargeData());
+            Dapper.SqlMapper.Execute(mockExecute, ExecuteWithParameter10Sql, new LargeDataEntity());
         }
 
         [Benchmark]
         public void SmartExecuteWithParameter10()
         {
-            mockExecute.Execute(ExecuteWithParameter10Sql, new LargeData());
+            mockExecute.Execute(ExecuteWithParameter10Sql, new LargeDataEntity());
         }
 
         [Benchmark]
         public void DapperExecuteWithOverParameter()
         {
             // [MEMO] Dapper optimize parameters
-            Dapper.SqlMapper.Execute(mockExecute, ExecuteSql, new LargeData());
+            Dapper.SqlMapper.Execute(mockExecute, ExecuteSql, new LargeDataEntity());
         }
 
         [Benchmark]
         public void SmartExecuteWithOverParameter()
         {
-            mockExecute.Execute(ExecuteSql, new LargeData());
+            mockExecute.Execute(ExecuteSql, new LargeDataEntity());
         }
 
         //--------------------------------------------------------------------------------
@@ -182,7 +193,7 @@ namespace Smart.Data.Mapper.Benchmark
         [Benchmark]
         public void DapperQuery100()
         {
-            foreach (var dummy in Dapper.SqlMapper.Query<Data>(mockQuery, QuerySql, buffered: false))
+            foreach (var dummy in Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, buffered: false))
             {
             }
         }
@@ -190,7 +201,7 @@ namespace Smart.Data.Mapper.Benchmark
         [Benchmark]
         public void SmartQuery100()
         {
-            foreach (var dummy in mockQuery.Query<Data>(QuerySql))
+            foreach (var dummy in mockQuery.Query<DataEntity>(QuerySql))
             {
             }
         }
@@ -203,26 +214,26 @@ namespace Smart.Data.Mapper.Benchmark
             "SELECT * FROM LargeData WHERE Id = 1";
 
         [Benchmark]
-        public LargeData DapperQueryFirst()
+        public LargeDataEntity DapperQueryFirst()
         {
-            return Dapper.SqlMapper.QueryFirstOrDefault<LargeData>(mockQueryFirst, QueryFirstSql);
+            return Dapper.SqlMapper.QueryFirstOrDefault<LargeDataEntity>(mockQueryFirst, QueryFirstSql);
         }
 
         [Benchmark]
-        public LargeData SmartQueryFirst()
+        public LargeDataEntity SmartQueryFirst()
         {
-            return mockQueryFirst.QueryFirstOrDefault<LargeData>(QueryFirstSql);
+            return mockQueryFirst.QueryFirstOrDefault<LargeDataEntity>(QueryFirstSql);
         }
     }
 
-    public class Data
+    public class DataEntity
     {
         public long Id { get; set; }
 
         public string Name { get; set; }
     }
 
-    public class LargeData
+    public class LargeDataEntity
     {
         public long Id { get; set; }
 

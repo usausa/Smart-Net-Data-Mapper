@@ -36,7 +36,7 @@ namespace Smart.Data.Mapper
                 var reader = new MockDataReader(columns, values);
                 con.SetupCommand(cmd => cmd.SetupResult(reader));
 
-                var list = con.Query<Data>("SELECT * FROM Data").ToList();
+                var list = con.Query<DataEntity>("SELECT * FROM Data").ToList();
 
                 Assert.Equal(2, list.Count);
                 Assert.Equal(1, list[0].Column1);
@@ -56,7 +56,7 @@ namespace Smart.Data.Mapper
             }
         }
 
-        protected class Data
+        protected class DataEntity
         {
             public int Column1 { get; set; }
 
@@ -68,7 +68,7 @@ namespace Smart.Data.Mapper
 
             public Value? Column5 { get; set; }
 
-            public int Column6 => 0;
+            public int Column6 => Column7;
 
             [Ignore]
             public int Column7 { get; set; }

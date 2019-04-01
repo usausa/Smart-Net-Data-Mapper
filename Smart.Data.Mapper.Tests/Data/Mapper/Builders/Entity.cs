@@ -20,9 +20,11 @@ namespace Smart.Data.Mapper.Builders
         [Ignore]
         public int IgnoreValue { get; set; }
 
+#pragma warning disable CA1044 // Properties should not be write only
         public int WriteOnlyValue
         {
             set => IgnoreValue = value;
         }
+#pragma warning restore CA1044 // Properties should not be write only
     }
 }

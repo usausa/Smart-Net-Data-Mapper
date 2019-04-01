@@ -4,6 +4,6 @@ namespace Smart.Data.Mapper.Selector
 
     public interface IPropertySelector
     {
-        PropertyInfo Select(PropertyInfo[] properties, string name);
+        PropertyInfo SelectProperty(PropertyInfo[] properties, string name);
     }
 }

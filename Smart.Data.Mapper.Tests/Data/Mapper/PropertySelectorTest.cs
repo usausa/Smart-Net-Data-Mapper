@@ -13,7 +13,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                var entity = con.QueryFirstOrDefault<Data>(
+                var entity = con.QueryFirstOrDefault<DataEntity>(
                     "SELECT " +
                     "1 AS ColumnName1, " +
                     "2 AS columnName2, " +
@@ -33,7 +33,7 @@ namespace Smart.Data.Mapper
             }
         }
 
-        protected class Data
+        protected class DataEntity
         {
             public int ColumnName1 { get; set; }
 

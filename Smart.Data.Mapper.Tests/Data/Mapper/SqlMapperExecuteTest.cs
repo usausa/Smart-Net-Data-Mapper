@@ -39,7 +39,7 @@ namespace Smart.Data.Mapper
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-                var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
+                var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" }).ConfigureAwait(false);
 
                 Assert.Equal(1, effect);
             }
@@ -67,7 +67,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1");
+                await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -133,7 +133,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object());
+                await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object()).ConfigureAwait(false);
 
                 Assert.True(factory.BuildCalled);
                 Assert.True(factory.PostProcessCalled);
@@ -154,7 +154,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1");
+                await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
 
                 Assert.False(factory.BuildCalled);
                 Assert.False(factory.PostProcessCalled);

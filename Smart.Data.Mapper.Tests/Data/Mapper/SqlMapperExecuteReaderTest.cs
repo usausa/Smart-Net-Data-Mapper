@@ -53,7 +53,7 @@ namespace Smart.Data.Mapper
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-                using (var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id"))
+                using (var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false))
                 {
                     Assert.True(reader.Read());
                     Assert.Equal(1, reader.GetInt64(0));
@@ -95,7 +95,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'"))
+                using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'").ConfigureAwait(false))
                 {
                     Assert.Equal(ConnectionState.Open, con.State);
                     Assert.True(reader.Read());
@@ -176,10 +176,10 @@ namespace Smart.Data.Mapper
             {
                 await Assert.ThrowsAsync<SqliteException>(async () =>
                 {
-                    using (await con.ExecuteReaderAsync("x"))
+                    using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
                     {
                     }
-                });
+                }).ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -193,10 +193,10 @@ namespace Smart.Data.Mapper
             {
                 await Assert.ThrowsAsync<NotSupportedException>(async () =>
                 {
-                    using (await con.ExecuteReaderAsync("x"))
+                    using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
                     {
                     }
-                });
+                }).ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -217,10 +217,10 @@ namespace Smart.Data.Mapper
             {
                 await Assert.ThrowsAsync<NotSupportedException>(async () =>
                 {
-                    using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
+                    using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
                     {
                     }
-                });
+                }).ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -290,7 +290,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
+                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
                 {
                 }
 
@@ -313,7 +313,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'"))
+                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'").ConfigureAwait(false))
                 {
                 }
 

@@ -12,7 +12,7 @@ namespace Smart.Data.Mapper
 
         private const double Factor = 2;
 
-        private static readonly Node[] EmptyNodes = new Node[0];
+        private static readonly Node[] EmptyNodes = Array.Empty<Node>();
 
         private readonly object sync = new object();
 
@@ -108,7 +108,7 @@ namespace Smart.Data.Mapper
             }
         }
 
-        private Table CreateAddTable(Table oldTable, Node node)
+        private static Table CreateAddTable(Table oldTable, Node node)
         {
             var requestSize = Math.Max(InitialSize, (int)Math.Ceiling((oldTable.Count + 1) * Factor));
 

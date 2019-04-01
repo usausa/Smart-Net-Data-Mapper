@@ -1,18 +1,19 @@
 namespace Smart.Data.Mapper.Builders.Metadata
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
     using Smart.Data.Mapper.Attributes;
 
-    public sealed class StandardMetadataFactory : IMetadataFactory
+    public sealed class StandardTableInfoProvider : ITableInfoProvider
     {
-        public static StandardMetadataFactory Default { get; } = new StandardMetadataFactory();
+        public static StandardTableInfoProvider Default { get; } = new StandardTableInfoProvider();
 
-        public string[] RemoveSuffix { get; set; } = { "Entity" };
+        public IList<string> RemoveSuffix { get; } = new List<string>(new[] { "Entity" });
 
-        public TableInfo CreateTableInfo(Type type)
+        public TableInfo Create(Type type)
         {
             var columns = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(IsTargetProperty)
@@ -47,7 +48,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
             var name = mi.Name;
             foreach (var suffix in RemoveSuffix)
             {
-                if (name.EndsWith(suffix))
+                if (name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
                 {
                     return name.Substring(0, name.Length - suffix.Length);
                 }

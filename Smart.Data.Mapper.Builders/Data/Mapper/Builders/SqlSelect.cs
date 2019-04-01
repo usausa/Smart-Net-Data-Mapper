@@ -15,7 +15,7 @@ namespace Smart.Data.Mapper.Builders
 
         static SqlSelect()
         {
-            var tableInfo = Metadata<T>.Table;
+            var tableInfo = TableInfo<T>.Instance;
             var sql = new StringBuilder(256);
 
             sql.Append("SELECT * FROM ");
@@ -67,7 +67,7 @@ namespace Smart.Data.Mapper.Builders
 
             if (!String.IsNullOrEmpty(column))
             {
-                var tableInfo = Metadata<T>.Table;
+                var tableInfo = TableInfo<T>.Instance;
                 sql.Append("SELECT ");
                 sql.Append(column);
                 sql.Append(" FROM ");

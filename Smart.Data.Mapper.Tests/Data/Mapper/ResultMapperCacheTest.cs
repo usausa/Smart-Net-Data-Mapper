@@ -19,11 +19,11 @@ namespace Smart.Data.Mapper
                 new MockColumn(typeof(string), "Name")
             };
 
-            ((ISqlMapperConfig)config).CreateResultMapper<Data>(new MockDataReader(columns, new List<object[]>()));
+            ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
 
             Assert.Equal(1, config.CountResultMapperCache);
 
-            ((ISqlMapperConfig)config).CreateResultMapper<Data>(new MockDataReader(columns, new List<object[]>()));
+            ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
 
             Assert.Equal(1, config.CountResultMapperCache);
         }
@@ -37,7 +37,7 @@ namespace Smart.Data.Mapper
             {
                 new MockColumn(typeof(long), "Id")
             };
-            ((ISqlMapperConfig)config).CreateResultMapper<Data>(new MockDataReader(columns1, new List<object[]>()));
+            ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns1, new List<object[]>()));
 
             Assert.Equal(1, config.CountResultMapperCache);
 
@@ -45,7 +45,7 @@ namespace Smart.Data.Mapper
             {
                 new MockColumn(typeof(string), "Name")
             };
-            ((ISqlMapperConfig)config).CreateResultMapper<Data>(new MockDataReader(columns2, new List<object[]>()));
+            ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns2, new List<object[]>()));
 
             Assert.Equal(2, config.CountResultMapperCache);
 
@@ -54,7 +54,7 @@ namespace Smart.Data.Mapper
                 new MockColumn(typeof(long), "Id"),
                 new MockColumn(typeof(string), "Name")
             };
-            ((ISqlMapperConfig)config).CreateResultMapper<Data>(new MockDataReader(columns3, new List<object[]>()));
+            ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns3, new List<object[]>()));
 
             Assert.Equal(3, config.CountResultMapperCache);
         }
@@ -70,23 +70,23 @@ namespace Smart.Data.Mapper
                 new MockColumn(typeof(string), "Name")
             };
 
-            ((ISqlMapperConfig)config).CreateResultMapper<Data>(new MockDataReader(columns, new List<object[]>()));
+            ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
 
             Assert.Equal(1, config.CountResultMapperCache);
 
-            ((ISqlMapperConfig)config).CreateResultMapper<Data2>(new MockDataReader(columns, new List<object[]>()));
+            ((ISqlMapperConfig)config).CreateResultMapper<Data2Entity>(new MockDataReader(columns, new List<object[]>()));
 
             Assert.Equal(2, config.CountResultMapperCache);
         }
 
-        protected class Data
+        protected class DataEntity
         {
             public long Id { get; set; }
 
             public string Name { get; set; }
         }
 
-        protected class Data2
+        protected class Data2Entity
         {
             public long Id { get; set; }
 

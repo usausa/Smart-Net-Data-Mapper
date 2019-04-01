@@ -83,7 +83,7 @@ namespace Smart.Data.Mapper
                 parameter.Add("Date", new DateTime(2000, 1, 1));
                 con.Execute("INSERT INTO Data (Id, Name, Date) VALUES (@Id, @Name, @Date)", parameter);
 
-                var entity = con.QueryFirstOrDefault<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
+                var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
                 Assert.Equal(1L, entity.Id);
                 Assert.Null(entity.Name);
@@ -91,7 +91,7 @@ namespace Smart.Data.Mapper
             }
         }
 
-        protected class Data
+        protected class DataEntity
         {
             public int Id { get; set; }
 

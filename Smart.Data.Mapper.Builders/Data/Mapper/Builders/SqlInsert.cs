@@ -10,7 +10,7 @@ namespace Smart.Data.Mapper.Builders
 
         static SqlInsert()
         {
-            var tableInfo = Metadata<T>.Table;
+            var tableInfo = TableInfo<T>.Instance;
             var sql = new StringBuilder(256);
 
             sql.Append("INSERT INTO ");

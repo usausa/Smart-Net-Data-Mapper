@@ -15,7 +15,7 @@ namespace Smart.Data.Mapper.Builders
 
         static SqlUpdate()
         {
-            var tableInfo = Metadata<T>.Table;
+            var tableInfo = TableInfo<T>.Instance;
             var sql = new StringBuilder(256);
 
             UpdateSql = $"UPDATE {tableInfo.Name} SET ";

@@ -25,9 +25,9 @@ namespace Smart.Data.Mapper
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Date int)");
 
                 var date = new DateTime(2000, 1, 1);
-                con.Execute("INSERT INTO Data (Id, Date) VALUES (@Id, @Date)", new Data { Id = 1, Date = date });
+                con.Execute("INSERT INTO Data (Id, Date) VALUES (@Id, @Date)", new DataEntity { Id = 1, Date = date });
 
-                var entity = con.QueryFirstOrDefault<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
+                var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
                 Assert.Equal(date, entity.Date);
 
@@ -37,7 +37,7 @@ namespace Smart.Data.Mapper
             }
         }
 
-        protected class Data
+        protected class DataEntity
         {
             public int Id { get; set; }
 

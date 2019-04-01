@@ -12,7 +12,7 @@ namespace Smart.Data.Mapper.Builders
 
         static SqlCount()
         {
-            var tableInfo = Metadata<T>.Table;
+            var tableInfo = TableInfo<T>.Instance;
             var sql = new StringBuilder(256);
 
             sql.Append("SELECT COUNT(*) FROM ");

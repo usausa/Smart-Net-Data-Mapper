@@ -13,7 +13,7 @@ namespace Smart.Data.Mapper.Mocks
 
         public IDbConnection Connection { get; set; }
 
-        public IDataParameterCollection Parameters { get; set; }
+        public IDataParameterCollection Parameters => null;
 
         public IDbTransaction Transaction { get; set; }
 

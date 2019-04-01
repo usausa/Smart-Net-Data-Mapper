@@ -20,4 +20,14 @@ namespace Smart.Data.Mapper.Builders.Metadata
             NonKeyColumns = nonKeyColumns;
         }
     }
+
+    public static class TableInfo<T>
+    {
+        public static TableInfo Instance { get; }
+
+        static TableInfo()
+        {
+            Instance = TableInfoFactory.Provider.Create(typeof(T));
+        }
+    }
 }

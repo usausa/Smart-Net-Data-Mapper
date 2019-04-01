@@ -55,7 +55,7 @@ namespace Smart.Data.Mapper
         {
             var con = new AsyncUnsupportedConnection(true);
 
-            await Assert.ThrowsAsync<SqlMapperException>(async () => await con.ExecuteAsync("TEST"));
+            await Assert.ThrowsAsync<SqlMapperException>(async () => await con.ExecuteAsync("TEST").ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         [Fact]
@@ -65,7 +65,7 @@ namespace Smart.Data.Mapper
             var con = new AsyncUnsupportedConnection();
             con.Open();
 
-            await Assert.ThrowsAsync<SqlMapperException>(async () => await con.ExecuteAsync("TEST"));
+            await Assert.ThrowsAsync<SqlMapperException>(async () => await con.ExecuteAsync("TEST").ConfigureAwait(false)).ConfigureAwait(false);
         }
     }
 }

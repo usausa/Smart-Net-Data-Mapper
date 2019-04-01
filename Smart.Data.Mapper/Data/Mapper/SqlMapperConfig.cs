@@ -188,7 +188,7 @@ namespace Smart.Data.Mapper
 
         Action<object, object> ISqlMapperConfig.CreateSetter(PropertyInfo pi) => DelegateFactory.CreateSetter(pi);
 
-        Func<PropertyInfo[], string, PropertyInfo> ISqlMapperConfig.GetPropertySelector() => PropertySelector.Select;
+        Func<PropertyInfo[], string, PropertyInfo> ISqlMapperConfig.GetPropertySelector() => PropertySelector.SelectProperty;
 
         Func<object, object> ISqlMapperConfig.CreateParser(Type sourceType, Type destinationType)
         {

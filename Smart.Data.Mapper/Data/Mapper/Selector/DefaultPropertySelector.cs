@@ -15,7 +15,7 @@ namespace Smart.Data.Mapper.Selector
         {
         }
 
-        public PropertyInfo Select(PropertyInfo[] properties, string name)
+        public PropertyInfo SelectProperty(PropertyInfo[] properties, string name)
         {
             var pi = properties.FirstOrDefault(x => IsMatchName(x, name, false)) ??
                      properties.FirstOrDefault(x => IsMatchName(x, name, true));

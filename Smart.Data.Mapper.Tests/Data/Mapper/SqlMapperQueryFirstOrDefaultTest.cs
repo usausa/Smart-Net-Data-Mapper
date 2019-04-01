@@ -25,13 +25,13 @@ namespace Smart.Data.Mapper
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
 
-                var entity = con.QueryFirstOrDefault<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
+                var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
                 Assert.NotNull(entity);
                 Assert.Equal(1, entity.Id);
                 Assert.Equal("test1", entity.Name);
 
-                entity = con.QueryFirstOrDefault<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 });
+                entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 });
 
                 Assert.Null(entity);
             }
@@ -47,13 +47,13 @@ namespace Smart.Data.Mapper
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
 
-                var entity = await con.QueryFirstOrDefaultAsync<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
+                var entity = await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 }).ConfigureAwait(false);
 
                 Assert.NotNull(entity);
                 Assert.Equal(1, entity.Id);
                 Assert.Equal("test1", entity.Name);
 
-                entity = await con.QueryFirstOrDefaultAsync<Data>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 });
+                entity = await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 }).ConfigureAwait(false);
 
                 Assert.Null(entity);
             }
@@ -69,7 +69,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                con.QueryFirstOrDefault<Data>("SELECT 1, 'test1'");
+                con.QueryFirstOrDefault<DataEntity>("SELECT 1, 'test1'");
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -81,7 +81,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.QueryFirstOrDefaultAsync<Data>("SELECT 1, 'test1'");
+                await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT 1, 'test1'").ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -97,7 +97,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                Assert.Throws<SqliteException>(() => con.QueryFirstOrDefault<Data>("x"));
+                Assert.Throws<SqliteException>(() => con.QueryFirstOrDefault<DataEntity>("x"));
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -109,7 +109,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryFirstOrDefaultAsync<Data>("x"));
+                await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryFirstOrDefaultAsync<DataEntity>("x").ConfigureAwait(false)).ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -133,7 +133,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                con.QueryFirstOrDefault<Data>(config, "SELECT 1, 'test1'", new object());
+                con.QueryFirstOrDefault<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
                 Assert.True(factory.BuildCalled);
                 Assert.True(factory.PostProcessCalled);
@@ -154,7 +154,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                con.QueryFirstOrDefault<Data>(config, "SELECT 1, 'test1'");
+                con.QueryFirstOrDefault<DataEntity>(config, "SELECT 1, 'test1'");
 
                 Assert.False(factory.BuildCalled);
                 Assert.False(factory.PostProcessCalled);
@@ -175,7 +175,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.QueryFirstOrDefaultAsync<Data>(config, "SELECT 1, 'test1'", new object());
+                await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false);
 
                 Assert.True(factory.BuildCalled);
                 Assert.True(factory.PostProcessCalled);
@@ -196,14 +196,14 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await con.QueryFirstOrDefaultAsync<Data>(config, "SELECT 1, 'test1'");
+                await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'").ConfigureAwait(false);
 
                 Assert.False(factory.BuildCalled);
                 Assert.False(factory.PostProcessCalled);
             }
         }
 
-        protected class Data
+        protected class DataEntity
         {
             public int Id { get; set; }
 

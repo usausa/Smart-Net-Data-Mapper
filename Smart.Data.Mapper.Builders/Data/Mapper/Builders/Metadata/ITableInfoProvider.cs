@@ -2,8 +2,8 @@ namespace Smart.Data.Mapper.Builders.Metadata
 {
     using System;
 
-    public interface IMetadataFactory
+    public interface ITableInfoProvider
     {
-        TableInfo CreateTableInfo(Type type);
+        TableInfo Create(Type type);
     }
 }
