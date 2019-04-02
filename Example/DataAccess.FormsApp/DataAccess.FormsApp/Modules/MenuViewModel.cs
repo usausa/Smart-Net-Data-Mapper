@@ -254,18 +254,18 @@ namespace DataAccess.FormsApp.Modules
         {
             var watch = Stopwatch.StartNew();
 
-            await connectionFactory.UsingTxAsync(async (con, tx) =>
+            await Task.Run(() => connectionFactory.UsingTx((con, tx) =>
             {
                 for (var i = 1; i <= 10000; i++)
                 {
-                    await con.ExecuteAsync(
+                    con.Execute(
                         "INSERT INTO Benchmark (Id, Name) VALUES (@Id, @Name)",
                         new BenchmarkEntity { Id = i, Name = $"Name-{i}" },
                         tx);
                 }
 
                 tx.Commit();
-            });
+            }));
 
             await dialogs.Information($"Inserted\r\nElapsed={watch.ElapsedMilliseconds}");
 
@@ -284,18 +284,21 @@ namespace DataAccess.FormsApp.Modules
         {
             var watch = Stopwatch.StartNew();
 
-            using (var tx = memoryConnection.BeginTransaction())
+            await Task.Run(() =>
             {
-                for (var i = 1; i <= 10000; i++)
+                using (var tx = memoryConnection.BeginTransaction())
                 {
-                    await memoryConnection.ExecuteAsync(
-                        "INSERT INTO Benchmark (Id, Name) VALUES (@Id, @Name)",
-                        new BenchmarkEntity { Id = i, Name = $"Name-{i}" },
-                        tx);
-                }
+                    for (var i = 1; i <= 10000; i++)
+                    {
+                        memoryConnection.Execute(
+                            "INSERT INTO Benchmark (Id, Name) VALUES (@Id, @Name)",
+                            new BenchmarkEntity { Id = i, Name = $"Name-{i}" },
+                            tx);
+                    }
 
-                tx.Commit();
-            }
+                    tx.Commit();
+                }
+            });
 
             await dialogs.Information($"Inserted\r\nElapsed={watch.ElapsedMilliseconds}");
 
