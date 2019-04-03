@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper.Builders
+﻿namespace Smart.Data.Mapper.Builders
 {
     using Smart.Data.Mapper.Attributes;
 
@@ -20,11 +20,10 @@ namespace Smart.Data.Mapper.Builders
         [Ignore]
         public int IgnoreValue { get; set; }
 
-#pragma warning disable CA1044 // Properties should not be write only
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
         public int WriteOnlyValue
         {
             set => IgnoreValue = value;
         }
-#pragma warning restore CA1044 // Properties should not be write only
     }
 }

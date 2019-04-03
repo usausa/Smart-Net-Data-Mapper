@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper
+﻿namespace Smart.Data.Mapper
 {
     using System;
 
@@ -14,9 +14,8 @@ namespace Smart.Data.Mapper
             Type = type;
         }
 
-#pragma warning disable SA1008 // Opening parenthesis must be spaced correctly
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1008:OpeningParenthesisMustBeSpacedCorrectly", Justification = "Ignore")]
         public override int GetHashCode() => (Name, Type).GetHashCode();
-#pragma warning restore SA1008 // Opening parenthesis must be spaced correctly
 
         public override bool Equals(object obj) => obj is ColumnInfo other && Equals(other);
 

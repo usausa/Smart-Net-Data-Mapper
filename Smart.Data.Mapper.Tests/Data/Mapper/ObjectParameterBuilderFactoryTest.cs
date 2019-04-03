@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper
+﻿namespace Smart.Data.Mapper
 {
     using System;
     using System.Data;
@@ -72,9 +72,8 @@ namespace Smart.Data.Mapper
 
             public Value? Value6 { get; set; }
 
-#pragma warning disable CA1044 // Properties should not be write only
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
             public int Value7 { set => Value7 = value; }
-#pragma warning restore CA1044 // Properties should not be write only
 
             [Ignore]
             public int Value8 { get; set; }

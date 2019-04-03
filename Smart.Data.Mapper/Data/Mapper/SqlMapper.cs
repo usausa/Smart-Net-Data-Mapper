@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper
+﻿namespace Smart.Data.Mapper
 {
     using System;
     using System.Collections.Generic;
@@ -65,14 +65,13 @@ namespace Smart.Data.Mapper
             throw new SqlMapperException("Async operation is not supported.");
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2007:DoNotDirectlyAwaitATask", Justification = "Ignore")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static async Task OpenAsync(IDbConnection con, CancellationToken cancel)
         {
             if (con is DbConnection dbConnection)
             {
-#pragma warning disable CA2007 // Do not directly await a Task
                 await dbConnection.OpenAsync(cancel);
-#pragma warning restore CA2007 // Do not directly await a Task
             }
             else
             {

@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper.Benchmark
+﻿namespace Smart.Data.Mapper.Benchmark
 {
     using System;
     using System.Linq;
@@ -30,10 +30,9 @@ namespace Smart.Data.Mapper.Benchmark
         }
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Ignore")]
     [Config(typeof(BenchmarkConfig))]
-#pragma warning disable CA1001 // Types that own disposable fields should be disposable
     public class DataMapperBenchmark
-#pragma warning restore CA1001 // Types that own disposable fields should be disposable
     {
         private MockDbConnection mockExecute;
 
