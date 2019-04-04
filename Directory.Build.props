@@ -3,7 +3,6 @@
   <PropertyGroup>
     <Deterministic>true</Deterministic>
     <LangVersion>latest</LangVersion>
-    <NullableContextOptions>Enable</NullableContextOptions>
     <Version>0.9.3</Version>
   </PropertyGroup>
 
