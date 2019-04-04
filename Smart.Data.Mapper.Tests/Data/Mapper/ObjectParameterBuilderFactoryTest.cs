@@ -72,7 +72,6 @@
 
             public Value? Value6 { get; set; }
 
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
             public int Value7 { set => Value7 = value; }
 
             [Ignore]
