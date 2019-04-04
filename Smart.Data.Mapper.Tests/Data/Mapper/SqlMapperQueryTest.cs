@@ -39,7 +39,7 @@ namespace Smart.Data.Mapper
             }
         }
 
-       [Fact]
+        [Fact]
 
         public async Task QueryAsync()
         {
