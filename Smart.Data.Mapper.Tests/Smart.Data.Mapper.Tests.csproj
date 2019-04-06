@@ -19,14 +19,14 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="2.2.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
-    <PackageReference Include="Usa.Smart.Mock.Data" Version="1.4.0" />
+    <PackageReference Include="Usa.Smart.Mock.Data" Version="1.5.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="Usa.Smart.Core" Version="1.6.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>
