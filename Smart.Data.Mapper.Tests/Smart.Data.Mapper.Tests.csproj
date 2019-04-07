@@ -26,7 +26,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="Usa.Smart.Core" Version="1.7.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.7.1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -19,7 +19,7 @@
     <PackageReference Include="Dapper" Version="1.60.6" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="Usa.Smart.Core" Version="1.7.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.7.1" />
     <PackageReference Include="Usa.Smart.Mock.Data" Version="1.5.0" />
   </ItemGroup>
 
