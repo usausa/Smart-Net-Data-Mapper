@@ -15,8 +15,6 @@
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-	<key>MinimumOSVersion</key>
-	<string>8.0</string>
 	<key>CFBundleDisplayName</key>
 	<string>DataAccess</string>
 	<key>CFBundleIdentifier</key>
@@ -27,5 +25,7 @@
 	<string>LaunchScreen</string>
 	<key>CFBundleName</key>
 	<string>DataAccess.FormsApp</string>
+	<key>XSAppIconAssets</key>
+	<string>Assets.xcassets/AppIcon.appiconset</string>
 </dict>
 </plist>

@@ -1,9 +1,8 @@
 namespace DataAccess.FormsApp
 {
-    using DataAccess.FormsApp.Shell;
+    using System.ComponentModel;
 
-    using Smart.Navigation;
-
+    [DesignTimeVisible(true)]
     public partial class MainPage
     {
         public MainPage()

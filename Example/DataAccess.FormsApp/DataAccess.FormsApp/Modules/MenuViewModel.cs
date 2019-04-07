@@ -68,8 +68,8 @@ namespace DataAccess.FormsApp.Modules
             CountCommand = MakeAsyncCommand(Count, () => IsCreated.Value).Observe(IsCreated);
             Select1Command = MakeAsyncCommand(Select1, () => IsCreated.Value).Observe(IsCreated);
             SelectAllCommand = MakeAsyncCommand(SelectAll, () => IsCreated.Value).Observe(IsCreated);
-            InsertBulkCommand = MakeAsyncCommand(InsertBulk, () => !IsInserted.Value).Observe(IsInserted);
-            DeleteAllCommand = MakeAsyncCommand(DeleteAll, () => IsInserted.Value).Observe(IsInserted);
+            InsertBulkCommand = MakeAsyncCommand(InsertBulk, () => IsCreated.Value && !IsInserted.Value).Observe(IsCreated).Observe(IsInserted);
+            DeleteAllCommand = MakeAsyncCommand(DeleteAll, () => IsCreated.Value && IsInserted.Value).Observe(IsCreated).Observe(IsInserted);
             MemoryInsertBulkCommand = MakeAsyncCommand(MemoryInsertBulk, () => !IsMemoryInserted.Value).Observe(IsMemoryInserted);
             MemoryDeleteAllCommand = MakeAsyncCommand(MemoryDeleteAll, () => IsMemoryInserted.Value).Observe(IsMemoryInserted);
 
