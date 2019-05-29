@@ -14,13 +14,10 @@ namespace Smart.Data.Mapper
     public static class SqlMapper
     {
         private const CommandBehavior CommandBehaviorQueryWithClose =
-            CommandBehavior.CloseConnection | CommandBehavior.SequentialAccess;
+            CommandBehavior.SequentialAccess | CommandBehavior.CloseConnection;
 
         private const CommandBehavior CommandBehaviorQuery =
             CommandBehavior.SequentialAccess;
-
-        private const CommandBehavior CommandBehaviorQueryFirstOrDefaultWithClose =
-            CommandBehavior.CloseConnection | CommandBehavior.SequentialAccess | CommandBehavior.SingleRow;
 
         private const CommandBehavior CommandBehaviorQueryFirstOrDefault =
             CommandBehavior.SequentialAccess | CommandBehavior.SingleRow;
@@ -501,10 +498,8 @@ namespace Smart.Data.Mapper
                         con.Open();
                     }
 
-                    using (var reader = cmd.ExecuteReader(wasClosed ? CommandBehaviorQueryFirstOrDefaultWithClose : CommandBehaviorQueryFirstOrDefault))
+                    using (var reader = cmd.ExecuteReader(CommandBehaviorQueryFirstOrDefault))
                     {
-                        wasClosed = false;
-
                         builder.PostProcess?.Invoke(cmd, param);
 
                         var mapper = config.CreateResultMapper<T>(reader);
@@ -543,10 +538,8 @@ namespace Smart.Data.Mapper
                         await OpenAsync(con, cancel).ConfigureAwait(false);
                     }
 
-                    using (var reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryFirstOrDefaultWithClose : CommandBehaviorQueryFirstOrDefault, cancel).ConfigureAwait(false))
+                    using (var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQueryFirstOrDefault, cancel).ConfigureAwait(false))
                     {
-                        wasClosed = false;
-
                         builder.PostProcess?.Invoke(cmd, param);
 
                         var mapper = config.CreateResultMapper<T>(reader);
