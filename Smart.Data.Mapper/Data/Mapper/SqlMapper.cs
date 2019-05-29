@@ -1,4 +1,4 @@
-﻿namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper
 {
     using System;
     using System.Collections.Generic;
@@ -180,14 +180,14 @@
 
                     builder.PostProcess?.Invoke(cmd, param);
 
-                    if (result is DBNull)
-                    {
-                        return default;
-                    }
-
                     if (result is T scalar)
                     {
                         return scalar;
+                    }
+
+                    if (result is DBNull)
+                    {
+                        return default;
                     }
 
                     var parser = config.CreateParser(result.GetType(), typeof(T));
@@ -228,14 +228,14 @@
 
                     builder.PostProcess?.Invoke(cmd, param);
 
-                    if (result is DBNull)
-                    {
-                        return default;
-                    }
-
                     if (result is T scalar)
                     {
                         return scalar;
+                    }
+
+                    if (result is DBNull)
+                    {
+                        return default;
                     }
 
                     var parser = config.CreateParser(result.GetType(), typeof(T));
