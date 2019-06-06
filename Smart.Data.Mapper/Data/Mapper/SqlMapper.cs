@@ -4,7 +4,6 @@ namespace Smart.Data.Mapper
     using System.Collections.Generic;
     using System.Data;
     using System.Data.Common;
-    using System.Globalization;
     using System.Runtime.CompilerServices;
     using System.Threading;
     using System.Threading.Tasks;
@@ -188,7 +187,8 @@ namespace Smart.Data.Mapper
                         return default;
                     }
 
-                    return (T)Convert.ChangeType(result, typeof(T), CultureInfo.InvariantCulture);
+                    var parser = config.CreateParser(result.GetType(), typeof(T));
+                    return (T)parser(result);
                 }
                 finally
                 {
@@ -235,7 +235,8 @@ namespace Smart.Data.Mapper
                         return default;
                     }
 
-                    return (T)Convert.ChangeType(result, typeof(T), CultureInfo.InvariantCulture);
+                    var parser = config.CreateParser(result.GetType(), typeof(T));
+                    return (T)parser(result);
                 }
                 finally
                 {
