@@ -16,8 +16,8 @@
     <dependencies>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Data.Common" version="4.3.0" />
-        <dependency id="System.Memory" version="4.5.2" />
-        <dependency id="Usa.Smart.Core" version="1.7.1" />
+        <dependency id="System.Memory" version="4.5.3" />
+        <dependency id="Usa.Smart.Core" version="1.7.3" />
       </group>
     </dependencies>
     <tags>smart ado.net orm micro-orm</tags>
