@@ -88,9 +88,21 @@ IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string 
 
 IEnumerable<T> Query<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
 
-async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken token = default)
+async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
 
-Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken token = default)
+Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+```
+
+### QueryList
+
+```csharp
+List<T> QueryList<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+
+List<T> QueryList<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+
+async Task<List<T>> QueryListAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+
+Task<List<T>> QueryListAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
 ```
 
 ### QueryFirstOrDefault
@@ -175,21 +187,23 @@ SqlMapperConfig ConfigureTypeHandlers(Action<IDictionary<Type, ITypeHandler>> ac
 
 Benchmark result on .NET Core 2.2 with Code generation mode.
 
-|                         Method |     Mean |     Error |   StdDev |   Median | Allocated Memory/Op |
-|------------------------------- |---------:|----------:|---------:|---------:|--------------------:|
-|                  DapperExecute | 5.514 us | 0.3060 us | 1.505 us | 5.693 us |               456 B |
-|                   SmartExecute | 4.133 us | 0.2538 us | 1.251 us | 4.380 us |               368 B |
-|   DapperExecuteWithParameter10 | 6.856 us | 0.2649 us | 1.291 us | 6.695 us |              1256 B |
-|    SmartExecuteWithParameter10 | 5.194 us | 0.3092 us | 1.547 us | 5.305 us |              1256 B |
-| DapperExecuteWithOverParameter | 6.485 us | 0.4046 us | 2.017 us | 6.085 us |               472 B |
-|  SmartExecuteWithOverParameter | 7.252 us | 0.6104 us | 3.121 us | 6.650 us |              1256 B |
-|            DapperExecuteScalar | 4.281 us | 0.3842 us | 1.954 us | 4.175 us |               144 B |
-|             SmartExecuteScalar | 4.488 us | 0.3260 us | 1.631 us | 4.175 us |               144 B |
-| DapperExecuteScalarWithConvert | 4.884 us | 0.2894 us | 1.443 us | 5.167 us |               168 B |
-|  SmartExecuteScalarWithConvert | 4.433 us | 0.2926 us | 1.461 us | 4.680 us |               304 B |
-|                 DapperQuery100 | 9.723 us | 0.3018 us | 1.471 us | 9.805 us |              3648 B |
-|                  SmartQuery100 | 8.319 us | 0.2740 us | 1.314 us | 8.700 us |              3520 B |
-|               DapperQueryFirst | 5.678 us | 0.2920 us | 1.429 us | 5.880 us |               336 B |
-|                SmartQueryFirst | 5.182 us | 0.2742 us | 1.362 us | 5.476 us |               248 B |
+|                         Method |       Mean |      Error |    StdDev |     Median |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------------- |-----------:|-----------:|----------:|-----------:|-------:|------:|------:|----------:|
+|                  DapperExecute |   388.5 ns |  0.6510 ns |  3.305 ns |   388.2 ns | 0.1101 |     - |     - |     464 B |
+|                   SmartExecute |   243.6 ns |  0.4917 ns |  2.483 ns |   243.2 ns | 0.0892 |     - |     - |     376 B |
+|   DapperExecuteWithParameter10 |   878.0 ns |  1.2811 ns |  6.585 ns |   878.0 ns | 0.3004 |     - |     - |    1264 B |
+|    SmartExecuteWithParameter10 |   704.0 ns |  0.9440 ns |  4.818 ns |   703.2 ns | 0.3004 |     - |     - |    1264 B |
+| DapperExecuteWithOverParameter |   357.4 ns |  0.6111 ns |  3.108 ns |   357.2 ns | 0.1140 |     - |     - |     480 B |
+|  SmartExecuteWithOverParameter |   707.5 ns |  1.2544 ns |  6.392 ns |   706.1 ns | 0.3004 |     - |     - |    1264 B |
+|            DapperExecuteScalar |   151.5 ns |  0.3255 ns |  1.664 ns |   151.3 ns | 0.0362 |     - |     - |     152 B |
+|             SmartExecuteScalar |   128.6 ns |  0.3784 ns |  1.911 ns |   128.0 ns | 0.0362 |     - |     - |     152 B |
+| DapperExecuteScalarWithConvert |   255.5 ns |  0.3646 ns |  1.864 ns |   255.3 ns | 0.0415 |     - |     - |     176 B |
+|  SmartExecuteScalarWithConvert |   240.4 ns |  0.4056 ns |  2.081 ns |   240.1 ns | 0.0741 |     - |     - |     312 B |
+|                 DapperQuery100 | 5,751.1 ns | 10.6433 ns | 54.230 ns | 5,745.5 ns | 1.4038 |     - |     - |    5920 B |
+|                  SmartQuery100 | 4,395.3 ns |  7.8120 ns | 39.377 ns | 4,386.7 ns | 0.8163 |     - |     - |    3448 B |
+|          DapperQuery100Bufferd | 4,797.6 ns |  6.7593 ns | 33.822 ns | 4,794.4 ns | 1.3962 |     - |     - |    5880 B |
+|           SmartQuery100Bufferd | 4,459.3 ns |  5.9561 ns | 30.348 ns | 4,455.1 ns | 1.3199 |     - |     - |    5552 B |
+|               DapperQueryFirst |   525.2 ns |  0.7646 ns |  3.882 ns |   524.7 ns | 0.0811 |     - |     - |     344 B |
+|                SmartQueryFirst |   727.1 ns |  0.7818 ns |  3.948 ns |   726.6 ns | 0.0601 |     - |     - |     256 B |
 
-Not so late( ˙ω˙)
+Not so late( ˙ω˙)?

@@ -25,7 +25,7 @@
     </PackageReference>
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="Usa.Smart.Core" Version="1.7.3" />
-    <PackageReference Include="Usa.Smart.Mock.Data" Version="1.5.0" />
+    <PackageReference Include="Usa.Smart.Mock.Data" Version="1.6.1" />
   </ItemGroup>
 
   <ItemGroup>

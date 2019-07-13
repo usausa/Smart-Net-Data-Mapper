@@ -1,6 +1,7 @@
-﻿namespace Smart.Data.Mapper.Benchmark
+namespace Smart.Data.Mapper.Benchmark
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using BenchmarkDotNet.Attributes;
@@ -34,25 +35,22 @@
     [Config(typeof(BenchmarkConfig))]
     public class DataMapperBenchmark
     {
-        private MockDbConnection mockExecute;
+        private MockRepeatDbConnection mockExecute;
 
-        private MockDbConnection mockExecuteScalar;
+        private MockRepeatDbConnection mockExecuteScalar;
 
-        private MockDbConnection mockQuery;
+        private MockRepeatDbConnection mockQuery;
 
-        private MockDbConnection mockQueryFirst;
+        private MockRepeatDbConnection mockQueryFirst;
 
-        [IterationSetup]
-        public void IterationSetup()
+        [GlobalSetup]
+        public void Setup()
         {
-            mockExecute = new MockDbConnection();
-            mockExecute.SetupCommand(cmd => cmd.SetupResult(1));
+            mockExecute = new MockRepeatDbConnection(1);
 
-            mockExecuteScalar = new MockDbConnection();
-            mockExecuteScalar.SetupCommand(cmd => cmd.SetupResult(1L));
+            mockExecuteScalar = new MockRepeatDbConnection(1L);
 
-            mockQuery = new MockDbConnection();
-            mockQuery.SetupCommand(cmd => cmd.SetupResult(new MockDataReader(
+            mockQuery = new MockRepeatDbConnection(new MockDataReader(
                 new[]
                 {
                     new MockColumn(typeof(long), "Id"),
@@ -62,10 +60,9 @@
                 {
                     (long)x,
                     "test"
-                }).ToList())));
+                })));
 
-            mockQueryFirst = new MockDbConnection();
-            mockQueryFirst.SetupCommand(cmd => cmd.SetupResult(new MockDataReader(
+            mockQueryFirst = new MockRepeatDbConnection(new MockDataReader(
                 new[]
                 {
                     new MockColumn(typeof(long), "Id"),
@@ -91,11 +88,11 @@
                     "user",
                     DBNull.Value,
                     DBNull.Value
-                }).ToList())));
+                })));
         }
 
-        [IterationCleanup]
-        public void IterationCleanup()
+        [GlobalCleanup]
+        public void Cleanup()
         {
             mockExecute.Dispose();
             mockExecuteScalar.Dispose();
@@ -192,7 +189,7 @@
         [Benchmark]
         public void DapperQuery100()
         {
-            foreach (var dummy in Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, buffered: false))
+            foreach (var dummy in Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, false))
             {
             }
         }
@@ -204,6 +201,12 @@
             {
             }
         }
+
+        [Benchmark]
+        public void DapperQuery100Bufferd() => Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, true);
+
+        [Benchmark]
+        public void SmartQuery100Bufferd() => mockQuery.QueryList<DataEntity>(QuerySql);
 
         //--------------------------------------------------------------------------------
         // Query
