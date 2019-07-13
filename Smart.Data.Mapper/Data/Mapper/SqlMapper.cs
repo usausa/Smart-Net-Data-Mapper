@@ -352,18 +352,6 @@ namespace Smart.Data.Mapper
         // Query
         //--------------------------------------------------------------------------------
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IEnumerable<T> ReaderToList<T>(IDataReader reader, Func<IDataReader, T> mapper)
-        {
-            var list = new List<T>();
-            while (reader.Read())
-            {
-                list.Add(mapper(reader));
-            }
-
-            return list;
-        }
-
         private static IEnumerable<T> ReaderToDefer<T>(IDbCommand cmd, IDataReader reader, Func<IDataRecord, T> mapper)
         {
             using (cmd)
@@ -376,7 +364,7 @@ namespace Smart.Data.Mapper
             }
         }
 
-        public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(IDbCommand);
@@ -398,23 +386,20 @@ namespace Smart.Data.Mapper
                 builder.PostProcess?.Invoke(cmd, param);
 
                 var mapper = config.CreateResultMapper<T>(reader);
-                if (buffered)
-                {
-                    return ReaderToList(reader, mapper);
-                }
-                else
-                {
-                    var deferred = ReaderToDefer(cmd, reader, mapper);
-                    cmd = null;
-                    reader = null;
-                    return deferred;
-                }
+
+                var deferred = ReaderToDefer(cmd, reader, mapper);
+                cmd = null;
+                reader = null;
+                return deferred;
             }
-            finally
+            catch (Exception)
             {
                 reader?.Dispose();
                 cmd?.Dispose();
-
+                throw;
+            }
+            finally
+            {
                 if (wasClosed)
                 {
                     con.Close();
@@ -423,12 +408,12 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IEnumerable<T> Query<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null)
+        public static IEnumerable<T> Query<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
-            return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, buffered, commandTimeout, commandType);
+            return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
-        public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(DbCommand);
@@ -450,23 +435,20 @@ namespace Smart.Data.Mapper
                 builder.PostProcess?.Invoke(cmd, param);
 
                 var mapper = config.CreateResultMapper<T>(reader);
-                if (buffered)
-                {
-                    return ReaderToList(reader, mapper);
-                }
-                else
-                {
-                    var deferred = ReaderToDefer(cmd, reader, mapper);
-                    cmd = null;
-                    reader = null;
-                    return deferred;
-                }
+
+                var deferred = ReaderToDefer(cmd, reader, mapper);
+                cmd = null;
+                reader = null;
+                return deferred;
             }
-            finally
+            catch (Exception)
             {
                 reader?.Dispose();
                 cmd?.Dispose();
-
+                throw;
+            }
+            finally
+            {
                 if (wasClosed)
                 {
                     con.Close();
@@ -475,9 +457,105 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, bool buffered = true, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
-            return QueryAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, buffered, commandTimeout, commandType, cancel);
+            return QueryAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
+        }
+
+        //--------------------------------------------------------------------------------
+        // QueryList
+        //--------------------------------------------------------------------------------
+
+        public static List<T> QueryList<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            var wasClosed = con.State == ConnectionState.Closed;
+            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+            {
+                var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+                builder.Build?.Invoke(cmd, param);
+
+                if (wasClosed)
+                {
+                    con.Open();
+                }
+
+                try
+                {
+                    using (var reader = cmd.ExecuteReader(CommandBehaviorQuery))
+                    {
+                        builder.PostProcess?.Invoke(cmd, param);
+
+                        var mapper = config.CreateResultMapper<T>(reader);
+
+                        var list = new List<T>();
+                        while (reader.Read())
+                        {
+                            list.Add(mapper(reader));
+                        }
+
+                        return list;
+                    }
+                }
+                finally
+                {
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static List<T> QueryList<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            return QueryList<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
+        }
+
+        public static async Task<List<T>> QueryListAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        {
+            var wasClosed = con.State == ConnectionState.Closed;
+            using (var cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType))
+            {
+                var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+                builder.Build?.Invoke(cmd, param);
+
+                if (wasClosed)
+                {
+                    await OpenAsync(con, cancel).ConfigureAwait(false);
+                }
+
+                try
+                {
+                    using (var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQuery, cancel).ConfigureAwait(false))
+                    {
+                        builder.PostProcess?.Invoke(cmd, param);
+
+                        var mapper = config.CreateResultMapper<T>(reader);
+
+                        var list = new List<T>();
+                        while (await reader.ReadAsync(cancel).ConfigureAwait(false))
+                        {
+                            list.Add(mapper(reader));
+                        }
+
+                        return list;
+                    }
+                }
+                finally
+                {
+                    if (wasClosed)
+                    {
+                        con.Close();
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static Task<List<T>> QueryListAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        {
+            return QueryListAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
         }
 
         //--------------------------------------------------------------------------------
