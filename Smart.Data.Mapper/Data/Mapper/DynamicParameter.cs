@@ -39,6 +39,7 @@ namespace Smart.Data.Mapper
             return (T)value;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
         public void Build(ISqlMapperConfig config, IDbCommand cmd)
         {
             foreach (var parameter in parameters.Values)

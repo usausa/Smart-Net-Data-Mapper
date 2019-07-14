@@ -13,6 +13,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
 
         public IList<string> RemoveSuffix { get; } = new List<string>(new[] { "Entity" });
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
         public TableInfo Create(Type type)
         {
             var columns = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)

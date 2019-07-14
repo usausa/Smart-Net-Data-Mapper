@@ -18,6 +18,7 @@ namespace Smart.Data.Mapper.Mappers
 
         public bool IsMatch(Type type) => true;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
         public Func<IDataRecord, T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
         {
             var objectFactory = config.CreateFactory<T>();

@@ -8,19 +8,7 @@
     <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.2" />
-  </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="System.Data.Common" Version="4.3.0" />
     <PackageReference Include="System.Memory" Version="4.5.3" />
     <PackageReference Include="Usa.Smart.Core" Version="1.7.3" />

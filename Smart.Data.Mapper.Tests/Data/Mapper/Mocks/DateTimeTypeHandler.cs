@@ -6,6 +6,7 @@ namespace Smart.Data.Mapper.Mocks
 
     public sealed class DateTimeTypeHandler : TypeHandler<DateTime>
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
         public override void SetValue(IDbDataParameter parameter, DateTime value)
         {
             parameter.DbType = DbType.Int64;

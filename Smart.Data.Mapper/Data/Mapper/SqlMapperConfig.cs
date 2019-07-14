@@ -123,6 +123,11 @@ namespace Smart.Data.Mapper
 
         public SqlMapperConfig ConfigureParameterBuilderFactories(Action<IList<IParameterBuilderFactory>> action)
         {
+            if (action is null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var list = new List<IParameterBuilderFactory>(parameterBuilderFactories);
             action(list);
             parameterBuilderFactories = list.ToArray();
@@ -139,6 +144,11 @@ namespace Smart.Data.Mapper
 
         public SqlMapperConfig ConfigureResultMapperFactories(Action<IList<IResultMapperFactory>> action)
         {
+            if (action is null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var list = new List<IResultMapperFactory>(resultMapperFactories);
             action(list);
             resultMapperFactories = list.ToArray();
@@ -155,6 +165,11 @@ namespace Smart.Data.Mapper
 
         public SqlMapperConfig ConfigureTypeMap(Action<IDictionary<Type, DbType>> action)
         {
+            if (action is null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var dictionary = new Dictionary<Type, DbType>(typeMap);
             action(dictionary);
             typeMap = dictionary;
@@ -171,6 +186,11 @@ namespace Smart.Data.Mapper
 
         public SqlMapperConfig ConfigureTypeHandlers(Action<IDictionary<Type, ITypeHandler>> action)
         {
+            if (action is null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var dictionary = new Dictionary<Type, ITypeHandler>(typeHandlers);
             action(dictionary);
             typeHandlers = dictionary;

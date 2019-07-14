@@ -18,6 +18,7 @@ namespace Smart.Data.Mapper.Parameters
 
         public bool IsMatch(Type type) => true;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
         public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
         {
             var entries = CreateParameterEntries(config, type);

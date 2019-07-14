@@ -80,6 +80,7 @@ namespace Smart.Data.Mapper
         // Execute
         //--------------------------------------------------------------------------------
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static int Execute(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -117,6 +118,7 @@ namespace Smart.Data.Mapper
             return Execute(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static async Task<int> ExecuteAsync(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -158,6 +160,7 @@ namespace Smart.Data.Mapper
         // ExecuteScalar
         //--------------------------------------------------------------------------------
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static T ExecuteScalar<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -206,6 +209,7 @@ namespace Smart.Data.Mapper
             return ExecuteScalar<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static async Task<T> ExecuteScalarAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -258,6 +262,7 @@ namespace Smart.Data.Mapper
         // ExecuteReader
         //--------------------------------------------------------------------------------
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static IDataReader ExecuteReader(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -304,6 +309,7 @@ namespace Smart.Data.Mapper
             return ExecuteReader(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static async Task<IDataReader> ExecuteReaderAsync(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -364,6 +370,7 @@ namespace Smart.Data.Mapper
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -413,6 +420,7 @@ namespace Smart.Data.Mapper
             return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -466,6 +474,7 @@ namespace Smart.Data.Mapper
         // QueryList
         //--------------------------------------------------------------------------------
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static List<T> QueryList<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -512,6 +521,7 @@ namespace Smart.Data.Mapper
             return QueryList<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static async Task<List<T>> QueryListAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -562,6 +572,7 @@ namespace Smart.Data.Mapper
         // QueryFirstOrDefault
         //--------------------------------------------------------------------------------
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static T QueryFirstOrDefault<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
@@ -602,6 +613,7 @@ namespace Smart.Data.Mapper
             return QueryFirstOrDefault<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public static async Task<T> QueryFirstOrDefaultAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
