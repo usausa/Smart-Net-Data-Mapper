@@ -1,4 +1,4 @@
-﻿namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper
 {
     using System;
 
@@ -15,7 +15,7 @@
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1008:OpeningParenthesisMustBeSpacedCorrectly", Justification = "Ignore")]
-        public override int GetHashCode() => (Name, Type).GetHashCode();
+        public override int GetHashCode() => Name.GetHashCode() ^ Type.GetHashCode();
 
         public override bool Equals(object obj) => obj is ColumnInfo other && Equals(other);
 

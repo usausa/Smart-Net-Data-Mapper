@@ -1,7 +1,6 @@
 namespace Smart.Data.Mapper.Benchmark
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
 
     using BenchmarkDotNet.Attributes;

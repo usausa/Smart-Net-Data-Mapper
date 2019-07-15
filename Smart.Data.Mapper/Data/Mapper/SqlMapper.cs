@@ -568,9 +568,13 @@ namespace Smart.Data.Mapper
                     {
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateResultMapper<T>(reader);
+                        if (reader.Read())
+                        {
+                            var mapper = config.CreateResultMapper<T>(reader);
+                            return mapper(reader);
+                        }
 
-                        return reader.Read() ? mapper(reader) : default;
+                        return default;
                     }
                 }
                 finally
@@ -609,9 +613,13 @@ namespace Smart.Data.Mapper
                     {
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateResultMapper<T>(reader);
+                        if (await reader.ReadAsync(cancel).ConfigureAwait(false))
+                        {
+                            var mapper = config.CreateResultMapper<T>(reader);
+                            return mapper(reader);
+                        }
 
-                        return await reader.ReadAsync(cancel).ConfigureAwait(false) ? mapper(reader) : default;
+                        return default;
                     }
                 }
                 finally
