@@ -2,40 +2,36 @@ namespace Smart.Data.Mapper.Mocks
 {
     using System;
     using System.Data;
+    using System.Data.Common;
 
-    public sealed class CommandUnsupportedConnection : IDbConnection
+    public sealed class CommandUnsupportedConnection : DbConnection
     {
-        public string ConnectionString { get; set; }
+        private ConnectionState state;
 
-        public int ConnectionTimeout { get; set; }
+        public override string ConnectionString { get; set; }
 
-        public string Database { get; set; }
+        public override string Database => string.Empty;
 
-        public ConnectionState State { get; private set; }
+        public override ConnectionState State => state;
 
-        public void Dispose()
+        public override string DataSource => string.Empty;
+
+        public override string ServerVersion => string.Empty;
+
+        public override void Open()
         {
+            state = ConnectionState.Open;
         }
 
-        public void Open()
+        public override void Close()
         {
-            State = ConnectionState.Open;
+            state = ConnectionState.Closed;
         }
 
-        public void Close()
-        {
-            State = ConnectionState.Closed;
-        }
+        protected override DbCommand CreateDbCommand() => throw new NotSupportedException();
 
-        public IDbCommand CreateCommand()
-        {
-            throw new NotSupportedException();
-        }
+        protected override DbTransaction BeginDbTransaction(IsolationLevel isolationLevel) => throw new NotSupportedException();
 
-        public IDbTransaction BeginTransaction() => throw new NotSupportedException();
-
-        public IDbTransaction BeginTransaction(IsolationLevel il) => throw new NotSupportedException();
-
-        public void ChangeDatabase(string databaseName) => throw new NotSupportedException();
+        public override void ChangeDatabase(string databaseName) => throw new NotSupportedException();
     }
 }

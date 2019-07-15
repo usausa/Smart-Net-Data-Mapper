@@ -3,6 +3,7 @@ namespace Smart.Data.Mapper
     using System;
     using System.Collections.Generic;
     using System.Data;
+    using System.Data.Common;
 
     public sealed class DynamicParameter : IDynamicParameter
     {
@@ -40,7 +41,7 @@ namespace Smart.Data.Mapper
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-        public void Build(ISqlMapperConfig config, IDbCommand cmd)
+        public void Build(ISqlMapperConfig config, DbCommand cmd)
         {
             foreach (var parameter in parameters.Values)
             {

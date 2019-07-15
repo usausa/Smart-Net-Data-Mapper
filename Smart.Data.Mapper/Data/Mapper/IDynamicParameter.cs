@@ -1,9 +1,9 @@
 namespace Smart.Data.Mapper
 {
-    using System.Data;
+    using System.Data.Common;
 
     public interface IDynamicParameter
     {
-        void Build(ISqlMapperConfig config, IDbCommand cmd);
+        void Build(ISqlMapperConfig config, DbCommand cmd);
     }
 }

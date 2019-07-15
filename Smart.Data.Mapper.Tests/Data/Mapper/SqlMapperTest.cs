@@ -48,24 +48,5 @@ namespace Smart.Data.Mapper
                 Assert.Equal(10, con.Commands[0].CommandTimeout);
             }
         }
-
-        [Fact]
-
-        public async Task OpenAsyncFailed()
-        {
-            var con = new AsyncUnsupportedConnection(true);
-
-            await Assert.ThrowsAsync<SqlMapperException>(async () => await con.ExecuteAsync("TEST").ConfigureAwait(false)).ConfigureAwait(false);
-        }
-
-        [Fact]
-
-        public async Task SetupCommandAsyncFailed()
-        {
-            var con = new AsyncUnsupportedConnection();
-            con.Open();
-
-            await Assert.ThrowsAsync<SqlMapperException>(async () => await con.ExecuteAsync("TEST").ConfigureAwait(false)).ConfigureAwait(false);
-        }
     }
 }

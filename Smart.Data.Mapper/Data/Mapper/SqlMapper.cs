@@ -27,7 +27,8 @@ namespace Smart.Data.Mapper
         // Core
         //--------------------------------------------------------------------------------
 
-        private static IDbCommand SetupCommand(IDbConnection con, IDbTransaction transaction, string sql, int? commandTimeout, CommandType? commandType)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:ReviewSqlQueriesForSecurityVulnerabilities", Justification = "Extension")]
+        private static DbCommand SetupCommand(DbConnection con, DbTransaction transaction, string sql, int? commandTimeout, CommandType? commandType)
         {
             var cmd = con.CreateCommand();
 
@@ -51,37 +52,12 @@ namespace Smart.Data.Mapper
             return cmd;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static DbCommand SetupAsyncCommand(IDbConnection con, IDbTransaction transaction, string sql, int? commandTimeout, CommandType? commandType)
-        {
-            if (SetupCommand(con, transaction, sql, commandTimeout, commandType) is DbCommand dbCommand)
-            {
-                return dbCommand;
-            }
-
-            throw new SqlMapperException("Async operation is not supported.");
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2007:DoNotDirectlyAwaitATask", Justification = "Ignore")]
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static async Task OpenAsync(IDbConnection con, CancellationToken cancel)
-        {
-            if (con is DbConnection dbConnection)
-            {
-                await dbConnection.OpenAsync(cancel);
-            }
-            else
-            {
-                throw new SqlMapperException("Async operation is not supported.");
-            }
-        }
-
         //--------------------------------------------------------------------------------
         // Execute
         //--------------------------------------------------------------------------------
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static int Execute(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static int Execute(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
@@ -113,16 +89,16 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int Execute(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static int Execute(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return Execute(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static async Task<int> ExecuteAsync(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static async Task<int> ExecuteAsync(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType))
+            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
             {
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
@@ -131,7 +107,7 @@ namespace Smart.Data.Mapper
                 {
                     if (wasClosed)
                     {
-                        await OpenAsync(con, cancel).ConfigureAwait(false);
+                        await con.OpenAsync(cancel).ConfigureAwait(false);
                     }
 
                     var result = await cmd.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
@@ -151,7 +127,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<int> ExecuteAsync(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static Task<int> ExecuteAsync(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             return ExecuteAsync(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
         }
@@ -161,7 +137,7 @@ namespace Smart.Data.Mapper
         //--------------------------------------------------------------------------------
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static T ExecuteScalar<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T ExecuteScalar<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
@@ -204,16 +180,16 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T ExecuteScalar<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T ExecuteScalar<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return ExecuteScalar<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static async Task<T> ExecuteScalarAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static async Task<T> ExecuteScalarAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType))
+            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
             {
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
@@ -222,7 +198,7 @@ namespace Smart.Data.Mapper
                 {
                     if (wasClosed)
                     {
-                        await OpenAsync(con, cancel).ConfigureAwait(false);
+                        await con.OpenAsync(cancel).ConfigureAwait(false);
                     }
 
                     var result = await cmd.ExecuteScalarAsync(cancel).ConfigureAwait(false);
@@ -253,7 +229,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<T> ExecuteScalarAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static Task<T> ExecuteScalarAsync<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             return ExecuteScalarAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
         }
@@ -263,11 +239,11 @@ namespace Smart.Data.Mapper
         //--------------------------------------------------------------------------------
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static IDataReader ExecuteReader(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
+        public static IDataReader ExecuteReader(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            var cmd = default(IDbCommand);
-            var reader = default(IDataReader);
+            var cmd = default(DbCommand);
+            var reader = default(DbDataReader);
             try
             {
                 cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
@@ -304,26 +280,26 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IDataReader ExecuteReader(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
+        public static IDataReader ExecuteReader(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
         {
             return ExecuteReader(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static async Task<IDataReader> ExecuteReaderAsync(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
+        public static async Task<IDataReader> ExecuteReaderAsync(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(DbCommand);
-            var reader = default(IDataReader);
+            var reader = default(DbDataReader);
             try
             {
-                cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType);
+                cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
 
                 if (wasClosed)
                 {
-                    await OpenAsync(con, cancel).ConfigureAwait(false);
+                    await con.OpenAsync(cancel).ConfigureAwait(false);
                 }
 
                 reader = await cmd.ExecuteReaderAsync(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior, cancel).ConfigureAwait(false);
@@ -349,7 +325,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<IDataReader> ExecuteReaderAsync(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
+        public static Task<IDataReader> ExecuteReaderAsync(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
         {
             return ExecuteReaderAsync(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior, cancel);
         }
@@ -358,7 +334,7 @@ namespace Smart.Data.Mapper
         // Query
         //--------------------------------------------------------------------------------
 
-        private static IEnumerable<T> ReaderToDefer<T>(IDbCommand cmd, IDataReader reader, Func<IDataRecord, T> mapper)
+        private static IEnumerable<T> ReaderToDefer<T>(DbCommand cmd, IDataReader reader, Func<IDataRecord, T> mapper)
         {
             using (cmd)
             using (reader)
@@ -371,10 +347,10 @@ namespace Smart.Data.Mapper
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static IEnumerable<T> Query<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static IEnumerable<T> Query<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            var cmd = default(IDbCommand);
+            var cmd = default(DbCommand);
             var reader = default(IDataReader);
             try
             {
@@ -415,26 +391,26 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IEnumerable<T> Query<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static IEnumerable<T> Query<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static async Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static async Task<IEnumerable<T>> QueryAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             var cmd = default(DbCommand);
             var reader = default(DbDataReader);
             try
             {
-                cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType);
+                cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
 
                 if (wasClosed)
                 {
-                    await OpenAsync(con, cancel).ConfigureAwait(false);
+                    await con.OpenAsync(cancel).ConfigureAwait(false);
                 }
 
                 reader = await cmd.ExecuteReaderAsync(wasClosed ? CommandBehaviorQueryWithClose : CommandBehaviorQuery, cancel).ConfigureAwait(false);
@@ -465,7 +441,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<IEnumerable<T>> QueryAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static Task<IEnumerable<T>> QueryAsync<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             return QueryAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
         }
@@ -475,7 +451,7 @@ namespace Smart.Data.Mapper
         //--------------------------------------------------------------------------------
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static List<T> QueryList<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static List<T> QueryList<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
@@ -516,23 +492,23 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static List<T> QueryList<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static List<T> QueryList<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return QueryList<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static async Task<List<T>> QueryListAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static async Task<List<T>> QueryListAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType))
+            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
             {
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
 
                 if (wasClosed)
                 {
-                    await OpenAsync(con, cancel).ConfigureAwait(false);
+                    await con.OpenAsync(cancel).ConfigureAwait(false);
                 }
 
                 try
@@ -563,7 +539,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<List<T>> QueryListAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static Task<List<T>> QueryListAsync<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             return QueryListAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
         }
@@ -573,7 +549,7 @@ namespace Smart.Data.Mapper
         //--------------------------------------------------------------------------------
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static T QueryFirstOrDefault<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T QueryFirstOrDefault<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
@@ -608,16 +584,16 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T QueryFirstOrDefault<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T QueryFirstOrDefault<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return QueryFirstOrDefault<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static async Task<T> QueryFirstOrDefaultAsync<T>(this IDbConnection con, ISqlMapperConfig config, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static async Task<T> QueryFirstOrDefaultAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupAsyncCommand(con, transaction, sql, commandTimeout, commandType))
+            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
             {
                 var builder = param != null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param);
@@ -626,7 +602,7 @@ namespace Smart.Data.Mapper
                 {
                     if (wasClosed)
                     {
-                        await OpenAsync(con, cancel).ConfigureAwait(false);
+                        await con.OpenAsync(cancel).ConfigureAwait(false);
                     }
 
                     using (var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQueryFirstOrDefault, cancel).ConfigureAwait(false))
@@ -649,7 +625,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static Task<T> QueryFirstOrDefaultAsync<T>(this IDbConnection con, string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static Task<T> QueryFirstOrDefaultAsync<T>(this DbConnection con, string sql, object param = null, DbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             return QueryFirstOrDefaultAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
         }

@@ -2,6 +2,7 @@ namespace Smart.Data.Mapper.Parameters
 {
     using System;
     using System.Data;
+    using System.Data.Common;
     using System.Linq;
     using System.Reflection;
 
@@ -72,7 +73,7 @@ namespace Smart.Data.Mapper.Parameters
             };
         }
 
-        private static Action<IDbCommand, object> CreateBuildAction(ParameterEntry[] entries)
+        private static Action<DbCommand, object> CreateBuildAction(ParameterEntry[] entries)
         {
             return (cmd, parameter) =>
             {
@@ -117,7 +118,7 @@ namespace Smart.Data.Mapper.Parameters
             };
         }
 
-        private static Action<IDbCommand, object> CreatePostProcessAction(ParameterEntry[] entries)
+        private static Action<DbCommand, object> CreatePostProcessAction(ParameterEntry[] entries)
         {
             if (entries.Any(x => x.Setter != null))
             {
@@ -125,7 +126,7 @@ namespace Smart.Data.Mapper.Parameters
                 {
                     for (var i = 0; i < entries.Length; i++)
                     {
-                        entries[i].Setter?.Invoke(parameter, ((IDbDataParameter)cmd.Parameters[i]).Value);
+                        entries[i].Setter?.Invoke(parameter, cmd.Parameters[i].Value);
                     }
                 };
             }
