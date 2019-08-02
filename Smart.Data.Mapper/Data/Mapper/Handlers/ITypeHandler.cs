@@ -7,6 +7,6 @@ namespace Smart.Data.Mapper.Handlers
     {
         void SetValue(IDbDataParameter parameter, object value);
 
-        object Parse(Type destinationType, object value);
+        Func<object, object> CreateParse(Type type);
     }
 }

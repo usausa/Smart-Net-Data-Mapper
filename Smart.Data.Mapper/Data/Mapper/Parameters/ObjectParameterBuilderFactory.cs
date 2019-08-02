@@ -61,14 +61,17 @@ namespace Smart.Data.Mapper.Parameters
                 {
                     setter(target, defaultValue);
                 }
-                else if (value.GetType() == destinationType)
-                {
-                    setter(target, value);
-                }
                 else
                 {
                     var parser = config.CreateParser(value.GetType(), destinationType);
-                    setter(target, parser(value));
+                    if (parser == null)
+                    {
+                        setter(target, value);
+                    }
+                    else
+                    {
+                        setter(target, parser(value));
+                    }
                 }
             };
         }

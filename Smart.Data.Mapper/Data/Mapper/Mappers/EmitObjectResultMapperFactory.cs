@@ -112,16 +112,7 @@ namespace Smart.Data.Mapper.Mappers
                     continue;
                 }
 
-                if ((pi.PropertyType == column.Type) ||
-                    (pi.PropertyType.IsNullableType() && (Nullable.GetUnderlyingType(pi.PropertyType) == column.Type)))
-                {
-                    list.Add(new MapEntry(i, pi, null));
-                }
-                else
-                {
-                    var parser = config.CreateParser(column.Type, pi.PropertyType);
-                    list.Add(new MapEntry(i, pi, parser));
-                }
+                list.Add(new MapEntry(i, pi, config.CreateParser(column.Type, pi.PropertyType)));
             }
 
             return list.ToArray();

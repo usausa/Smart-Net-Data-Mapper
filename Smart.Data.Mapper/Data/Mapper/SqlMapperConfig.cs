@@ -208,6 +208,8 @@ namespace Smart.Data.Mapper
 
         Action<object, object> ISqlMapperConfig.CreateSetter(PropertyInfo pi) => DelegateFactory.CreateSetter(pi);
 
+        public T Convert<T>(object source) => Converter.Convert<T>(source);
+
         Func<PropertyInfo[], string, PropertyInfo> ISqlMapperConfig.GetPropertySelector() => PropertySelector.SelectProperty;
 
         Func<object, object> ISqlMapperConfig.CreateParser(Type sourceType, Type destinationType)
@@ -219,7 +221,13 @@ namespace Smart.Data.Mapper
 
             if (entry.TypeHandler != null)
             {
-                return x => entry.TypeHandler.Parse(destinationType, x);
+                return entry.TypeHandler.CreateParse(destinationType);
+            }
+
+            if ((destinationType == sourceType) ||
+                (destinationType.IsNullableType() && (Nullable.GetUnderlyingType(destinationType) == sourceType)))
+            {
+                return null;
             }
 
             return Converter.CreateConverter(sourceType, destinationType);

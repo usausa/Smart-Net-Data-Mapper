@@ -14,9 +14,9 @@ namespace Smart.Data.Mapper.Handlers
             SetValue(parameter, (T)value);
         }
 
-        public object Parse(Type destinationType, object value)
+        public Func<object, object> CreateParse(Type type)
         {
-            return Parse(value);
+            return x => Parse(x);
         }
     }
 }

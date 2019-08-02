@@ -57,19 +57,28 @@ namespace Smart.Data.Mapper.Mappers
                 var setter = config.CreateSetter(pi);
                 var defaultValue = pi.PropertyType.GetDefaultValue();
 
-                if ((pi.PropertyType == column.Type) ||
-                    (pi.PropertyType.IsNullableType() && (Nullable.GetUnderlyingType(pi.PropertyType) == column.Type)))
+                var parser = config.CreateParser(column.Type, pi.PropertyType);
+                if (parser == null)
                 {
-                    list.Add(new MapEntry(i, (obj, value) => setter(obj, value is DBNull ? defaultValue : value)));
+                    list.Add(new MapEntry(i, CreateParser(setter, defaultValue)));
                 }
                 else
                 {
-                    var parser = config.CreateParser(column.Type, pi.PropertyType);
-                    list.Add(new MapEntry(i, (obj, value) => setter(obj, parser(value is DBNull ? defaultValue : value))));
+                    list.Add(new MapEntry(i, CreateParser(setter, defaultValue, parser)));
                 }
             }
 
             return list.ToArray();
+        }
+
+        private static Action<object, object> CreateParser(Action<object, object> setter, object defaultValue)
+        {
+            return (obj, value) => setter(obj, value is DBNull ? defaultValue : value);
+        }
+
+        private static Action<object, object> CreateParser(Action<object, object> setter, object defaultValue, Func<object, object> parser)
+        {
+            return (obj, value) => setter(obj, value is DBNull ? defaultValue : parser(value));
         }
 
         private static bool IsTargetProperty(PropertyInfo pi)

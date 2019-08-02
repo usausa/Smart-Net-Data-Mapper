@@ -14,6 +14,8 @@ namespace Smart.Data.Mapper
 
         Action<object, object> CreateSetter(PropertyInfo pi);
 
+        T Convert<T>(object source);
+
         Func<PropertyInfo[], string, PropertyInfo> GetPropertySelector();
 
         Func<object, object> CreateParser(Type sourceType, Type destinationType);

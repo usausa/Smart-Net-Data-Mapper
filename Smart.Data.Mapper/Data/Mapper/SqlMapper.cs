@@ -166,8 +166,7 @@ namespace Smart.Data.Mapper
                         return default;
                     }
 
-                    var parser = config.CreateParser(result.GetType(), typeof(T));
-                    return (T)parser(result);
+                    return config.Convert<T>(result);
                 }
                 finally
                 {
@@ -215,8 +214,7 @@ namespace Smart.Data.Mapper
                         return default;
                     }
 
-                    var parser = config.CreateParser(result.GetType(), typeof(T));
-                    return (T)parser(result);
+                    return config.Convert<T>(result);
                 }
                 finally
                 {
