@@ -1,10 +1,7 @@
 namespace Smart.Data.Mapper
 {
-    using System.Threading.Tasks;
-
     using Microsoft.Data.Sqlite;
 
-    using Smart.Data.Mapper.Mocks;
     using Smart.Mock.Data;
 
     using Xunit;
