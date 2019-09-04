@@ -172,13 +172,14 @@ namespace Smart.Data.Mapper.Mappers
             return value is DBNull ? default : (T)parser(value);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
         private sealed class MapEntry
         {
-            public int Index { get; }
+            public readonly int Index;
 
-            public PropertyInfo Property { get; }
+            public readonly PropertyInfo Property;
 
-            public Func<object, object> Parser { get; }
+            public readonly Func<object, object> Parser;
 
             public MapEntry(int index, PropertyInfo property, Func<object, object> parser)
             {

@@ -137,21 +137,22 @@ namespace Smart.Data.Mapper.Parameters
             return null;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
         private sealed class ParameterEntry
         {
-            public string Name { get; }
+            public readonly string Name;
 
-            public Func<object, object> Getter { get; }
+            public readonly Func<object, object> Getter;
 
-            public Action<object, object> Setter { get; }
+            public readonly Action<object, object> Setter;
 
-            public DbType DbType { get; }
+            public readonly DbType DbType;
 
-            public ITypeHandler Handler { get; }
+            public readonly ITypeHandler Handler;
 
-            public int? Size { get; }
+            public readonly int? Size;
 
-            public ParameterDirection Direction { get; }
+            public readonly ParameterDirection Direction;
 
             public ParameterEntry(string name, Func<object, object> getter, Action<object, object> setter, DbType dbType, ITypeHandler handler, int? size, ParameterDirection direction)
             {

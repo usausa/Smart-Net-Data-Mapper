@@ -9,24 +9,34 @@ namespace Smart.Data.Mapper
     {
         private readonly Dictionary<string, ParameterInfo> parameters = new Dictionary<string, ParameterInfo>();
 
-        private class ParameterInfo
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+        private sealed class ParameterInfo
         {
-            public string Name { get; set; }
+            public readonly string Name;
 
-            public object Value { get; set; }
+            public readonly object Value;
 
-            public DbType? DbType { get; set; }
+            public readonly DbType? DbType;
 
-            public int? Size { get; set; }
+            public readonly int? Size;
 
-            public ParameterDirection Direction { get; set; }
+            public readonly ParameterDirection Direction;
 
-            public IDbDataParameter AttachedParam { get; set; }
+            public IDbDataParameter AttachedParam;
+
+            public ParameterInfo(string name, object value, DbType? dbType, int? size, ParameterDirection direction)
+            {
+                Name = name;
+                Value = value;
+                DbType = dbType;
+                Size = size;
+                Direction = direction;
+            }
         }
 
         public void Add(string name, object value, DbType? dbType = null, int? size = null, ParameterDirection direction = ParameterDirection.Input)
         {
-            parameters[name] = new ParameterInfo { Name = name, Value = value, DbType = dbType, Size = size, Direction = direction };
+            parameters[name] = new ParameterInfo(name, value, dbType, size, direction);
         }
 
         public T Get<T>(string name)

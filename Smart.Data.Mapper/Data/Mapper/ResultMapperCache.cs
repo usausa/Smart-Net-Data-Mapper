@@ -228,13 +228,14 @@ namespace Smart.Data.Mapper
         // Inner
         //--------------------------------------------------------------------------------
 
-        private class Node
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+        private sealed class Node
         {
-            public Type TargetType { get; }
+            public readonly Type TargetType;
 
-            public ColumnInfo[] Columns { get; }
+            public readonly ColumnInfo[] Columns;
 
-            public object Value { get; }
+            public readonly object Value;
 
             public Node(Type targetType, ColumnInfo[] columns, object value)
             {
@@ -244,13 +245,14 @@ namespace Smart.Data.Mapper
             }
         }
 
-        private class Table
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+        private sealed class Table
         {
-            public int HashMask { get; }
+            public readonly int HashMask;
 
-            public Node[][] Nodes { get; }
+            public readonly Node[][] Nodes;
 
-            public int Count { get; }
+            public readonly int Count;
 
             public Table(int hashMask, Node[][] nodes, int count)
             {

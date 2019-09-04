@@ -86,11 +86,12 @@ namespace Smart.Data.Mapper.Mappers
             return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() == null);
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
         private sealed class MapEntry
         {
-            public int Index { get; }
+            public readonly int Index;
 
-            public Action<object, object> Setter { get; }
+            public readonly Action<object, object> Setter;
 
             public MapEntry(int index, Action<object, object> setter)
             {
