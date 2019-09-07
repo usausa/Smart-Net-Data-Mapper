@@ -191,23 +191,23 @@ SqlMapperConfig ConfigureTypeHandlers(Action<IDictionary<Type, ITypeHandler>> ac
 
 Benchmark result on .NET Core 2.2 with Code generation mode.
 
-|                         Method |       Mean |     Error |    StdDev |     Median |  Gen 0 | Gen 1 | Gen 2 | Allocated |
-|------------------------------- |-----------:|----------:|----------:|-----------:|-------:|------:|------:|----------:|
-|                  DapperExecute |   352.9 ns | 0.8447 ns |  4.311 ns |   351.8 ns | 0.1101 |     - |     - |     464 B |
-|                   SmartExecute |   194.7 ns | 0.4167 ns |  2.046 ns |   194.9 ns | 0.0894 |     - |     - |     376 B |
-|   DapperExecuteWithParameter10 |   767.1 ns | 0.9446 ns |  4.889 ns |   766.5 ns | 0.3004 |     - |     - |    1264 B |
-|    SmartExecuteWithParameter10 |   516.0 ns | 0.6310 ns |  3.238 ns |   515.8 ns | 0.3004 |     - |     - |    1264 B |
-| DapperExecuteWithOverParameter |   321.8 ns | 0.6742 ns |  3.349 ns |   321.6 ns | 0.1140 |     - |     - |     480 B |
-|  SmartExecuteWithOverParameter |   514.7 ns | 0.5797 ns |  2.990 ns |   514.4 ns | 0.3004 |     - |     - |    1264 B |
-|            DapperExecuteScalar |   138.3 ns | 0.2828 ns |  1.444 ns |   138.5 ns | 0.0362 |     - |     - |     152 B |
-|             SmartExecuteScalar |   110.5 ns | 0.2775 ns |  1.419 ns |   110.1 ns | 0.0362 |     - |     - |     152 B |
-| DapperExecuteScalarWithConvert |   234.3 ns | 0.2713 ns |  1.400 ns |   234.1 ns | 0.0417 |     - |     - |     176 B |
-|  SmartExecuteScalarWithConvert |   157.4 ns | 0.2090 ns |  1.071 ns |   157.4 ns | 0.0417 |     - |     - |     176 B |
-|                 DapperQuery100 | 5,246.0 ns | 6.0221 ns | 30.848 ns | 5,238.5 ns | 1.4038 |     - |     - |    5920 B |
-|                  SmartQuery100 | 3,153.3 ns | 3.0727 ns | 15.822 ns | 3,151.9 ns | 0.8202 |     - |     - |    3448 B |
-|          DapperQuery100Bufferd | 4,243.6 ns | 5.0693 ns | 26.058 ns | 4,239.2 ns | 1.3962 |     - |     - |    5880 B |
-|           SmartQuery100Bufferd | 2,961.4 ns | 3.3767 ns | 17.327 ns | 2,957.9 ns | 1.3199 |     - |     - |    5552 B |
-|               DapperQueryFirst |   481.0 ns | 0.5978 ns |  3.089 ns |   480.9 ns | 0.0811 |     - |     - |     344 B |
-|                SmartQueryFirst |   630.9 ns | 0.8443 ns |  4.279 ns |   630.3 ns | 0.0601 |     - |     - |     256 B |
+|                         Method |       Mean |     Error |     StdDev |     Median |  Gen 0 | Gen 1 | Gen 2 | Allocated |
+|------------------------------- |-----------:|----------:|-----------:|-----------:|-------:|------:|------:|----------:|
+|                  DapperExecute |   339.7 ns | 0.3405 ns |  1.6882 ns |   339.6 ns | 0.1101 |     - |     - |     464 B |
+|                   SmartExecute |   187.1 ns | 0.2850 ns |  1.4260 ns |   186.7 ns | 0.0894 |     - |     - |     376 B |
+|   DapperExecuteWithParameter10 |   747.9 ns | 0.5939 ns |  3.0262 ns |   747.7 ns | 0.3004 |     - |     - |    1264 B |
+|    SmartExecuteWithParameter10 |   506.4 ns | 0.4279 ns |  2.1606 ns |   506.5 ns | 0.3004 |     - |     - |    1264 B |
+| DapperExecuteWithOverParameter |   317.5 ns | 0.3829 ns |  1.9510 ns |   317.7 ns | 0.1140 |     - |     - |     480 B |
+|  SmartExecuteWithOverParameter |   507.6 ns | 0.6400 ns |  3.2320 ns |   507.1 ns | 0.3004 |     - |     - |    1264 B |
+|            DapperExecuteScalar |   132.4 ns | 0.1059 ns |  0.5279 ns |   132.3 ns | 0.0362 |     - |     - |     152 B |
+|             SmartExecuteScalar |   106.7 ns | 0.1820 ns |  0.8922 ns |   106.3 ns | 0.0362 |     - |     - |     152 B |
+| DapperExecuteScalarWithConvert |   225.8 ns | 0.2113 ns |  1.0668 ns |   225.7 ns | 0.0417 |     - |     - |     176 B |
+|  SmartExecuteScalarWithConvert |   152.2 ns | 0.1517 ns |  0.7620 ns |   152.3 ns | 0.0417 |     - |     - |     176 B |
+|                 DapperQuery100 | 5,239.8 ns | 7.1074 ns | 36.0205 ns | 5,238.1 ns | 1.4038 |     - |     - |    5920 B |
+|                  SmartQuery100 | 3,086.7 ns | 4.6153 ns | 23.0514 ns | 3,076.0 ns | 0.8202 |     - |     - |    3448 B |
+|          DapperQuery100Bufferd | 4,366.1 ns | 5.0800 ns | 26.0217 ns | 4,367.3 ns | 1.3962 |     - |     - |    5880 B |
+|           SmartQuery100Bufferd | 2,931.9 ns | 5.5895 ns | 28.3277 ns | 2,943.5 ns | 1.3199 |     - |     - |    5552 B |
+|               DapperQueryFirst |   473.3 ns | 0.3999 ns |  2.0342 ns |   473.5 ns | 0.0815 |     - |     - |     344 B |
+|                SmartQueryFirst |   627.5 ns | 3.7892 ns | 19.4095 ns |   616.3 ns | 0.0601 |     - |     - |     256 B |
 
 Not so late( ˙ω˙)?
