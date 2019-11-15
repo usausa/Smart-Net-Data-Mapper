@@ -35,7 +35,7 @@ namespace Smart.Data.Mapper
 
         public async Task ExecuteByObjectParameterAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
@@ -54,7 +54,7 @@ namespace Smart.Data.Mapper
 
         public async Task ExecuteCancelAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
@@ -89,7 +89,7 @@ namespace Smart.Data.Mapper
 
         public async Task WithoutOpenAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
 
@@ -155,7 +155,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object()).ConfigureAwait(false);
 
@@ -176,7 +176,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
 

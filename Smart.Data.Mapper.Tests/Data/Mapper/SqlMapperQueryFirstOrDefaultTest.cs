@@ -43,7 +43,7 @@ namespace Smart.Data.Mapper
 
         public async Task QueryFirstOrDefaultAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
@@ -69,7 +69,7 @@ namespace Smart.Data.Mapper
 
         public async Task QueryFirstOrDefaultCancelAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
 
@@ -103,7 +103,7 @@ namespace Smart.Data.Mapper
 
         public async Task WithoutOpenAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT 1, 'test1'").ConfigureAwait(false);
 
@@ -131,7 +131,7 @@ namespace Smart.Data.Mapper
 
         public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryFirstOrDefaultAsync<DataEntity>("x").ConfigureAwait(false)).ConfigureAwait(false);
 
@@ -197,7 +197,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false);
 
@@ -218,7 +218,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'").ConfigureAwait(false);
 

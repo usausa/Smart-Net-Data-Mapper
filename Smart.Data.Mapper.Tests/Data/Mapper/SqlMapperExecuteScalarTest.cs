@@ -37,7 +37,7 @@ namespace Smart.Data.Mapper
 
         public async Task ExecuteScalarByObjectParameterAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
@@ -68,7 +68,7 @@ namespace Smart.Data.Mapper
 
         public async Task ResultIsNullAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
 
@@ -96,7 +96,7 @@ namespace Smart.Data.Mapper
 
         public async Task ResultIsConvertedAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
 
@@ -114,7 +114,7 @@ namespace Smart.Data.Mapper
 
         public async Task ExecuteScalarCancelAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
@@ -150,7 +150,7 @@ namespace Smart.Data.Mapper
 
         public async Task WithoutOpenAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 var value = await con.ExecuteScalarAsync<long>("SELECT 1").ConfigureAwait(false);
 
@@ -217,7 +217,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object()).ConfigureAwait(false);
 
@@ -238,7 +238,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.ExecuteScalarAsync<long>(config, "SELECT 1").ConfigureAwait(false);
 

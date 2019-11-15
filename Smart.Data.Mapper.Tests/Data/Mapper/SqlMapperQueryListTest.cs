@@ -42,7 +42,7 @@ namespace Smart.Data.Mapper
 
         public async Task QueryListAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
@@ -67,7 +67,7 @@ namespace Smart.Data.Mapper
 
         public async Task QueryListCancelAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 con.Open();
                 con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
@@ -103,7 +103,7 @@ namespace Smart.Data.Mapper
 
         public async Task WithoutOpenAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await con.QueryListAsync<DataEntity>("SELECT 1, 'test1'").ConfigureAwait(false);
 
@@ -162,7 +162,7 @@ namespace Smart.Data.Mapper
 
         public async Task ClosedConnectionMustClosedWhenQueryListErrorAsync()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryListAsync<DataEntity>("x").ConfigureAwait(false)).ConfigureAwait(false);
 
@@ -174,7 +174,7 @@ namespace Smart.Data.Mapper
 
         public async Task ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
         {
-            using (var con = new CommandUnsupportedConnection())
+            await using (var con = new CommandUnsupportedConnection())
             {
                 await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryListAsync<DataEntity>("x").ConfigureAwait(false)).ConfigureAwait(false);
 
@@ -193,7 +193,7 @@ namespace Smart.Data.Mapper
                 opt.Add(new PostProcessErrorParameterBuilderFactory());
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false)).ConfigureAwait(false);
 
@@ -261,7 +261,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 var list = await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false);
 
@@ -283,7 +283,7 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 var list = await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'").ConfigureAwait(false);
 
