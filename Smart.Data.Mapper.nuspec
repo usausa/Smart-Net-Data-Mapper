@@ -25,7 +25,7 @@
     <tags>smart ado.net orm micro-orm</tags>
   </metadata>
   <files>
-    <!-- netstandard2.0 -->
-    <file src="Smart.Data.Mapper\bin\Release\netstandard2.0\Smart.Data.Mapper.dll" target="lib\netstandard2.0" />
+    <!-- netstandard2.1 -->
+    <file src="Smart.Data.Mapper\bin\Release\netstandard2.1\Smart.Data.Mapper.dll" target="lib\netstandard2.1" />
   </files>
 </package>
