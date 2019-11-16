@@ -50,7 +50,7 @@ namespace Smart.Data.Mapper
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
                 con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-                var list = (await con.QueryAsync<DataEntity>("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false)).ToList();
+                var list = await con.QueryAsync<DataEntity>("SELECT * FROM Data ORDER BY Id").ToListAsync();
 
                 Assert.Equal(2, list.Count);
                 Assert.Equal(1, list[0].Id);
@@ -79,7 +79,7 @@ namespace Smart.Data.Mapper
                     await con.QueryAsync<DataEntity>(
                         "SELECT * FROM Data ORDER BY Id",
                         cancel: cancel)
-                        .ConfigureAwait(false);
+                        .ToListAsync(cancel);
                 }).ConfigureAwait(false);
             }
         }
@@ -90,13 +90,12 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public void WithoutOpen()
+        public void WithoutOpenMustClosed()
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
                 var list = con.Query<DataEntity>("SELECT 1, 'test1'");
 
-                Assert.Equal(ConnectionState.Open, con.State);
                 Assert.Single(list.ToList());
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -104,14 +103,13 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task WithoutOpenAsync()
+        public async Task WithoutOpenMustClosedAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                var list = await con.QueryAsync<DataEntity>("SELECT 1, 'test1'").ConfigureAwait(false);
+                var list = con.QueryAsync<DataEntity>("SELECT 1, 'test1'");
 
-                Assert.Equal(ConnectionState.Open, con.State);
-                Assert.Single(list.ToList());
+                Assert.Single(await list.ToListAsync());
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
         }
@@ -138,7 +136,7 @@ namespace Smart.Data.Mapper
         {
             using (var con = new CommandUnsupportedConnection())
             {
-                Assert.Throws<NotSupportedException>(() => con.Query<DataEntity>("x"));
+                Assert.Throws<NotSupportedException>(() => con.Query<DataEntity>("x").ToList());
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -157,7 +155,7 @@ namespace Smart.Data.Mapper
 
             using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                Assert.Throws<NotSupportedException>(() => con.Query<DataEntity>(config, "SELECT 1, 'test1'", new object()));
+                Assert.Throws<NotSupportedException>(() => con.Query<DataEntity>(config, "SELECT 1, 'test1'", new object()).ToList());
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -169,7 +167,7 @@ namespace Smart.Data.Mapper
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryAsync<DataEntity>("x").ConfigureAwait(false)).ConfigureAwait(false);
+                await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync()).ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -181,7 +179,7 @@ namespace Smart.Data.Mapper
         {
             await using (var con = new CommandUnsupportedConnection())
             {
-                await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>("x").ConfigureAwait(false)).ConfigureAwait(false);
+                await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync()).ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -200,7 +198,7 @@ namespace Smart.Data.Mapper
 
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false)).ConfigureAwait(false);
+                await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ToListAsync()).ConfigureAwait(false);
 
                 Assert.Equal(ConnectionState.Closed, con.State);
             }
@@ -268,9 +266,9 @@ namespace Smart.Data.Mapper
 
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                var list = await con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false);
+                var list = con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
-                Assert.Single(list.ToList());
+                Assert.Single(await list.ToListAsync());
                 Assert.True(factory.BuildCalled);
                 Assert.True(factory.PostProcessCalled);
             }
@@ -290,9 +288,9 @@ namespace Smart.Data.Mapper
 
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
-                var list = await con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'").ConfigureAwait(false);
+                var list = con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'");
 
-                Assert.Single(list.ToList());
+                Assert.Single(await list.ToListAsync());
                 Assert.False(factory.BuildCalled);
                 Assert.False(factory.PostProcessCalled);
             }
