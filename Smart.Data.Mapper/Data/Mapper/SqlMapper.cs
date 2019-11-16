@@ -395,7 +395,7 @@ namespace Smart.Data.Mapper
 
                         var mapper = config.CreateResultMapper<T>(reader);
 
-                        while (await reader.ReadAsync(cancel))
+                        while (await reader.ReadAsync(cancel).ConfigureAwait(false))
                         {
                             yield return mapper(reader);
                         }
