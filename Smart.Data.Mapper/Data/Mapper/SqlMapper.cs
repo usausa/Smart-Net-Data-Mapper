@@ -250,9 +250,7 @@ namespace Smart.Data.Mapper
                     con.Open();
                 }
 
-                reader = cmd.ExecuteReader(wasClosed
-                    ? commandBehavior | CommandBehavior.CloseConnection
-                    : commandBehavior);
+                reader = cmd.ExecuteReader(wasClosed ? commandBehavior | CommandBehavior.CloseConnection : commandBehavior);
                 wasClosed = false;
 
                 builder.PostProcess?.Invoke(cmd, param);

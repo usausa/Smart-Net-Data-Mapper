@@ -2,6 +2,7 @@ namespace Smart.Data.Mapper
 {
     using System;
     using System.Data;
+    using System.IO;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -18,7 +19,6 @@ namespace Smart.Data.Mapper
         //--------------------------------------------------------------------------------
 
         [Fact]
-
         public void ExecuteReader()
         {
             using (var con = new SqliteConnection("Data Source=:memory:"))
@@ -44,7 +44,6 @@ namespace Smart.Data.Mapper
         }
 
         [Fact]
-
         public async Task ExecuteReaderAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
@@ -66,6 +65,58 @@ namespace Smart.Data.Mapper
 
                     Assert.False(reader.Read());
                 }
+            }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Lifecycle
+        //--------------------------------------------------------------------------------
+
+        private void Prepare()
+        {
+            File.Delete("Test.db");
+            using (var con = new SqliteConnection("Data Source=Test.db"))
+            {
+                con.Open();
+                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+                con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+                con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+            }
+        }
+
+        [Fact]
+        public void ExecuteReaderLife()
+        {
+            Prepare();
+            using (var reader = new SqliteConnection("Data Source=Test.db").ExecuteReader("SELECT * FROM Data ORDER BY Id"))
+            {
+                Assert.True(reader.Read());
+                Assert.Equal(1, reader.GetInt64(0));
+                Assert.Equal("test1", reader.GetString(1));
+
+                Assert.True(reader.Read());
+                Assert.Equal(2, reader.GetInt64(0));
+                Assert.Equal("test2", reader.GetString(1));
+
+                Assert.False(reader.Read());
+            }
+        }
+
+        [Fact]
+        public async Task ExecuteReaderLifeAsync()
+        {
+            Prepare();
+            using (var reader = await new SqliteConnection("Data Source=Test.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false))
+            {
+                Assert.True(reader.Read());
+                Assert.Equal(1, reader.GetInt64(0));
+                Assert.Equal("test1", reader.GetString(1));
+
+                Assert.True(reader.Read());
+                Assert.Equal(2, reader.GetInt64(0));
+                Assert.Equal("test2", reader.GetString(1));
+
+                Assert.False(reader.Read());
             }
         }
 
