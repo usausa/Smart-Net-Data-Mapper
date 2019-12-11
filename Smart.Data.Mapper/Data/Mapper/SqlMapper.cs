@@ -158,7 +158,7 @@ namespace Smart.Data.Mapper
                         return scalar;
                     }
 
-                    if (result is DBNull)
+                    if (result is null)
                     {
                         return default;
                     }
@@ -206,7 +206,7 @@ namespace Smart.Data.Mapper
                         return scalar;
                     }
 
-                    if (result is DBNull)
+                    if (result is null)
                     {
                         return default;
                     }
