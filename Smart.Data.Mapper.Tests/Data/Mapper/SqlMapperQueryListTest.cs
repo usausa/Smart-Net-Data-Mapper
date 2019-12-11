@@ -40,7 +40,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task QueryListAsync()
+        public async ValueTask QueryListAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -65,7 +65,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task QueryListCancelAsync()
+        public async ValueTask QueryListCancelAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -101,7 +101,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task WithoutOpenAsync()
+        public async ValueTask WithoutOpenAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -160,7 +160,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ClosedConnectionMustClosedWhenQueryListErrorAsync()
+        public async ValueTask ClosedConnectionMustClosedWhenQueryListErrorAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -172,7 +172,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
+        public async ValueTask ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
         {
             await using (var con = new CommandUnsupportedConnection())
             {
@@ -184,7 +184,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+        public async ValueTask ClosedConnectionMustClosedWhenPostProcessErrorAsync()
         {
             var config = new SqlMapperConfig();
             config.ConfigureParameterBuilderFactories(opt =>
@@ -251,7 +251,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ProcessParameterAsync()
+        public async ValueTask ProcessParameterAsync()
         {
             var factory = new MockParameterBuilderFactory();
             var config = new SqlMapperConfig();
@@ -273,7 +273,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ProcessParameterIsNothingAsync()
+        public async ValueTask ProcessParameterIsNothingAsync()
         {
             var factory = new MockParameterBuilderFactory();
             var config = new SqlMapperConfig();

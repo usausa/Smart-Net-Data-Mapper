@@ -41,7 +41,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task QueryFirstOrDefaultAsync()
+        public async ValueTask QueryFirstOrDefaultAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -67,7 +67,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task QueryFirstOrDefaultCancelAsync()
+        public async ValueTask QueryFirstOrDefaultCancelAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -101,7 +101,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task WithoutOpenAsync()
+        public async ValueTask WithoutOpenAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -129,7 +129,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
+        public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -187,7 +187,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ProcessParameterAsync()
+        public async ValueTask ProcessParameterAsync()
         {
             var factory = new MockParameterBuilderFactory();
             var config = new SqlMapperConfig();
@@ -208,7 +208,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ProcessParameterIsNothingAsync()
+        public async ValueTask ProcessParameterIsNothingAsync()
         {
             var factory = new MockParameterBuilderFactory();
             var config = new SqlMapperConfig();

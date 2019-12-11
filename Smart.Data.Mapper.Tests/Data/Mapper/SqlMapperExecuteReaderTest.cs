@@ -44,7 +44,7 @@ namespace Smart.Data.Mapper
         }
 
         [Fact]
-        public async Task ExecuteReaderAsync()
+        public async ValueTask ExecuteReaderAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -103,7 +103,7 @@ namespace Smart.Data.Mapper
         }
 
         [Fact]
-        public async Task ExecuteReaderLifeAsync()
+        public async ValueTask ExecuteReaderLifeAsync()
         {
             Prepare();
             using (var reader = await new SqliteConnection("Data Source=Test.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false))
@@ -126,7 +126,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ExecuteReaderCancelAsync()
+        public async ValueTask ExecuteReaderCancelAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -166,7 +166,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task WithoutOpenAsync()
+        public async ValueTask WithoutOpenAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -245,7 +245,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
+        public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
         {
             await using (var con = new SqliteConnection("Data Source=:memory:"))
             {
@@ -262,7 +262,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
+        public async ValueTask ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
         {
             await using (var con = new CommandUnsupportedConnection())
             {
@@ -279,7 +279,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+        public async ValueTask ClosedConnectionMustClosedWhenPostProcessErrorAsync()
         {
             var config = new SqlMapperConfig();
             config.ConfigureParameterBuilderFactories(opt =>
@@ -353,7 +353,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ProcessParameterAsync()
+        public async ValueTask ProcessParameterAsync()
         {
             var factory = new MockParameterBuilderFactory();
             var config = new SqlMapperConfig();
@@ -376,7 +376,7 @@ namespace Smart.Data.Mapper
 
         [Fact]
 
-        public async Task ProcessParameterIsNothingAsync()
+        public async ValueTask ProcessParameterIsNothingAsync()
         {
             var factory = new MockParameterBuilderFactory();
             var config = new SqlMapperConfig();
