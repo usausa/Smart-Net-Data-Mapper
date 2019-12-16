@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -11,7 +11,7 @@
     <PackageReference Include="System.Memory" Version="4.5.3" />
     <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
-    <PackageReference Include="Usa.Smart.Core" Version="1.7.9" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.7.10" />
   </ItemGroup>
 
 </Project>
