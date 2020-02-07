@@ -99,9 +99,10 @@ namespace Smart.Data.Mapper
         // Cache
         //--------------------------------------------------------------------------------
 
+        // TODO
         public int CountParameterBuilderCache => parameterBuilderCache.Count;
 
-        public int CountResultMapperCache => resultMapperCache.Count;
+        public int CountResultMapperCache => resultMapperCache.Diagnostics.Count;
 
         public int CountTypeHandleEntriesCache => typeHandleEntriesCache.Count;
 
