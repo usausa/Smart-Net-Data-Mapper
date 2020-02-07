@@ -16,7 +16,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
                 sql.Append(" AND ");
             }
 
-            sql.Length = sql.Length - 5;
+            sql.Length -= 5;
         }
     }
 }

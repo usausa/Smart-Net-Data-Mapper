@@ -38,7 +38,7 @@ namespace Smart.Data.Mapper.Builders
                     sql.Append(", ");
                 }
 
-                sql.Length = sql.Length - 2;
+                sql.Length -= 2;
 
                 OrderSqlBase = sql.ToString();
             }

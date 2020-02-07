@@ -21,7 +21,7 @@ namespace Smart.Data.Mapper.Builders
                 sql.Append(column.Name);
                 sql.Append(", ");
             }
-            sql.Length = sql.Length - 2;
+            sql.Length -= 2;
             sql.Append(") VALUES (");
             foreach (var column in tableInfo.Columns)
             {
@@ -29,7 +29,7 @@ namespace Smart.Data.Mapper.Builders
                 sql.Append(column.Property.Name);
                 sql.Append(", ");
             }
-            sql.Length = sql.Length - 2;
+            sql.Length -= 2;
             sql.Append(")");
 
             ValuesSql = sql.ToString();

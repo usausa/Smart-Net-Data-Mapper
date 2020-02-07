@@ -38,7 +38,7 @@ namespace Smart.Data.Mapper.Builders
                     sql.Append(column.Property.Name);
                     sql.Append(", ");
                 }
-                sql.Length = sql.Length - 2;
+                sql.Length -= 2;
                 sql.Append(KeyConditionSql);
 
                 ByKeySql = sql.ToString();

@@ -49,7 +49,7 @@ namespace Smart.Data.Mapper
             { typeof(DateTimeOffset), DbType.DateTimeOffset },
             { typeof(TimeSpan), DbType.Time },
             { typeof(byte[]), DbType.Binary },
-            { typeof(object), DbType.Object },
+            { typeof(object), DbType.Object }
         };
 
         private static readonly Dictionary<Type, ITypeHandler> DefaultTypeHandlers = new Dictionary<Type, ITypeHandler>();

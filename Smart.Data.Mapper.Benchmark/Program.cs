@@ -73,7 +73,7 @@ namespace Smart.Data.Mapper.Benchmark
                     new MockColumn(typeof(DateTimeOffset), "CreatedAt"),
                     new MockColumn(typeof(string), "CreatedBy"),
                     new MockColumn(typeof(DateTimeOffset?), "UpdatedAt"),
-                    new MockColumn(typeof(string), "UpdatedBy"),
+                    new MockColumn(typeof(string), "UpdatedBy")
                 },
                 Enumerable.Range(1, 1).Select(x => new object[]
                 {

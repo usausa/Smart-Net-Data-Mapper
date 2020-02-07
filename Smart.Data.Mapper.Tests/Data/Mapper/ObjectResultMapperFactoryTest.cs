@@ -25,7 +25,7 @@ namespace Smart.Data.Mapper
                     new MockColumn(typeof(int), "Column5"),
                     new MockColumn(typeof(int), "Column6"),
                     new MockColumn(typeof(int), "Column7"),
-                    new MockColumn(typeof(int), "Column8"),
+                    new MockColumn(typeof(int), "Column8")
                 };
                 var values = new List<object[]>
                 {

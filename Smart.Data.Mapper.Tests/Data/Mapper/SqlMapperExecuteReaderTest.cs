@@ -72,7 +72,7 @@ namespace Smart.Data.Mapper
         // Lifecycle
         //--------------------------------------------------------------------------------
 
-        private void Prepare()
+        private static void Prepare()
         {
             File.Delete("Test.db");
             using (var con = new SqliteConnection("Data Source=Test.db"))

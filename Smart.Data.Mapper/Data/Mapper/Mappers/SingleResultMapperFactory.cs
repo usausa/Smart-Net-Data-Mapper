@@ -6,7 +6,7 @@ namespace Smart.Data.Mapper.Mappers
 
     public sealed class SingleResultMapperFactory : IResultMapperFactory
     {
-        public static IEnumerable<Type> SupportedTypes { get; } = new[]
+        private static IEnumerable<Type> SupportedTypes { get; } = new[]
         {
             typeof(byte),
             typeof(sbyte),
@@ -32,35 +32,36 @@ namespace Smart.Data.Mapper.Mappers
         private readonly HashSet<Type> supportedTypes;
 
         public SingleResultMapperFactory()
-            : this(SingleResultMapperFactory.SupportedTypes)
+            : this(SupportedTypes)
         {
         }
 
         public SingleResultMapperFactory(IEnumerable<Type> types)
         {
-            this.supportedTypes = new HashSet<Type>(types);
+            supportedTypes = new HashSet<Type>(types);
         }
 
         public bool IsMatch(Type type)
         {
-            return supportedTypes.Contains(type.IsNullableType() ? Nullable.GetUnderlyingType(type) : type);
+            var targetType = type.IsNullableType() ? Nullable.GetUnderlyingType(type) : type;
+            return supportedTypes.Contains(targetType);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
         public Func<IDataRecord, T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
         {
             var defaultValue = default(T);
             var parser = config.CreateParser(columns[0].Type, typeof(T));
-            return parser != null
-                ? CreateConvertMapper(defaultValue, parser)
-                : CreateConvertMapper(defaultValue);
+            return parser == null
+                ? CreateConvertMapper(defaultValue)
+                : CreateConvertMapper(defaultValue, parser);
         }
 
         private static Func<IDataRecord, T> CreateConvertMapper<T>(T defaultValue)
         {
             return record =>
             {
-                object value = record.GetValue(0);
+                var value = record.GetValue(0);
                 return value is DBNull ? defaultValue : (T)value;
             };
         }
@@ -69,7 +70,7 @@ namespace Smart.Data.Mapper.Mappers
         {
             return record =>
             {
-                object value = record.GetValue(0);
+                var value = record.GetValue(0);
                 return value is DBNull ? defaultValue : (T)parser(value);
             };
         }

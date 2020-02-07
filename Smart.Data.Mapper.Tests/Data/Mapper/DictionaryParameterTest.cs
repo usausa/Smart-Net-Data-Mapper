@@ -29,7 +29,7 @@ namespace Smart.Data.Mapper
                 {
                     { "Id", 1 },
                     { "Name", null },
-                    { "Date", new DateTime(2000, 1, 1) },
+                    { "Date", new DateTime(2000, 1, 1) }
                 };
                 con.Execute("INSERT INTO Data (Id, Name, Date) VALUES (@Id, @Name, @Date)", parameter);
 
