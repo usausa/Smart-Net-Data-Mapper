@@ -347,11 +347,15 @@ namespace Smart.Data.Mapper
                     {
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateResultMapper<T>(reader);
-
-                        while (reader.Read())
+                        if (reader.Read())
                         {
-                            yield return mapper(reader);
+                            var mapper = config.CreateResultMapper<T>(reader);
+
+                            do
+                            {
+                                yield return mapper(reader);
+                            }
+                            while (reader.Read());
                         }
                     }
                 }
@@ -391,11 +395,15 @@ namespace Smart.Data.Mapper
                     {
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateResultMapper<T>(reader);
-
-                        while (await reader.ReadAsync(cancel).ConfigureAwait(false))
+                        if (await reader.ReadAsync(cancel).ConfigureAwait(false))
                         {
-                            yield return mapper(reader);
+                            var mapper = config.CreateResultMapper<T>(reader);
+
+                            do
+                            {
+                                yield return mapper(reader);
+                            }
+                            while (await reader.ReadAsync(cancel).ConfigureAwait(false));
                         }
                     }
                 }
@@ -439,12 +447,16 @@ namespace Smart.Data.Mapper
                     {
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateResultMapper<T>(reader);
-
                         var list = new List<T>();
-                        while (reader.Read())
+                        if (reader.Read())
                         {
-                            list.Add(mapper(reader));
+                            var mapper = config.CreateResultMapper<T>(reader);
+
+                            do
+                            {
+                                list.Add(mapper(reader));
+                            }
+                            while (reader.Read());
                         }
 
                         return list;
@@ -486,12 +498,16 @@ namespace Smart.Data.Mapper
                     {
                         builder.PostProcess?.Invoke(cmd, param);
 
-                        var mapper = config.CreateResultMapper<T>(reader);
-
                         var list = new List<T>();
-                        while (await reader.ReadAsync(cancel).ConfigureAwait(false))
+                        if (await reader.ReadAsync(cancel).ConfigureAwait(false))
                         {
-                            list.Add(mapper(reader));
+                            var mapper = config.CreateResultMapper<T>(reader);
+
+                            do
+                            {
+                                list.Add(mapper(reader));
+                            }
+                            while (await reader.ReadAsync(cancel).ConfigureAwait(false));
                         }
 
                         return list;
