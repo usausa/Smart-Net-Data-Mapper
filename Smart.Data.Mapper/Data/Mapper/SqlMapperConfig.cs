@@ -96,15 +96,72 @@ namespace Smart.Data.Mapper
         }
 
         //--------------------------------------------------------------------------------
-        // Cache
+        // Diagnostics
         //--------------------------------------------------------------------------------
 
-        // TODO
-        public int CountParameterBuilderCache => parameterBuilderCache.Count;
+        public sealed class DiagnosticsInfo
+        {
+            public int ParameterCacheCount { get; }
 
-        public int CountResultMapperCache => resultMapperCache.Diagnostics.Count;
+            public int ParameterCacheWidth { get; }
 
-        public int CountTypeHandleEntriesCache => typeHandleEntriesCache.Count;
+            public int ParameterCacheDepth { get; }
+
+            public int ResultMapperCacheCount { get; }
+
+            public int ResultMapperCacheWidth { get; }
+
+            public int ResultMapperCacheDepth { get; }
+
+            public int TypeHandlerCacheCount { get; }
+
+            public int TypeHandlerCacheWidth { get; }
+
+            public int TypeHandlerCacheDepth { get; }
+
+            public DiagnosticsInfo(
+                int parameterCacheCount,
+                int parameterCacheWidth,
+                int parameterCacheDepth,
+                int resultMapperCacheCount,
+                int resultMapperCacheWidth,
+                int resultMapperCacheDepth,
+                int typeHandlerCacheCount,
+                int typeHandlerCacheWidth,
+                int typeHandlerCacheDepth)
+            {
+                ParameterCacheCount = parameterCacheCount;
+                ParameterCacheWidth = parameterCacheWidth;
+                ParameterCacheDepth = parameterCacheDepth;
+                ResultMapperCacheCount = resultMapperCacheCount;
+                ResultMapperCacheWidth = resultMapperCacheWidth;
+                ResultMapperCacheDepth = resultMapperCacheDepth;
+                TypeHandlerCacheCount = typeHandlerCacheCount;
+                TypeHandlerCacheWidth = typeHandlerCacheWidth;
+                TypeHandlerCacheDepth = typeHandlerCacheDepth;
+            }
+        }
+
+        public DiagnosticsInfo Diagnostics
+        {
+            get
+            {
+                var parameterBuilderDiagnostics = parameterBuilderCache.Diagnostics;
+                var resultMapperCacheDiagnostics = resultMapperCache.Diagnostics;
+                var typeHandleDiagnostics = typeHandleEntriesCache.Diagnostics;
+
+                return new DiagnosticsInfo(
+                    parameterBuilderDiagnostics.Count,
+                    parameterBuilderDiagnostics.Width,
+                    parameterBuilderDiagnostics.Depth,
+                    resultMapperCacheDiagnostics.Count,
+                    resultMapperCacheDiagnostics.Width,
+                    resultMapperCacheDiagnostics.Depth,
+                    typeHandleDiagnostics.Count,
+                    typeHandleDiagnostics.Width,
+                    typeHandleDiagnostics.Depth);
+            }
+        }
 
         public void ClearParameterBuilderCache() => parameterBuilderCache.Clear();
 
