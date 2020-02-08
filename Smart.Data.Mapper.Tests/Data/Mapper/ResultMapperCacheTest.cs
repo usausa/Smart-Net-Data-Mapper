@@ -21,11 +21,11 @@ namespace Smart.Data.Mapper
 
             ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
 
-            Assert.Equal(1, config.CountResultMapperCache);
+            Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
             ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
 
-            Assert.Equal(1, config.CountResultMapperCache);
+            Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
         }
 
         [Fact]
@@ -39,7 +39,7 @@ namespace Smart.Data.Mapper
             };
             ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns1, new List<object[]>()));
 
-            Assert.Equal(1, config.CountResultMapperCache);
+            Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
             var columns2 = new[]
             {
@@ -47,7 +47,7 @@ namespace Smart.Data.Mapper
             };
             ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns2, new List<object[]>()));
 
-            Assert.Equal(2, config.CountResultMapperCache);
+            Assert.Equal(2, config.Diagnostics.ResultMapperCacheCount);
 
             var columns3 = new[]
             {
@@ -56,7 +56,7 @@ namespace Smart.Data.Mapper
             };
             ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns3, new List<object[]>()));
 
-            Assert.Equal(3, config.CountResultMapperCache);
+            Assert.Equal(3, config.Diagnostics.ResultMapperCacheCount);
         }
 
         [Fact]
@@ -72,11 +72,11 @@ namespace Smart.Data.Mapper
 
             ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
 
-            Assert.Equal(1, config.CountResultMapperCache);
+            Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
             ((ISqlMapperConfig)config).CreateResultMapper<Data2Entity>(new MockDataReader(columns, new List<object[]>()));
 
-            Assert.Equal(2, config.CountResultMapperCache);
+            Assert.Equal(2, config.Diagnostics.ResultMapperCacheCount);
         }
 
         protected class DataEntity

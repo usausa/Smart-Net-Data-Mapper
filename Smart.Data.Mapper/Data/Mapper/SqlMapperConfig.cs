@@ -101,11 +101,11 @@ namespace Smart.Data.Mapper
 
         public sealed class DiagnosticsInfo
         {
-            public int ParameterCacheCount { get; }
+            public int ParameterBuilderCacheCount { get; }
 
-            public int ParameterCacheWidth { get; }
+            public int ParameterBuilderCacheWidth { get; }
 
-            public int ParameterCacheDepth { get; }
+            public int ParameterBuilderCacheDepth { get; }
 
             public int ResultMapperCacheCount { get; }
 
@@ -120,9 +120,9 @@ namespace Smart.Data.Mapper
             public int TypeHandlerCacheDepth { get; }
 
             public DiagnosticsInfo(
-                int parameterCacheCount,
-                int parameterCacheWidth,
-                int parameterCacheDepth,
+                int parameterBuilderCacheCount,
+                int parameterBuilderCacheWidth,
+                int parameterBuilderCacheDepth,
                 int resultMapperCacheCount,
                 int resultMapperCacheWidth,
                 int resultMapperCacheDepth,
@@ -130,9 +130,9 @@ namespace Smart.Data.Mapper
                 int typeHandlerCacheWidth,
                 int typeHandlerCacheDepth)
             {
-                ParameterCacheCount = parameterCacheCount;
-                ParameterCacheWidth = parameterCacheWidth;
-                ParameterCacheDepth = parameterCacheDepth;
+                ParameterBuilderCacheCount = parameterBuilderCacheCount;
+                ParameterBuilderCacheWidth = parameterBuilderCacheWidth;
+                ParameterBuilderCacheDepth = parameterBuilderCacheDepth;
                 ResultMapperCacheCount = resultMapperCacheCount;
                 ResultMapperCacheWidth = resultMapperCacheWidth;
                 ResultMapperCacheDepth = resultMapperCacheDepth;

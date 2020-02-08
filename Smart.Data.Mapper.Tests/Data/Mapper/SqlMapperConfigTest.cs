@@ -19,11 +19,11 @@ namespace Smart.Data.Mapper
             var config = new SqlMapperConfig();
             ((ISqlMapperConfig)config).CreateParameterBuilder(typeof(object));
 
-            Assert.Equal(1, config.CountParameterBuilderCache);
+            Assert.Equal(1, config.Diagnostics.ParameterBuilderCacheCount);
 
             config.ClearParameterBuilderCache();
 
-            Assert.Equal(0, config.CountParameterBuilderCache);
+            Assert.Equal(0, config.Diagnostics.ParameterBuilderCacheCount);
         }
 
         [Fact]
@@ -32,11 +32,11 @@ namespace Smart.Data.Mapper
             var config = new SqlMapperConfig();
             ((ISqlMapperConfig)config).CreateResultMapper<object>(new MockDataReader(new[] { new MockColumn(typeof(int), "Id") }, new List<object[]>()));
 
-            Assert.Equal(1, config.CountResultMapperCache);
+            Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
             config.ClearResultMapperCache();
 
-            Assert.Equal(0, config.CountResultMapperCache);
+            Assert.Equal(0, config.Diagnostics.ResultMapperCacheCount);
         }
 
         [Fact]
@@ -45,11 +45,11 @@ namespace Smart.Data.Mapper
             var config = new SqlMapperConfig();
             ((ISqlMapperConfig)config).LookupTypeHandle(typeof(int));
 
-            Assert.Equal(1, config.CountTypeHandleEntriesCache);
+            Assert.Equal(1, config.Diagnostics.TypeHandlerCacheCount);
 
             config.ClearTypeHandleEntriesCache();
 
-            Assert.Equal(0, config.CountTypeHandleEntriesCache);
+            Assert.Equal(0, config.Diagnostics.TypeHandlerCacheCount);
         }
 
         [Fact]
