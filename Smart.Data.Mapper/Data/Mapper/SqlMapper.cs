@@ -117,7 +117,7 @@ namespace Smart.Data.Mapper
                 {
                     if (wasClosed)
                     {
-                        con.Close();
+                        await con.CloseAsync().ConfigureAwait(false);
                     }
                 }
             }
@@ -217,7 +217,7 @@ namespace Smart.Data.Mapper
                 {
                     if (wasClosed)
                     {
-                        con.Close();
+                        await con.CloseAsync().ConfigureAwait(false);
                     }
                 }
             }
@@ -304,6 +304,7 @@ namespace Smart.Data.Mapper
             }
             catch (Exception)
             {
+                // ReSharper disable once MethodHasAsyncOverload
                 reader?.Dispose();
                 cmd?.Dispose();
                 throw;
@@ -312,7 +313,7 @@ namespace Smart.Data.Mapper
             {
                 if (wasClosed)
                 {
-                    con.Close();
+                    await con.CloseAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -412,7 +413,7 @@ namespace Smart.Data.Mapper
             {
                 if (wasClosed)
                 {
-                    con.Close();
+                    await con.CloseAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -517,7 +518,7 @@ namespace Smart.Data.Mapper
                 {
                     if (wasClosed)
                     {
-                        con.Close();
+                        await con.CloseAsync().ConfigureAwait(false);
                     }
                 }
             }
@@ -611,7 +612,7 @@ namespace Smart.Data.Mapper
                 {
                     if (wasClosed)
                     {
-                        con.Close();
+                        await con.CloseAsync().ConfigureAwait(false);
                     }
                 }
             }

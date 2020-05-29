@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper
 {
     using System;
 
-    public struct ColumnInfo : IEquatable<ColumnInfo>
+    public readonly struct ColumnInfo : IEquatable<ColumnInfo>
     {
         public string Name { get; }
 

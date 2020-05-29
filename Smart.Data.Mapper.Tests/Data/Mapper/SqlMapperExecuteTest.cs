@@ -10,6 +10,7 @@ namespace Smart.Data.Mapper
 
     using Xunit;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
     public class SqlMapperExecuteTest
     {
         //--------------------------------------------------------------------------------

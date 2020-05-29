@@ -1,4 +1,4 @@
-﻿namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper
 {
     using System;
     using System.Data;
@@ -72,6 +72,7 @@
 
             public Value? Value6 { get; set; }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2011:DoNotAssignPropertyWithinTtsSetter", Justification = "Ignore")]
             public int Value7 { set => Value7 = value; }
 
             [Ignore]

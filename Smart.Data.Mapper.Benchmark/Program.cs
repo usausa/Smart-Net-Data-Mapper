@@ -24,9 +24,9 @@ namespace Smart.Data.Mapper.Benchmark
     {
         public BenchmarkConfig()
         {
-            Add(MarkdownExporter.Default, MarkdownExporter.GitHub);
-            Add(MemoryDiagnoser.Default);
-            Add(Job.LongRun);
+            AddExporter(MarkdownExporter.Default, MarkdownExporter.GitHub);
+            AddDiagnoser(MemoryDiagnoser.Default);
+            AddJob(Job.LongRun);
         }
     }
 

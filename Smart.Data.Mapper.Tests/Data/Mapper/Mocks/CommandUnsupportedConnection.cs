@@ -12,6 +12,7 @@ namespace Smart.Data.Mapper.Mocks
 
         public override string Database => string.Empty;
 
+        // ReSharper disable once ConvertToAutoPropertyWithPrivateSetter
         public override ConnectionState State => state;
 
         public override string DataSource => string.Empty;
