@@ -86,7 +86,7 @@ namespace Smart.Data.Mapper.Mappers
                     var method = getValueWithConvertMethod.MakeGenericMethod(entry.Property.PropertyType);
                     ilGenerator.Emit(OpCodes.Call, method);
                 }
-                ilGenerator.Emit(OpCodes.Callvirt, entry.Property.SetMethod);
+                ilGenerator.EmitCallMethod(entry.Property.SetMethod);
             }
 
             ilGenerator.Emit(OpCodes.Ret);
