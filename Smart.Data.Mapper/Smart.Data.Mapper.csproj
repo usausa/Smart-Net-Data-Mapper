@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -13,5 +13,13 @@
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="Usa.Smart.Core" Version="1.8.8" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <PackageId>Usa.Smart.Data.Mapper</PackageId>
+    <Title>Smart.Data.Mapper .NET</Title>
+    <Description>Smart data mapper library for .NET</Description>
+    <Summary>Smart data mapper library for .NET</Summary>
+    <PackageTags>smart ado.net orm micro-orm</PackageTags>
+  </PropertyGroup>
 
 </Project>

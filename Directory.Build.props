@@ -3,11 +3,21 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
-    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\'))</RepoRoot>
-    <PathMap>$(RepoRoot)=.</PathMap>
     <NoWarn>$(NoWarn),1573,1591,1712</NoWarn>
     <MSBuildWarningsAsMessages>SA0001</MSBuildWarningsAsMessages>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <Version>1.4.4</Version>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <MinClientVersion>2.12</MinClientVersion>
+    <Authors>machi_pon</Authors>
+    <Copyright></Copyright>
+    <PackageProjectUrl>https://github.com/usausa/Smart-Net-Data-Mapper</PackageProjectUrl>
+    <PackageLicenseExpression></PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
