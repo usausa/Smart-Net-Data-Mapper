@@ -6,6 +6,8 @@ namespace Smart.Data.Mapper.Builders
 
     public static class SqlDelete<T>
     {
+        private static readonly string AllSql;
+
         private static readonly string ByKeySql;
 
         private static readonly string WhereSqlBase;
@@ -17,6 +19,9 @@ namespace Smart.Data.Mapper.Builders
 
             sql.Append("DELETE FROM ");
             sql.Append(tableInfo.Name);
+
+            AllSql = sql.ToString();
+
             sql.Append(" WHERE ");
 
             WhereSqlBase = sql.ToString();
@@ -32,6 +37,8 @@ namespace Smart.Data.Mapper.Builders
                 ByKeySql = null;
             }
         }
+
+        public static string All() => AllSql;
 
         public static string ByKey() => ByKeySql;
 
