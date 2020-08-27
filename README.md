@@ -1,5 +1,7 @@
 # Smart.Data.Mapper .NET - micro-orm library for .NET
 
+[![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.Data.Mapper)](https://www.nuget.org/packages/Usa.Smart.Data.Mapper/)
+
 ## What is this?
 
 * Smart.Data.Mapper .NET is simplified micro-orm library, degradation version of Dapper.
@@ -39,9 +41,10 @@ var result = parameter.OutParam;
 
 ## NuGet
 
-| Id                    |
-|-----------------------|
-| Usa.Smart.Data.Mapper |
+| Package |
+|-|
+| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.Data.Mapper)](https://www.nuget.org/packages/Usa.Smart.Data.Mapper/) |
+| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.Data.Mapper.Builders)](https://www.nuget.org/packages/Usa.Smart.Data.Mapper.Builders/) |
 
 ## Functions
 
