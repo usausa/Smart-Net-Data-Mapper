@@ -43,7 +43,7 @@ namespace Smart.Data.Mapper
                 var hash = targetType.GetHashCode();
                 for (var i = 0; i < columns.Length; i++)
                 {
-                    hash = (hash * 31) + (columns[i].Name.GetHashCode(StringComparison.OrdinalIgnoreCase) ^ columns[i].Type.GetHashCode());
+                    hash = (hash * 31) + (columns[i].Name.GetHashCode(StringComparison.Ordinal) ^ columns[i].Type.GetHashCode());
                 }
                 return hash;
             }
@@ -231,7 +231,7 @@ namespace Smart.Data.Mapper
                     return false;
                 }
 
-                if (String.Compare(column1.Name, column2.Name, StringComparison.OrdinalIgnoreCase) != 0)
+                if (String.Compare(column1.Name, column2.Name, StringComparison.Ordinal) != 0)
                 {
                     return false;
                 }

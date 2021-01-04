@@ -2,7 +2,8 @@ namespace Smart.Data.Mapper
 {
     using System;
 
-    public readonly struct ColumnInfo : IEquatable<ColumnInfo>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "Ignore")]
+    public readonly struct ColumnInfo
     {
         public string Name { get; }
 
@@ -13,16 +14,5 @@ namespace Smart.Data.Mapper
             Name = name;
             Type = type;
         }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.SpacingRules", "SA1008:OpeningParenthesisMustBeSpacedCorrectly", Justification = "Ignore")]
-        public override int GetHashCode() => Name.GetHashCode(StringComparison.OrdinalIgnoreCase) ^ Type.GetHashCode();
-
-        public override bool Equals(object obj) => obj is ColumnInfo other && Equals(other);
-
-        public bool Equals(ColumnInfo other) => Name == other.Name && Type == other.Type;
-
-        public static bool operator ==(ColumnInfo x, ColumnInfo y) => x.Equals(y);
-
-        public static bool operator !=(ColumnInfo x, ColumnInfo y) => !x.Equals(y);
     }
 }
