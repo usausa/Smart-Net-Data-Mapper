@@ -2,19 +2,20 @@ namespace Smart.Data.Mapper
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
     using System.Threading;
 
     [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
     internal sealed class ResultMapperCache
     {
-        private static readonly Node EmptyNode = new Node(typeof(EmptyKey), Array.Empty<ColumnInfo>(), default);
+        private static readonly Node EmptyNode = new(typeof(EmptyKey), Array.Empty<ColumnInfo>(), default!);
 
         private const int InitialSize = 64;
 
         private const int Factor = 3;
 
-        private readonly object sync = new object();
+        private readonly object sync = new();
 
         private Node[] nodes;
 
@@ -51,14 +52,13 @@ namespace Smart.Data.Mapper
 
         private static int CalculateDepth(Node node)
         {
-            var length = 0;
-
-            do
+            var length = 1;
+            var next = node.Next;
+            while (next is not null)
             {
                 length++;
-                node = node.Next;
+                next = next.Next;
             }
-            while (node != null);
 
             return length;
         }
@@ -105,7 +105,7 @@ namespace Smart.Data.Mapper
 
         private static Node FindLastNode(Node node)
         {
-            while (node.Next != null)
+            while (node.Next is not null)
             {
                 node = node.Next;
             }
@@ -241,7 +241,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, out object value)
+        public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, [NotNullWhen(true)] out object? value)
         {
             var temp = nodes;
             var node = temp[CalculateHash(targetType, columns) & (temp.Length - 1)];
@@ -305,7 +305,7 @@ namespace Smart.Data.Mapper
 
             public readonly object Value;
 
-            public Node Next;
+            public Node? Next;
 
             public Node(Type targetType, ColumnInfo[] columns, object value)
             {

@@ -97,7 +97,7 @@ namespace Smart.Data.Mapper
             public Value? Output6 { get; set; }
 
             [Direction(ParameterDirection.Output)]
-            public string Output7 { get; set; }
+            public string? Output7 { get; set; }
         }
 
         protected enum Value

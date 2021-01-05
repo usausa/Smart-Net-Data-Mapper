@@ -7,14 +7,14 @@ namespace Smart.Data.Mapper
 
     public sealed class DynamicParameter : IDynamicParameter
     {
-        private readonly Dictionary<string, ParameterInfo> parameters = new Dictionary<string, ParameterInfo>();
+        private readonly Dictionary<string, ParameterInfo> parameters = new();
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
         private sealed class ParameterInfo
         {
             public readonly string Name;
 
-            public readonly object Value;
+            public readonly object? Value;
 
             public readonly DbType? DbType;
 
@@ -22,9 +22,9 @@ namespace Smart.Data.Mapper
 
             public readonly ParameterDirection Direction;
 
-            public IDbDataParameter AttachedParam;
+            public IDbDataParameter? AttachedParam;
 
-            public ParameterInfo(string name, object value, DbType? dbType, int? size, ParameterDirection direction)
+            public ParameterInfo(string name, object? value, DbType? dbType, int? size, ParameterDirection direction)
             {
                 Name = name;
                 Value = value;
@@ -34,20 +34,20 @@ namespace Smart.Data.Mapper
             }
         }
 
-        public void Add(string name, object value, DbType? dbType = null, int? size = null, ParameterDirection direction = ParameterDirection.Input)
+        public void Add(string name, object? value, DbType? dbType = null, int? size = null, ParameterDirection direction = ParameterDirection.Input)
         {
             parameters[name] = new ParameterInfo(name, value, dbType, size, direction);
         }
 
-        public T Get<T>(string name)
+        public T? Get<T>(string name)
         {
-            var value = parameters[name].AttachedParam.Value;
+            var value = parameters[name].AttachedParam?.Value ?? DBNull.Value;
             if (value == DBNull.Value)
             {
                 return default;
             }
 
-            return (T)value;
+            return (T)value!;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
@@ -78,7 +78,7 @@ namespace Smart.Data.Mapper
                             param.Size = parameter.Size.Value;
                         }
 
-                        if (entry.TypeHandler != null)
+                        if (entry.TypeHandler is not null)
                         {
                             entry.TypeHandler.SetValue(param, value);
                         }

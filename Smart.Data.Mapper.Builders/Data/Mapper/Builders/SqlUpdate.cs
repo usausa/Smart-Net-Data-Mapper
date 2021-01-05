@@ -7,11 +7,11 @@ namespace Smart.Data.Mapper.Builders
 
     public static class SqlUpdate<T>
     {
-        private static readonly string ByKeySql;
+        private static readonly string? ByKeySql;
 
         private static readonly string UpdateSql;
 
-        private static readonly string KeyConditionSql;
+        private static readonly string? KeyConditionSql;
 
         static SqlUpdate()
         {
@@ -34,7 +34,7 @@ namespace Smart.Data.Mapper.Builders
                 {
                     sql.Append(column.Name);
                     sql.Append(" = ");
-                    sql.Append("@");
+                    sql.Append('@');
                     sql.Append(column.Property.Name);
                     sql.Append(", ");
                 }
@@ -50,9 +50,9 @@ namespace Smart.Data.Mapper.Builders
             }
         }
 
-        public static string ByKey() => ByKeySql;
+        public static string? ByKey() => ByKeySql;
 
-        public static string ByKey(string set) => KeyConditionSql != null ? String.Concat(UpdateSql, set, KeyConditionSql) : null;
+        public static string? ByKey(string set) => KeyConditionSql is not null ? String.Concat(UpdateSql, set, KeyConditionSql) : null;
 
         public static string Set(string set, string condition) => String.Concat(UpdateSql, set, " WHERE ", condition);
     }

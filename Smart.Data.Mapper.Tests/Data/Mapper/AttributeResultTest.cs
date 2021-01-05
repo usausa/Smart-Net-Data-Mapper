@@ -20,7 +20,7 @@ namespace Smart.Data.Mapper
 
                 var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
-                Assert.Equal(1L, entity.No);
+                Assert.Equal(1L, entity!.No);
                 Assert.Equal("test", entity.Text);
             }
         }
@@ -31,7 +31,7 @@ namespace Smart.Data.Mapper
             public long No { get; set; }
 
             [Name("Name")]
-            public string Text { get; set; }
+            public string? Text { get; set; }
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
 
     public sealed class StandardTableInfoProvider : ITableInfoProvider
     {
-        public static StandardTableInfoProvider Default { get; } = new StandardTableInfoProvider();
+        public static StandardTableInfoProvider Default { get; } = new();
 
         public IList<string> RemoveSuffix { get; } = new List<string>(new[] { "Entity" });
 
@@ -22,12 +22,12 @@ namespace Smart.Data.Mapper.Builders.Metadata
                 .ToArray();
             var keyColumns = columns
                 .Select(x => new { Column = x, Attribute = x.Property.GetCustomAttribute<PrimaryKeyAttribute>() })
-                .Where(x => x.Attribute != null)
-                .OrderBy(x => x.Attribute.Order)
+                .Where(x => x.Attribute is not null)
+                .OrderBy(x => x.Attribute!.Order)
                 .Select(x => x.Column)
                 .ToArray();
             var nonKeyColumns = columns
-                .Where(x => x.Property.GetCustomAttribute<PrimaryKeyAttribute>() == null)
+                .Where(x => x.Property.GetCustomAttribute<PrimaryKeyAttribute>() is null)
                 .ToArray();
 
             return new TableInfo(ResolveName(type), columns, keyColumns, nonKeyColumns);
@@ -35,13 +35,13 @@ namespace Smart.Data.Mapper.Builders.Metadata
 
         private static bool IsTargetProperty(PropertyInfo pi)
         {
-            return pi.CanRead && (pi.GetCustomAttribute<IgnoreAttribute>() == null);
+            return pi.CanRead && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
         }
 
         private string ResolveName(MemberInfo mi)
         {
             var attribute = mi.GetCustomAttribute<NameAttribute>();
-            if (attribute != null)
+            if (attribute is not null)
             {
                 return attribute.Name;
             }

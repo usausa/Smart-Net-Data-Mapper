@@ -5,11 +5,11 @@ namespace Smart.Data.Mapper.Parameters
 
     public sealed class ParameterBuilder
     {
-        public Action<DbCommand, object> Build { get; }
+        public Action<DbCommand, object>? Build { get; }
 
-        public Action<DbCommand, object> PostProcess { get; }
+        public Action<DbCommand, object>? PostProcess { get; }
 
-        public ParameterBuilder(Action<DbCommand, object> build, Action<DbCommand, object> postProcess)
+        public ParameterBuilder(Action<DbCommand, object>? build, Action<DbCommand, object>? postProcess)
         {
             Build = build;
             PostProcess = postProcess;

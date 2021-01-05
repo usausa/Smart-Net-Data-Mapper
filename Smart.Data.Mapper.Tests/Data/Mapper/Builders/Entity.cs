@@ -1,4 +1,4 @@
-﻿namespace Smart.Data.Mapper.Builders
+namespace Smart.Data.Mapper.Builders
 {
     using Smart.Data.Mapper.Attributes;
 
@@ -12,7 +12,7 @@
         [Name("SubKey")]
         public int Key2 { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Name("Flag")]
         public bool IsEnable { get; set; }

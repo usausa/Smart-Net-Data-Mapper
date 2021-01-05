@@ -11,7 +11,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
             {
                 sql.Append(column.Name);
                 sql.Append(" = ");
-                sql.Append("@");
+                sql.Append('@');
                 sql.Append(column.Property.Name);
                 sql.Append(" AND ");
             }

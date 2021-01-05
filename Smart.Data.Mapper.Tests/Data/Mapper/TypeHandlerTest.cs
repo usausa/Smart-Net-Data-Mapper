@@ -29,7 +29,7 @@ namespace Smart.Data.Mapper
 
                 var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
-                Assert.Equal(date, entity.Date);
+                Assert.Equal(date, entity!.Date);
 
                 var rawValue = con.ExecuteScalar<long>("SELECT Date FROM Data WHERE Id = @Id", new { Id = 1 });
 

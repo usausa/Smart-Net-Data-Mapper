@@ -83,14 +83,14 @@ namespace Smart.Data.Mapper
         {
             public long Id { get; set; }
 
-            public string Name { get; set; }
+            public string? Name { get; set; }
         }
 
         protected class Data2Entity
         {
             public long Id { get; set; }
 
-            public string Name { get; set; }
+            public string? Name { get; set; }
         }
     }
 }

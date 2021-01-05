@@ -4,7 +4,7 @@ namespace Smart.Data.Mapper.Parameters
 
     public sealed class DynamicParameterBuilderFactory : IParameterBuilderFactory
     {
-        public static DynamicParameterBuilderFactory Instance { get; } = new DynamicParameterBuilderFactory();
+        public static DynamicParameterBuilderFactory Instance { get; } = new();
 
         private DynamicParameterBuilderFactory()
         {
@@ -17,7 +17,7 @@ namespace Smart.Data.Mapper.Parameters
 
         public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
         {
-            return new ParameterBuilder(
+            return new(
                 (cmd, parameter) => ((IDynamicParameter)parameter).Build(config, cmd),
                 null);
         }

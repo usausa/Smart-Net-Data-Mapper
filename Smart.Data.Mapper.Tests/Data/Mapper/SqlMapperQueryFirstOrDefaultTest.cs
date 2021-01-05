@@ -31,7 +31,7 @@ namespace Smart.Data.Mapper
                 var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
                 Assert.NotNull(entity);
-                Assert.Equal(1, entity.Id);
+                Assert.Equal(1, entity!.Id);
                 Assert.Equal("test1", entity.Name);
 
                 entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 });
@@ -53,7 +53,7 @@ namespace Smart.Data.Mapper
                 var entity = await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 }).ConfigureAwait(false);
 
                 Assert.NotNull(entity);
-                Assert.Equal(1, entity.Id);
+                Assert.Equal(1, entity!.Id);
                 Assert.Equal("test1", entity.Name);
 
                 entity = await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 0 }).ConfigureAwait(false);
@@ -232,7 +232,7 @@ namespace Smart.Data.Mapper
         {
             public int Id { get; set; }
 
-            public string Name { get; set; }
+            public string? Name { get; set; }
         }
     }
 }

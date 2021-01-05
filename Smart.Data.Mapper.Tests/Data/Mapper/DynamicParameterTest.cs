@@ -85,7 +85,7 @@ namespace Smart.Data.Mapper
 
                 var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
-                Assert.Equal(1L, entity.Id);
+                Assert.Equal(1L, entity!.Id);
                 Assert.Null(entity.Name);
                 Assert.Equal(new DateTime(2000, 1, 1), entity.Date);
             }
@@ -95,7 +95,7 @@ namespace Smart.Data.Mapper
         {
             public int Id { get; set; }
 
-            public string Name { get; set; }
+            public string? Name { get; set; }
 
             public DateTime Date { get; set; }
         }

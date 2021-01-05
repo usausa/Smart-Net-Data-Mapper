@@ -13,7 +13,7 @@ namespace Smart.Data.Mapper.Mappers
 
     public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
     {
-        public static EmitObjectResultMapperFactory Instance { get; } = new EmitObjectResultMapperFactory();
+        public static EmitObjectResultMapperFactory Instance { get; } = new();
 
         private readonly MethodInfo getValueMethod;
 
@@ -21,15 +21,15 @@ namespace Smart.Data.Mapper.Mappers
 
         private int typeNo;
 
-        private AssemblyBuilder assemblyBuilder;
+        private AssemblyBuilder? assemblyBuilder;
 
-        private ModuleBuilder moduleBuilder;
+        private ModuleBuilder? moduleBuilder;
 
         private ModuleBuilder ModuleBuilder
         {
             get
             {
-                if (moduleBuilder == null)
+                if (moduleBuilder is null)
                 {
                     assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
                         new AssemblyName("EmitObjectResultMapperFactoryAssembly"),
@@ -44,8 +44,8 @@ namespace Smart.Data.Mapper.Mappers
 
         private EmitObjectResultMapperFactory()
         {
-            getValueMethod = GetType().GetMethod(nameof(GetValue), BindingFlags.Static | BindingFlags.NonPublic);
-            getValueWithConvertMethod = GetType().GetMethod(nameof(GetValueWithConvert), BindingFlags.Static | BindingFlags.NonPublic);
+            getValueMethod = GetType().GetMethod(nameof(GetValue), BindingFlags.Static | BindingFlags.NonPublic)!;
+            getValueWithConvertMethod = GetType().GetMethod(nameof(GetValueWithConvert), BindingFlags.Static | BindingFlags.NonPublic)!;
         }
 
         public bool IsMatch(Type type) => true;
@@ -73,7 +73,7 @@ namespace Smart.Data.Mapper.Mappers
                 ilGenerator.Emit(OpCodes.Dup);
                 ilGenerator.Emit(OpCodes.Ldarg_1);
                 ilGenerator.EmitLdcI4(entry.Index);
-                if (entry.Parser == null)
+                if (entry.Parser is null)
                 {
                     var method = getValueMethod.MakeGenericMethod(entry.Property.PropertyType);
                     ilGenerator.Emit(OpCodes.Call, method);
@@ -82,11 +82,11 @@ namespace Smart.Data.Mapper.Mappers
                 {
                     var field = holderType.GetField($"parser{entry.Index}");
                     ilGenerator.Emit(OpCodes.Ldarg_0);
-                    ilGenerator.Emit(OpCodes.Ldfld, field);
+                    ilGenerator.Emit(OpCodes.Ldfld, field!);
                     var method = getValueWithConvertMethod.MakeGenericMethod(entry.Property.PropertyType);
                     ilGenerator.Emit(OpCodes.Call, method);
                 }
-                ilGenerator.EmitCallMethod(entry.Property.SetMethod);
+                ilGenerator.EmitCallMethod(entry.Property.SetMethod!);
             }
 
             ilGenerator.Emit(OpCodes.Ret);
@@ -107,7 +107,7 @@ namespace Smart.Data.Mapper.Mappers
             {
                 var column = columns[i];
                 var pi = selector(properties, column.Name);
-                if (pi == null)
+                if (pi is null)
                 {
                     continue;
                 }
@@ -120,7 +120,7 @@ namespace Smart.Data.Mapper.Mappers
 
         private static bool IsTargetProperty(PropertyInfo pi)
         {
-            return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() == null);
+            return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
         }
 
         private object CreateHolder(MapEntry[] entries)
@@ -133,7 +133,7 @@ namespace Smart.Data.Mapper.Mappers
             // Define setter fields
             foreach (var entry in entries)
             {
-                if (entry.Parser != null)
+                if (entry.Parser is not null)
                 {
                     typeBuilder.DefineField(
                         $"parser{entry.Index}",
@@ -143,30 +143,30 @@ namespace Smart.Data.Mapper.Mappers
             }
 
             var typeInfo = typeBuilder.CreateTypeInfo();
-            var holderType = typeInfo.AsType();
+            var holderType = typeInfo!.AsType();
             var holder = Activator.CreateInstance(holderType);
 
             foreach (var entry in entries)
             {
-                if (entry.Parser != null)
+                if (entry.Parser is not null)
                 {
                     var field = holderType.GetField($"parser{entry.Index}");
-                    field.SetValue(holder, entry.Parser);
+                    field!.SetValue(holder, entry.Parser);
                 }
             }
 
-            return holder;
+            return holder!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T GetValue<T>(IDataRecord reader, int index)
+        private static T? GetValue<T>(IDataRecord reader, int index)
         {
             var value = reader.GetValue(index);
             return value is DBNull ? default : (T)value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T GetValueWithConvert<T>(IDataRecord reader, int index, Func<object, object> parser)
+        private static T? GetValueWithConvert<T>(IDataRecord reader, int index, Func<object, object> parser)
         {
             var value = reader.GetValue(index);
             return value is DBNull ? default : (T)parser(value);
@@ -179,9 +179,9 @@ namespace Smart.Data.Mapper.Mappers
 
             public readonly PropertyInfo Property;
 
-            public readonly Func<object, object> Parser;
+            public readonly Func<object, object>? Parser;
 
-            public MapEntry(int index, PropertyInfo property, Func<object, object> parser)
+            public MapEntry(int index, PropertyInfo property, Func<object, object>? parser)
             {
                 Index = index;
                 Property = property;

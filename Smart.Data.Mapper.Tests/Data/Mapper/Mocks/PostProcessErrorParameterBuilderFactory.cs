@@ -9,7 +9,7 @@ namespace Smart.Data.Mapper.Mocks
 
         public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
         {
-            return new ParameterBuilder(null, (c, v) => throw new NotSupportedException());
+            return new(null, (_, _) => throw new NotSupportedException());
         }
     }
 }

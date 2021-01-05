@@ -38,7 +38,7 @@ namespace Smart.Data.Mapper
             public int Value { get; set; }
 
             [Ignore]
-            public string Ignore { get; set; }
+            public string? Ignore { get; set; }
         }
     }
 }

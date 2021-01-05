@@ -11,7 +11,7 @@ namespace Smart.Data.Mapper.Parameters
 
     public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
     {
-        public static ObjectParameterBuilderFactory Instance { get; } = new ObjectParameterBuilderFactory();
+        public static ObjectParameterBuilderFactory Instance { get; } = new();
 
         private ObjectParameterBuilderFactory()
         {
@@ -46,12 +46,17 @@ namespace Smart.Data.Mapper.Parameters
 
         private static bool IsTargetProperty(PropertyInfo pi)
         {
-            return pi.CanRead && (pi.GetCustomAttribute<IgnoreAttribute>() == null);
+            return pi.CanRead && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
         }
 
-        private static Action<object, object> CreateConvertSetter(ISqlMapperConfig config, PropertyInfo pi)
+        private static Action<object?, object?>? CreateConvertSetter(ISqlMapperConfig config, PropertyInfo pi)
         {
             var setter = config.CreateSetter(pi);
+            if (setter is null)
+            {
+                return null;
+            }
+
             var defaultValue = pi.PropertyType.GetDefaultValue();
             var destinationType = pi.PropertyType;
 
@@ -63,8 +68,8 @@ namespace Smart.Data.Mapper.Parameters
                 }
                 else
                 {
-                    var parser = config.CreateParser(value.GetType(), destinationType);
-                    if (parser == null)
+                    var parser = config.CreateParser(value!.GetType(), destinationType);
+                    if (parser is null)
                     {
                         setter(target, value);
                     }
@@ -89,7 +94,7 @@ namespace Smart.Data.Mapper.Parameters
 
                     param.Direction = entry.Direction;
 
-                    if (entry.Getter != null)
+                    if (entry.Getter is not null)
                     {
                         var value = entry.Getter(parameter);
                         if (value is null)
@@ -105,7 +110,7 @@ namespace Smart.Data.Mapper.Parameters
                                 param.Size = entry.Size.Value;
                             }
 
-                            if (entry.Handler != null)
+                            if (entry.Handler is not null)
                             {
                                 entry.Handler.SetValue(param, value);
                             }
@@ -121,9 +126,9 @@ namespace Smart.Data.Mapper.Parameters
             };
         }
 
-        private static Action<DbCommand, object> CreatePostProcessAction(ParameterEntry[] entries)
+        private static Action<DbCommand, object>? CreatePostProcessAction(ParameterEntry[] entries)
         {
-            if (entries.Any(x => x.Setter != null))
+            if (entries.Any(x => x.Setter is not null))
             {
                 return (cmd, parameter) =>
                 {
@@ -142,19 +147,19 @@ namespace Smart.Data.Mapper.Parameters
         {
             public readonly string Name;
 
-            public readonly Func<object, object> Getter;
+            public readonly Func<object?, object?>? Getter;
 
-            public readonly Action<object, object> Setter;
+            public readonly Action<object?, object?>? Setter;
 
             public readonly DbType DbType;
 
-            public readonly ITypeHandler Handler;
+            public readonly ITypeHandler? Handler;
 
             public readonly int? Size;
 
             public readonly ParameterDirection Direction;
 
-            public ParameterEntry(string name, Func<object, object> getter, Action<object, object> setter, DbType dbType, ITypeHandler handler, int? size, ParameterDirection direction)
+            public ParameterEntry(string name, Func<object?, object?>? getter, Action<object?, object?>? setter, DbType dbType, ITypeHandler? handler, int? size, ParameterDirection direction)
             {
                 Name = name;
                 Getter = getter;

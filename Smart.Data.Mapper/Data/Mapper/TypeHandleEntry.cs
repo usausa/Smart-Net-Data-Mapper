@@ -10,9 +10,9 @@ namespace Smart.Data.Mapper
 
         public DbType DbType { get; }
 
-        public ITypeHandler TypeHandler { get; }
+        public ITypeHandler? TypeHandler { get; }
 
-        public TypeHandleEntry(bool canUseAsParameter, DbType dbType, ITypeHandler typeHandler)
+        public TypeHandleEntry(bool canUseAsParameter, DbType dbType, ITypeHandler? typeHandler)
         {
             CanUseAsParameter = canUseAsParameter;
             DbType = dbType;

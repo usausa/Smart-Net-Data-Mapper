@@ -24,7 +24,7 @@ namespace Smart.Data.Mapper
                     "7 AS ColumnName7");
 
                 Assert.NotNull(entity);
-                Assert.Equal(1, entity.ColumnName1);
+                Assert.Equal(1, entity!.ColumnName1);
                 Assert.Equal(2, entity.ColumnName2);
                 Assert.Equal(3, entity.ColumnName3);
                 Assert.Equal(4, entity.ColumnName4);

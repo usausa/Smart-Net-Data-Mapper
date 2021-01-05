@@ -44,7 +44,7 @@ namespace Smart.Data.Mapper.Mappers
         public bool IsMatch(Type type)
         {
             var targetType = type.IsNullableType() ? Nullable.GetUnderlyingType(type) : type;
-            return supportedTypes.Contains(targetType);
+            return supportedTypes.Contains(targetType!);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
@@ -52,9 +52,9 @@ namespace Smart.Data.Mapper.Mappers
         {
             var defaultValue = default(T);
             var parser = config.CreateParser(columns[0].Type, typeof(T));
-            return parser == null
-                ? CreateConvertMapper(defaultValue)
-                : CreateConvertMapper(defaultValue, parser);
+            return parser is null
+                ? CreateConvertMapper(defaultValue!)
+                : CreateConvertMapper(defaultValue!, parser);
         }
 
         private static Func<IDataRecord, T> CreateConvertMapper<T>(T defaultValue)

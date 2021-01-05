@@ -54,10 +54,10 @@ namespace Smart.Data.Mapper
                 var list = await con.QueryAsync<DataEntity>("SELECT * FROM Data ORDER BY Id").ToListAsync().ConfigureAwait(false);
 
                 Assert.Equal(2, list.Count);
-                Assert.Equal(1, list[0].Id);
-                Assert.Equal("test1", list[0].Name);
-                Assert.Equal(2, list[1].Id);
-                Assert.Equal("test2", list[1].Name);
+                Assert.Equal(1, list[0]!.Id);
+                Assert.Equal("test1", list[0]!.Name);
+                Assert.Equal(2, list[1]!.Id);
+                Assert.Equal("test2", list[1]!.Name);
             }
         }
 
@@ -302,7 +302,7 @@ namespace Smart.Data.Mapper
         {
             public int Id { get; set; }
 
-            public string Name { get; set; }
+            public string? Name { get; set; }
         }
     }
 }

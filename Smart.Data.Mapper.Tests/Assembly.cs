@@ -1,4 +1,4 @@
 using System;
 
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 [assembly: Xunit.CollectionBehavior(DisableTestParallelization = true)]

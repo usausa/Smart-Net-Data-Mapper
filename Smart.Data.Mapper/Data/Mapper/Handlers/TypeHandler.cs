@@ -16,7 +16,7 @@ namespace Smart.Data.Mapper.Handlers
 
         public Func<object, object> CreateParse(Type type)
         {
-            return x => Parse(x);
+            return x => Parse(x)!;
         }
     }
 }

@@ -1,3 +1,4 @@
+#nullable disable
 namespace Smart.Data.Mapper.Mocks
 {
     using System;

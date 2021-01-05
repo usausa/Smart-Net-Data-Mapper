@@ -25,12 +25,12 @@ namespace Smart.Data.Mapper.Builders
             sql.Append(") VALUES (");
             foreach (var column in tableInfo.Columns)
             {
-                sql.Append("@");
+                sql.Append('@');
                 sql.Append(column.Property.Name);
                 sql.Append(", ");
             }
             sql.Length -= 2;
-            sql.Append(")");
+            sql.Append(')');
 
             ValuesSql = sql.ToString();
         }

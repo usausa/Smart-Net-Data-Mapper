@@ -28,7 +28,7 @@ namespace Smart.Data.Mapper
             ReflectionHelper.IsCodegenAllowed ? (IResultMapperFactory)EmitObjectResultMapperFactory.Instance : ObjectResultMapperFactory.Instance
         };
 
-        private static readonly Dictionary<Type, DbType> DefaultTypeMap = new Dictionary<Type, DbType>
+        private static readonly Dictionary<Type, DbType> DefaultTypeMap = new()
         {
             { typeof(byte), DbType.Byte },
             { typeof(sbyte), DbType.SByte },
@@ -52,16 +52,16 @@ namespace Smart.Data.Mapper
             { typeof(object), DbType.Object }
         };
 
-        private static readonly Dictionary<Type, ITypeHandler> DefaultTypeHandlers = new Dictionary<Type, ITypeHandler>();
+        private static readonly Dictionary<Type, ITypeHandler> DefaultTypeHandlers = new();
 
         [ThreadStatic]
-        private static ColumnInfo[] columnInfoPool;
+        private static ColumnInfo[]? columnInfoPool;
 
-        private readonly ThreadsafeTypeHashArrayMap<ParameterBuilder> parameterBuilderCache = new ThreadsafeTypeHashArrayMap<ParameterBuilder>();
+        private readonly ThreadsafeTypeHashArrayMap<ParameterBuilder> parameterBuilderCache = new();
 
-        private readonly ResultMapperCache resultMapperCache = new ResultMapperCache();
+        private readonly ResultMapperCache resultMapperCache = new();
 
-        private readonly ThreadsafeTypeHashArrayMap<TypeHandleEntry> typeHandleEntriesCache = new ThreadsafeTypeHashArrayMap<TypeHandleEntry>();
+        private readonly ThreadsafeTypeHashArrayMap<TypeHandleEntry> typeHandleEntriesCache = new();
 
         private IParameterBuilderFactory[] parameterBuilderFactories;
 
@@ -75,7 +75,7 @@ namespace Smart.Data.Mapper
         // Property
         //--------------------------------------------------------------------------------
 
-        public static SqlMapperConfig Default { get; } = new SqlMapperConfig();
+        public static SqlMapperConfig Default { get; } = new();
 
         public IDelegateFactory DelegateFactory { get; set; } = Smart.Reflection.DelegateFactory.Default;
 
@@ -263,22 +263,22 @@ namespace Smart.Data.Mapper
 
         Func<T> ISqlMapperConfig.CreateFactory<T>() => DelegateFactory.CreateFactory<T>();
 
-        Func<object, object> ISqlMapperConfig.CreateGetter(PropertyInfo pi) => DelegateFactory.CreateGetter(pi);
+        Func<object?, object?>? ISqlMapperConfig.CreateGetter(PropertyInfo pi) => DelegateFactory.CreateGetter(pi);
 
-        Action<object, object> ISqlMapperConfig.CreateSetter(PropertyInfo pi) => DelegateFactory.CreateSetter(pi);
+        Action<object?, object?>? ISqlMapperConfig.CreateSetter(PropertyInfo pi) => DelegateFactory.CreateSetter(pi);
 
         public T Convert<T>(object source) => Converter.Convert<T>(source);
 
-        Func<PropertyInfo[], string, PropertyInfo> ISqlMapperConfig.GetPropertySelector() => PropertySelector.SelectProperty;
+        Func<PropertyInfo[], string, PropertyInfo?> ISqlMapperConfig.GetPropertySelector() => PropertySelector.SelectProperty;
 
-        Func<object, object> ISqlMapperConfig.CreateParser(Type sourceType, Type destinationType)
+        Func<object, object>? ISqlMapperConfig.CreateParser(Type sourceType, Type destinationType)
         {
             if (!typeHandleEntriesCache.TryGetValue(destinationType, out var entry))
             {
                 entry = typeHandleEntriesCache.AddIfNotExist(destinationType, CreateTypeHandleInternal);
             }
 
-            if (entry.TypeHandler != null)
+            if (entry!.TypeHandler != null)
             {
                 return entry.TypeHandler.CreateParse(destinationType);
             }
@@ -299,7 +299,7 @@ namespace Smart.Data.Mapper
                 entry = typeHandleEntriesCache.AddIfNotExist(type, CreateTypeHandleInternal);
             }
 
-            if (!entry.CanUseAsParameter)
+            if (!entry!.CanUseAsParameter)
             {
                 throw new SqlMapperException($"Type cannot use as parameter. type=[{type.FullName}]");
             }
@@ -325,7 +325,7 @@ namespace Smart.Data.Mapper
         Func<IDataRecord, T> ISqlMapperConfig.CreateResultMapper<T>(IDataReader reader)
         {
             var fieldCount = reader.FieldCount;
-            if ((columnInfoPool == null) || (columnInfoPool.Length < fieldCount))
+            if ((columnInfoPool is null) || (columnInfoPool.Length < fieldCount))
             {
                 columnInfoPool = new ColumnInfo[fieldCount];
             }
@@ -366,7 +366,7 @@ namespace Smart.Data.Mapper
                 parameterBuilder = parameterBuilderCache.AddIfNotExist(type, CreateParameterBuilderInternal);
             }
 
-            return parameterBuilder;
+            return parameterBuilder!;
         }
 
         private ParameterBuilder CreateParameterBuilderInternal(Type type)

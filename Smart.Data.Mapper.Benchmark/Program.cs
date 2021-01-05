@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper.Benchmark
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
     using BenchmarkDotNet.Attributes;
@@ -34,12 +35,16 @@ namespace Smart.Data.Mapper.Benchmark
     [Config(typeof(BenchmarkConfig))]
     public class DataMapperBenchmark
     {
+        [AllowNull]
         private MockRepeatDbConnection mockExecute;
 
+        [AllowNull]
         private MockRepeatDbConnection mockExecuteScalar;
 
+        [AllowNull]
         private MockRepeatDbConnection mockQuery;
 
+        [AllowNull]
         private MockRepeatDbConnection mockQueryFirst;
 
         [GlobalSetup]
@@ -221,7 +226,7 @@ namespace Smart.Data.Mapper.Benchmark
         }
 
         [Benchmark]
-        public LargeDataEntity SmartQueryFirst()
+        public LargeDataEntity? SmartQueryFirst()
         {
             return mockQueryFirst.QueryFirstOrDefault<LargeDataEntity>(QueryFirstSql);
         }
@@ -231,14 +236,14 @@ namespace Smart.Data.Mapper.Benchmark
     {
         public long Id { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 
     public class LargeDataEntity
     {
         public long Id { get; set; }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public int Amount { get; set; }
 
@@ -250,10 +255,10 @@ namespace Smart.Data.Mapper.Benchmark
 
         public DateTimeOffset CreatedAt { get; set; }
 
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
         public DateTimeOffset? UpdatedAt { get; set; }
 
-        public string UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }

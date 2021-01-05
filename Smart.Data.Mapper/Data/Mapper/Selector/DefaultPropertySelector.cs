@@ -9,17 +9,17 @@ namespace Smart.Data.Mapper.Selector
 
     public sealed class DefaultPropertySelector : IPropertySelector
     {
-        public static DefaultPropertySelector Instance { get; } = new DefaultPropertySelector();
+        public static DefaultPropertySelector Instance { get; } = new();
 
         private DefaultPropertySelector()
         {
         }
 
-        public PropertyInfo SelectProperty(PropertyInfo[] properties, string name)
+        public PropertyInfo? SelectProperty(PropertyInfo[] properties, string name)
         {
             var pi = properties.FirstOrDefault(x => IsMatchName(x, name, false)) ??
                      properties.FirstOrDefault(x => IsMatchName(x, name, true));
-            if (pi != null)
+            if (pi is not null)
             {
                 return pi;
             }
@@ -29,7 +29,7 @@ namespace Smart.Data.Mapper.Selector
             {
                 pi = properties.FirstOrDefault(x => IsMatchName(x, pascalName, false)) ??
                      properties.FirstOrDefault(x => IsMatchName(x, pascalName, true));
-                if (pi != null)
+                if (pi is not null)
                 {
                     return pi;
                 }

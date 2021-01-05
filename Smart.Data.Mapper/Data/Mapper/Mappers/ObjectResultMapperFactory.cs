@@ -10,7 +10,7 @@ namespace Smart.Data.Mapper.Mappers
 
     public sealed class ObjectResultMapperFactory : IResultMapperFactory
     {
-        public static ObjectResultMapperFactory Instance { get; } = new ObjectResultMapperFactory();
+        public static ObjectResultMapperFactory Instance { get; } = new();
 
         private ObjectResultMapperFactory()
         {
@@ -28,10 +28,9 @@ namespace Smart.Data.Mapper.Mappers
             {
                 var obj = objectFactory();
 
-                for (var i = 0; i < entries.Length; i++)
+                foreach (var entry in entries)
                 {
-                    var entry = entries[i];
-                    entry.Setter(obj, record.GetValue(entry.Index));
+                    entry.Setter(obj!, record.GetValue(entry.Index));
                 }
 
                 return obj;
@@ -50,7 +49,7 @@ namespace Smart.Data.Mapper.Mappers
             {
                 var column = columns[i];
                 var pi = selector(properties, column.Name);
-                if (pi == null)
+                if (pi is null)
                 {
                     continue;
                 }
@@ -58,32 +57,32 @@ namespace Smart.Data.Mapper.Mappers
                 var defaultValue = pi.PropertyType.GetDefaultValue();
 
                 var parser = config.CreateParser(column.Type, pi.PropertyType);
-                if (parser == null)
+                if (parser is null)
                 {
-                    list.Add(new MapEntry(i, CreateParser(setter, defaultValue)));
+                    list.Add(new MapEntry(i, CreateParser(setter!, defaultValue)));
                 }
                 else
                 {
-                    list.Add(new MapEntry(i, CreateParser(setter, defaultValue, parser)));
+                    list.Add(new MapEntry(i, CreateParser(setter!, defaultValue, parser)));
                 }
             }
 
             return list.ToArray();
         }
 
-        private static Action<object, object> CreateParser(Action<object, object> setter, object defaultValue)
+        private static Action<object, object> CreateParser(Action<object?, object?> setter, object? defaultValue)
         {
             return (obj, value) => setter(obj, value is DBNull ? defaultValue : value);
         }
 
-        private static Action<object, object> CreateParser(Action<object, object> setter, object defaultValue, Func<object, object> parser)
+        private static Action<object, object> CreateParser(Action<object?, object?> setter, object? defaultValue, Func<object, object> parser)
         {
             return (obj, value) => setter(obj, value is DBNull ? defaultValue : parser(value));
         }
 
         private static bool IsTargetProperty(PropertyInfo pi)
         {
-            return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() == null);
+            return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]

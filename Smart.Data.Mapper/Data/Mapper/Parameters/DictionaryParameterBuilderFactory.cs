@@ -5,7 +5,7 @@ namespace Smart.Data.Mapper.Parameters
 
     public sealed class DictionaryParameterBuilderFactory : IParameterBuilderFactory
     {
-        public static DictionaryParameterBuilderFactory Instance { get; } = new DictionaryParameterBuilderFactory();
+        public static DictionaryParameterBuilderFactory Instance { get; } = new();
 
         private DictionaryParameterBuilderFactory()
         {
@@ -13,15 +13,15 @@ namespace Smart.Data.Mapper.Parameters
 
         public bool IsMatch(Type type)
         {
-            return typeof(IDictionary<string, object>).IsAssignableFrom(type);
+            return typeof(IDictionary<string, object?>).IsAssignableFrom(type);
         }
 
         public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
         {
-            return new ParameterBuilder(
+            return new(
                 (cmd, parameter) =>
                 {
-                    foreach (var keyValue in (IDictionary<string, object>)parameter)
+                    foreach (var keyValue in (IDictionary<string, object?>)parameter)
                     {
                         var param = cmd.CreateParameter();
                         param.ParameterName = keyValue.Key;
@@ -36,7 +36,7 @@ namespace Smart.Data.Mapper.Parameters
                             var entry = config.LookupTypeHandle(value.GetType());
                             param.DbType = entry.DbType;
 
-                            if (entry.TypeHandler != null)
+                            if (entry.TypeHandler is not null)
                             {
                                 entry.TypeHandler.SetValue(param, value);
                             }

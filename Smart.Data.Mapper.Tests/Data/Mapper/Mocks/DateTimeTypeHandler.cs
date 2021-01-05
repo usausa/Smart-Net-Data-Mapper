@@ -2,6 +2,7 @@ namespace Smart.Data.Mapper.Mocks
 {
     using System;
     using System.Data;
+
     using Smart.Data.Mapper.Handlers;
 
     public sealed class DateTimeTypeHandler : TypeHandler<DateTime>
@@ -15,7 +16,7 @@ namespace Smart.Data.Mapper.Mocks
 
         public override DateTime Parse(object value)
         {
-            return new DateTime((long)value);
+            return new((long)value);
         }
     }
 }
