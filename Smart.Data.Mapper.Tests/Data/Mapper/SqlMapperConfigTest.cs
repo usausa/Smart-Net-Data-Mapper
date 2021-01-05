@@ -98,16 +98,16 @@ namespace Smart.Data.Mapper
             var config = new SqlMapperConfig();
 
             config.ResetParameterBuilderFactories();
-            config.ConfigureParameterBuilderFactories(opt => { });
+            config.ConfigureParameterBuilderFactories(_ => { });
 
             config.ResetResultMapperFactories();
-            config.ConfigureResultMapperFactories(opt => { });
+            config.ConfigureResultMapperFactories(_ => { });
 
             config.ResetTypeMap();
-            config.ConfigureTypeMap(opt => { });
+            config.ConfigureTypeMap(_ => { });
 
             config.ResetTypeHandlers();
-            config.ConfigureTypeHandlers(opt => { });
+            config.ConfigureTypeHandlers(_ => { });
 
             config.DelegateFactory = DelegateFactory.Default;
             Assert.Equal(DelegateFactory.Default, config.DelegateFactory);

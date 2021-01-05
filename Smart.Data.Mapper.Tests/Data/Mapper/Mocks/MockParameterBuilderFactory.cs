@@ -13,7 +13,7 @@ namespace Smart.Data.Mapper.Mocks
 
         public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
         {
-            return new ParameterBuilder((c, v) => { BuildCalled = true; }, (c, v) => { PostProcessCalled = true; });
+            return new((_, _) => { BuildCalled = true; }, (_, _) => { PostProcessCalled = true; });
         }
     }
 }
