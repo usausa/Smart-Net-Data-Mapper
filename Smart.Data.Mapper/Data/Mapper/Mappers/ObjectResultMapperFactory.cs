@@ -28,8 +28,9 @@ namespace Smart.Data.Mapper.Mappers
             {
                 var obj = objectFactory();
 
-                foreach (var entry in entries)
+                for (var i = 0; i < entries.Length; i++)
                 {
+                    var entry = entries[i];
                     entry.Setter(obj!, record.GetValue(entry.Index));
                 }
 
