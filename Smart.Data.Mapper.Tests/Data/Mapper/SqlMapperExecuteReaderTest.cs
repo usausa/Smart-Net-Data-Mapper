@@ -22,51 +22,43 @@ namespace Smart.Data.Mapper
         [Fact]
         public void ExecuteReader()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-                using (var reader = con.ExecuteReader("SELECT * FROM Data ORDER BY Id"))
-                {
-                    Assert.True(reader.Read());
-                    Assert.Equal(1, reader.GetInt64(0));
-                    Assert.Equal("test1", reader.GetString(1));
+            using var reader = con.ExecuteReader("SELECT * FROM Data ORDER BY Id");
+            Assert.True(reader.Read());
+            Assert.Equal(1, reader.GetInt64(0));
+            Assert.Equal("test1", reader.GetString(1));
 
-                    Assert.True(reader.Read());
-                    Assert.Equal(2, reader.GetInt64(0));
-                    Assert.Equal("test2", reader.GetString(1));
+            Assert.True(reader.Read());
+            Assert.Equal(2, reader.GetInt64(0));
+            Assert.Equal("test2", reader.GetString(1));
 
-                    Assert.False(reader.Read());
-                }
-            }
+            Assert.False(reader.Read());
         }
 
         [Fact]
         public async ValueTask ExecuteReaderAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-                using (var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false))
-                {
-                    Assert.True(reader.Read());
-                    Assert.Equal(1, reader.GetInt64(0));
-                    Assert.Equal("test1", reader.GetString(1));
+            using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
+            Assert.True(reader.Read());
+            Assert.Equal(1, reader.GetInt64(0));
+            Assert.Equal("test1", reader.GetString(1));
 
-                    Assert.True(reader.Read());
-                    Assert.Equal(2, reader.GetInt64(0));
-                    Assert.Equal("test2", reader.GetString(1));
+            Assert.True(reader.Read());
+            Assert.Equal(2, reader.GetInt64(0));
+            Assert.Equal("test2", reader.GetString(1));
 
-                    Assert.False(reader.Read());
-                }
-            }
+            Assert.False(reader.Read());
         }
 
         //--------------------------------------------------------------------------------
@@ -76,49 +68,43 @@ namespace Smart.Data.Mapper
         private static void Prepare()
         {
             File.Delete("Test.db");
-            using (var con = new SqliteConnection("Data Source=Test.db"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
-            }
+            using var con = new SqliteConnection("Data Source=Test.db");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
         }
 
         [Fact]
         public void ExecuteReaderLife()
         {
             Prepare();
-            using (var reader = new SqliteConnection("Data Source=Test.db").ExecuteReader("SELECT * FROM Data ORDER BY Id"))
-            {
-                Assert.True(reader.Read());
-                Assert.Equal(1, reader.GetInt64(0));
-                Assert.Equal("test1", reader.GetString(1));
+            using var reader = new SqliteConnection("Data Source=Test.db").ExecuteReader("SELECT * FROM Data ORDER BY Id");
+            Assert.True(reader.Read());
+            Assert.Equal(1, reader.GetInt64(0));
+            Assert.Equal("test1", reader.GetString(1));
 
-                Assert.True(reader.Read());
-                Assert.Equal(2, reader.GetInt64(0));
-                Assert.Equal("test2", reader.GetString(1));
+            Assert.True(reader.Read());
+            Assert.Equal(2, reader.GetInt64(0));
+            Assert.Equal("test2", reader.GetString(1));
 
-                Assert.False(reader.Read());
-            }
+            Assert.False(reader.Read());
         }
 
         [Fact]
         public async ValueTask ExecuteReaderLifeAsync()
         {
             Prepare();
-            using (var reader = await new SqliteConnection("Data Source=Test.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false))
-            {
-                Assert.True(reader.Read());
-                Assert.Equal(1, reader.GetInt64(0));
-                Assert.Equal("test1", reader.GetString(1));
+            using var reader = await new SqliteConnection("Data Source=Test.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
+            Assert.True(reader.Read());
+            Assert.Equal(1, reader.GetInt64(0));
+            Assert.Equal("test1", reader.GetString(1));
 
-                Assert.True(reader.Read());
-                Assert.Equal(2, reader.GetInt64(0));
-                Assert.Equal("test2", reader.GetString(1));
+            Assert.True(reader.Read());
+            Assert.Equal(2, reader.GetInt64(0));
+            Assert.Equal("test2", reader.GetString(1));
 
-                Assert.False(reader.Read());
-            }
+            Assert.False(reader.Read());
         }
 
         //--------------------------------------------------------------------------------
@@ -129,19 +115,17 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ExecuteReaderCancelAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-                await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+            await Assert.ThrowsAsync<OperationCanceledException>(async () =>
+            {
+                var cancel = new CancellationToken(true);
+                using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel).ConfigureAwait(false))
                 {
-                    var cancel = new CancellationToken(true);
-                    using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel).ConfigureAwait(false))
-                    {
-                    }
-                }).ConfigureAwait(false);
-            }
+                }
+            }).ConfigureAwait(false);
         }
 
         //--------------------------------------------------------------------------------
@@ -152,34 +136,30 @@ namespace Smart.Data.Mapper
 
         public void WithoutOpen()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            using var con = new SqliteConnection("Data Source=:memory:");
+            using (var reader = con.ExecuteReader("SELECT 1, 'test1'"))
             {
-                using (var reader = con.ExecuteReader("SELECT 1, 'test1'"))
-                {
-                    Assert.Equal(ConnectionState.Open, con.State);
-                    Assert.True(reader.Read());
-                    Assert.False(reader.Read());
-                }
-
-                Assert.Equal(ConnectionState.Closed, con.State);
+                Assert.Equal(ConnectionState.Open, con.State);
+                Assert.True(reader.Read());
+                Assert.False(reader.Read());
             }
+
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
 
         public async ValueTask WithoutOpenAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'").ConfigureAwait(false))
             {
-                using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'").ConfigureAwait(false))
-                {
-                    Assert.Equal(ConnectionState.Open, con.State);
-                    Assert.True(reader.Read());
-                    Assert.False(reader.Read());
-                }
-
-                Assert.Equal(ConnectionState.Closed, con.State);
+                Assert.Equal(ConnectionState.Open, con.State);
+                Assert.True(reader.Read());
+                Assert.False(reader.Read());
             }
+
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         //--------------------------------------------------------------------------------
@@ -190,34 +170,30 @@ namespace Smart.Data.Mapper
 
         public void ClosedConnectionMustClosedWhenQueryError()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            using var con = new SqliteConnection("Data Source=:memory:");
+            Assert.Throws<SqliteException>(() =>
             {
-                Assert.Throws<SqliteException>(() =>
+                using (con.ExecuteReader("x"))
                 {
-                    using (con.ExecuteReader("x"))
-                    {
-                    }
-                });
+                }
+            });
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
 
         public void ClosedConnectionMustClosedWhenWhenCommandError()
         {
-            using (var con = new CommandUnsupportedConnection())
+            using var con = new CommandUnsupportedConnection();
+            Assert.Throws<NotSupportedException>(() =>
             {
-                Assert.Throws<NotSupportedException>(() =>
+                using (con.ExecuteReader("x"))
                 {
-                    using (con.ExecuteReader("x"))
-                    {
-                    }
-                });
+                }
+            });
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
@@ -231,51 +207,45 @@ namespace Smart.Data.Mapper
                 opt.Add(new PostProcessErrorParameterBuilderFactory());
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            using var con = new SqliteConnection("Data Source=:memory:");
+            Assert.Throws<NotSupportedException>(() =>
             {
-                Assert.Throws<NotSupportedException>(() =>
+                using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
                 {
-                    using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
-                    {
-                    }
-                });
+                }
+            });
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
 
         public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            await Assert.ThrowsAsync<SqliteException>(async () =>
             {
-                await Assert.ThrowsAsync<SqliteException>(async () =>
+                using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
                 {
-                    using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
-                    {
-                    }
-                }).ConfigureAwait(false);
+                }
+            }).ConfigureAwait(false);
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
 
         public async ValueTask ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
         {
-            await using (var con = new CommandUnsupportedConnection())
+            await using var con = new CommandUnsupportedConnection();
+            await Assert.ThrowsAsync<NotSupportedException>(async () =>
             {
-                await Assert.ThrowsAsync<NotSupportedException>(async () =>
+                using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
                 {
-                    using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
-                    {
-                    }
-                }).ConfigureAwait(false);
+                }
+            }).ConfigureAwait(false);
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
@@ -289,17 +259,15 @@ namespace Smart.Data.Mapper
                 opt.Add(new PostProcessErrorParameterBuilderFactory());
             });
 
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            await Assert.ThrowsAsync<NotSupportedException>(async () =>
             {
-                await Assert.ThrowsAsync<NotSupportedException>(async () =>
+                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
                 {
-                    using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
-                    {
-                    }
-                }).ConfigureAwait(false);
+                }
+            }).ConfigureAwait(false);
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         //--------------------------------------------------------------------------------
@@ -318,15 +286,13 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            using var con = new SqliteConnection("Data Source=:memory:");
+            using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
             {
-                using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
-                {
-                }
-
-                Assert.True(factory.BuildCalled);
-                Assert.True(factory.PostProcessCalled);
             }
+
+            Assert.True(factory.BuildCalled);
+            Assert.True(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -341,15 +307,13 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
+            using var con = new SqliteConnection("Data Source=:memory:");
+            using (con.ExecuteReader(config, "SELECT 1, 'test1'"))
             {
-                using (con.ExecuteReader(config, "SELECT 1, 'test1'"))
-                {
-                }
-
-                Assert.False(factory.BuildCalled);
-                Assert.False(factory.PostProcessCalled);
             }
+
+            Assert.False(factory.BuildCalled);
+            Assert.False(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -364,15 +328,13 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
             {
-                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
-                {
-                }
-
-                Assert.True(factory.BuildCalled);
-                Assert.True(factory.PostProcessCalled);
             }
+
+            Assert.True(factory.BuildCalled);
+            Assert.True(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -387,15 +349,13 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'").ConfigureAwait(false))
             {
-                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'").ConfigureAwait(false))
-                {
-                }
-
-                Assert.False(factory.BuildCalled);
-                Assert.False(factory.PostProcessCalled);
             }
+
+            Assert.False(factory.BuildCalled);
+            Assert.False(factory.PostProcessCalled);
         }
     }
 }

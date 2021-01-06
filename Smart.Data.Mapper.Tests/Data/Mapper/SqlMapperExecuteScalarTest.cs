@@ -21,90 +21,78 @@ namespace Smart.Data.Mapper
 
         public void ExecuteScalarByObjectParameter()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-                var count = con.ExecuteScalar<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
+            var count = con.ExecuteScalar<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
 
-                Assert.Equal(1L, count);
-            }
+            Assert.Equal(1L, count);
         }
 
         [Fact]
 
         public async ValueTask ExecuteScalarByObjectParameterAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-                con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-                var count = await con.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 }).ConfigureAwait(false);
+            var count = await con.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 }).ConfigureAwait(false);
 
-                Assert.Equal(1L, count);
-            }
+            Assert.Equal(1L, count);
         }
 
         [Fact]
 
         public void ResultIsNull()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
 
-                var value = con.ExecuteScalar<long>("SELECT NULL");
+            var value = con.ExecuteScalar<long>("SELECT NULL");
 
-                Assert.Equal(default, value);
-            }
+            Assert.Equal(default, value);
         }
 
         [Fact]
 
         public async ValueTask ResultIsNullAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
 
-                var value = await con.ExecuteScalarAsync<long>("SELECT NULL").ConfigureAwait(false);
+            var value = await con.ExecuteScalarAsync<long>("SELECT NULL").ConfigureAwait(false);
 
-                Assert.Equal(default, value);
-            }
+            Assert.Equal(default, value);
         }
 
         [Fact]
 
         public void ResultIsConverted()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
 
-                var value = con.ExecuteScalar<string>("SELECT 0");
+            var value = con.ExecuteScalar<string>("SELECT 0");
 
-                Assert.Equal("0", value);
-            }
+            Assert.Equal("0", value);
         }
 
         [Fact]
 
         public async ValueTask ResultIsConvertedAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
 
-                var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
+            var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
 
-                Assert.Equal("0", value);
-            }
+            Assert.Equal("0", value);
         }
 
         //--------------------------------------------------------------------------------
@@ -115,19 +103,17 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ExecuteScalarCancelAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-                var cancel = new CancellationToken(true);
-                await Assert.ThrowsAsync<TaskCanceledException>(async () =>
-                        await con.ExecuteScalarAsync<long>(
-                            "SELECT COUNT(*) FROM Data WHERE Id = @Id",
-                            new { Id = 1 },
-                            cancel: cancel).ConfigureAwait(false))
-                    .ConfigureAwait(false);
-            }
+            var cancel = new CancellationToken(true);
+            await Assert.ThrowsAsync<TaskCanceledException>(async () =>
+                    await con.ExecuteScalarAsync<long>(
+                        "SELECT COUNT(*) FROM Data WHERE Id = @Id",
+                        new { Id = 1 },
+                        cancel: cancel).ConfigureAwait(false))
+                .ConfigureAwait(false);
         }
 
         //--------------------------------------------------------------------------------
@@ -138,26 +124,22 @@ namespace Smart.Data.Mapper
 
         public void WithoutOpen()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                var value = con.ExecuteScalar<long>("SELECT 1");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            var value = con.ExecuteScalar<long>("SELECT 1");
 
-                Assert.Equal(1L, value);
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(1L, value);
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
 
         public async ValueTask WithoutOpenAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                var value = await con.ExecuteScalarAsync<long>("SELECT 1").ConfigureAwait(false);
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            var value = await con.ExecuteScalarAsync<long>("SELECT 1").ConfigureAwait(false);
 
-                Assert.Equal(1L, value);
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(1L, value);
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         //--------------------------------------------------------------------------------
@@ -176,13 +158,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.ExecuteScalar<long>(config, "SELECT 1", new object());
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.ExecuteScalar<long>(config, "SELECT 1", new object());
 
-                Assert.True(factory.BuildCalled);
-                Assert.True(factory.PostProcessCalled);
-            }
+            Assert.True(factory.BuildCalled);
+            Assert.True(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -197,13 +177,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.ExecuteScalar<long>(config, "SELECT 1");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.ExecuteScalar<long>(config, "SELECT 1");
 
-                Assert.False(factory.BuildCalled);
-                Assert.False(factory.PostProcessCalled);
-            }
+            Assert.False(factory.BuildCalled);
+            Assert.False(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -218,13 +196,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object()).ConfigureAwait(false);
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object()).ConfigureAwait(false);
 
-                Assert.True(factory.BuildCalled);
-                Assert.True(factory.PostProcessCalled);
-            }
+            Assert.True(factory.BuildCalled);
+            Assert.True(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -239,13 +215,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                await con.ExecuteScalarAsync<long>(config, "SELECT 1").ConfigureAwait(false);
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            await con.ExecuteScalarAsync<long>(config, "SELECT 1").ConfigureAwait(false);
 
-                Assert.False(factory.BuildCalled);
-                Assert.False(factory.PostProcessCalled);
-            }
+            Assert.False(factory.BuildCalled);
+            Assert.False(factory.PostProcessCalled);
         }
     }
 }

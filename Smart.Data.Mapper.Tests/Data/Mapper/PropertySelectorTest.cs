@@ -11,26 +11,24 @@ namespace Smart.Data.Mapper
         [Fact]
         public void MapProperty()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                var entity = con.QueryFirstOrDefault<DataEntity>(
-                    "SELECT " +
-                    "1 AS ColumnName1, " +
-                    "2 AS columnName2, " +
-                    "3 AS column_name3, " +
-                    "4 AS COLUMN_NAME4, " +
-                    "5 AS column_name5, " +
-                    "6 AS ColumnName6, " +
-                    "7 AS ColumnName7");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            var entity = con.QueryFirstOrDefault<DataEntity>(
+                "SELECT " +
+                "1 AS ColumnName1, " +
+                "2 AS columnName2, " +
+                "3 AS column_name3, " +
+                "4 AS COLUMN_NAME4, " +
+                "5 AS column_name5, " +
+                "6 AS ColumnName6, " +
+                "7 AS ColumnName7");
 
-                Assert.NotNull(entity);
-                Assert.Equal(1, entity!.ColumnName1);
-                Assert.Equal(2, entity.ColumnName2);
-                Assert.Equal(3, entity.ColumnName3);
-                Assert.Equal(4, entity.ColumnName4);
-                Assert.Equal(5, entity.ColumnName5);
-                Assert.Equal(0, entity.ColumnName6);
-            }
+            Assert.NotNull(entity);
+            Assert.Equal(1, entity!.ColumnName1);
+            Assert.Equal(2, entity.ColumnName2);
+            Assert.Equal(3, entity.ColumnName3);
+            Assert.Equal(4, entity.ColumnName4);
+            Assert.Equal(5, entity.ColumnName5);
+            Assert.Equal(0, entity.ColumnName6);
         }
 
         protected class DataEntity

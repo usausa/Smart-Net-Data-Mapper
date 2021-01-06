@@ -21,30 +21,26 @@ namespace Smart.Data.Mapper
 
         public void ExecuteByObjectParameter()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-                var effect = con.Execute("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
+            var effect = con.Execute("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
 
-                Assert.Equal(1, effect);
-            }
+            Assert.Equal(1, effect);
         }
 
         [Fact]
 
         public async ValueTask ExecuteByObjectParameterAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-                var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" }).ConfigureAwait(false);
+            var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" }).ConfigureAwait(false);
 
-                Assert.Equal(1, effect);
-            }
+            Assert.Equal(1, effect);
         }
 
         //--------------------------------------------------------------------------------
@@ -55,19 +51,17 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ExecuteCancelAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Open();
-                con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            con.Open();
+            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-                var cancel = new CancellationToken(true);
-                await Assert.ThrowsAsync<TaskCanceledException>(async () =>
-                        await con.ExecuteAsync(
-                            "INSERT INTO Data (Id, Name) VALUES (@Id, @Name)",
-                            new { Id = 1, Name = "test" },
-                            cancel: cancel).ConfigureAwait(false))
-                    .ConfigureAwait(false);
-            }
+            var cancel = new CancellationToken(true);
+            await Assert.ThrowsAsync<TaskCanceledException>(async () =>
+                    await con.ExecuteAsync(
+                        "INSERT INTO Data (Id, Name) VALUES (@Id, @Name)",
+                        new { Id = 1, Name = "test" },
+                        cancel: cancel).ConfigureAwait(false))
+                .ConfigureAwait(false);
         }
 
         //--------------------------------------------------------------------------------
@@ -78,24 +72,20 @@ namespace Smart.Data.Mapper
 
         public void WithoutOpen()
         {
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Execute("PRAGMA AUTO_VACUUM=1");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Execute("PRAGMA AUTO_VACUUM=1");
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         [Fact]
 
         public async ValueTask WithoutOpenAsync()
         {
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
 
-                Assert.Equal(ConnectionState.Closed, con.State);
-            }
+            Assert.Equal(ConnectionState.Closed, con.State);
         }
 
         //--------------------------------------------------------------------------------
@@ -114,13 +104,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Execute(config, "PRAGMA AUTO_VACUUM=1", new object());
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Execute(config, "PRAGMA AUTO_VACUUM=1", new object());
 
-                Assert.True(factory.BuildCalled);
-                Assert.True(factory.PostProcessCalled);
-            }
+            Assert.True(factory.BuildCalled);
+            Assert.True(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -135,13 +123,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                con.Execute(config, "PRAGMA AUTO_VACUUM=1");
+            using var con = new SqliteConnection("Data Source=:memory:");
+            con.Execute(config, "PRAGMA AUTO_VACUUM=1");
 
-                Assert.False(factory.BuildCalled);
-                Assert.False(factory.PostProcessCalled);
-            }
+            Assert.False(factory.BuildCalled);
+            Assert.False(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -156,13 +142,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object()).ConfigureAwait(false);
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object()).ConfigureAwait(false);
 
-                Assert.True(factory.BuildCalled);
-                Assert.True(factory.PostProcessCalled);
-            }
+            Assert.True(factory.BuildCalled);
+            Assert.True(factory.PostProcessCalled);
         }
 
         [Fact]
@@ -177,13 +161,11 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
-            await using (var con = new SqliteConnection("Data Source=:memory:"))
-            {
-                await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
+            await using var con = new SqliteConnection("Data Source=:memory:");
+            await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
 
-                Assert.False(factory.BuildCalled);
-                Assert.False(factory.PostProcessCalled);
-            }
+            Assert.False(factory.BuildCalled);
+            Assert.False(factory.PostProcessCalled);
         }
     }
 }

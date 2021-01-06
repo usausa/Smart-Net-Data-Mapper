@@ -39,14 +39,14 @@ namespace Smart.Data.Mapper.Builders
         [Fact]
         public void KeyOnlyByKey()
         {
-            Assert.Null(
+            Assert.Empty(
                 SqlUpdate<KeyOnlyEntity>.ByKey());
         }
 
         [Fact]
         public void KeyOnlyByKeyWithCondition()
         {
-            Assert.Null(
+            Assert.Empty(
                 SqlUpdate<KeyOnlyEntity>.ByKey("Key2 = @Key2"));
         }
 
@@ -65,14 +65,14 @@ namespace Smart.Data.Mapper.Builders
         [Fact]
         public void NonKeyByKey()
         {
-            Assert.Null(
+            Assert.Empty(
                 SqlUpdate<NonKeyEntity>.ByKey());
         }
 
         [Fact]
         public void NonKeyByKeyWithCondition()
         {
-            Assert.Null(
+            Assert.Empty(
                 SqlUpdate<NonKeyEntity>.ByKey("Key2 = @Key2"));
         }
 

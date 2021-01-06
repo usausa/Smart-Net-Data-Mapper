@@ -13,21 +13,19 @@ namespace Smart.Data.Mapper
 
         public void ParameterByAttribute()
         {
-            using (var con = new MockDbConnection())
-            {
-                con.SetupCommand(c => c.SetupResult(0));
+            using var con = new MockDbConnection();
+            con.SetupCommand(c => c.SetupResult(0));
 
-                var parameter = new Parameter { Value = 1 };
-                con.Execute("PROC", parameter, commandType: CommandType.StoredProcedure);
+            var parameter = new Parameter { Value = 1 };
+            con.Execute("PROC", parameter, commandType: CommandType.StoredProcedure);
 
-                var cmd = con.Commands[0];
-                Assert.Single(cmd.Parameters);
+            var cmd = con.Commands[0];
+            Assert.Single(cmd.Parameters);
 
-                var param = (MockDbParameter)cmd.Parameters[0];
-                Assert.Equal(DbType.Int64, param.DbType);
-                Assert.Equal(10, param.Size);
-                Assert.Equal(ParameterDirection.InputOutput, param.Direction);
-            }
+            var param = (MockDbParameter)cmd.Parameters[0];
+            Assert.Equal(DbType.Int64, param.DbType);
+            Assert.Equal(10, param.Size);
+            Assert.Equal(ParameterDirection.InputOutput, param.Direction);
         }
 
         protected class Parameter

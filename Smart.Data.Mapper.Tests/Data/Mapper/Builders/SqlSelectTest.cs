@@ -67,7 +67,7 @@ namespace Smart.Data.Mapper.Builders
         [Fact]
         public void NonKeyByKey()
         {
-            Assert.Null(
+            Assert.Empty(
                 SqlSelect<NonKeyEntity>.ByKey());
         }
 
