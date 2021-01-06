@@ -331,19 +331,23 @@ namespace Smart.Data.Mapper
             }
 
             var type = typeof(T);
+            var hash = type.GetHashCode();
             for (var i = 0; i < reader.FieldCount; i++)
             {
-                columnInfoPool[i] = new ColumnInfo(reader.GetName(i), reader.GetFieldType(i));
+                var name = reader.GetName(i);
+                var fieldType = reader.GetFieldType(i);
+                hash = unchecked((hash * 31) + (name.GetHashCode(StringComparison.Ordinal) ^ fieldType.GetHashCode()));
+                columnInfoPool[i] = new ColumnInfo(name, fieldType);
             }
 
             var columns = new Span<ColumnInfo>(columnInfoPool, 0, fieldCount);
 
-            if (resultMapperCache.TryGetValue(type, columns, out var value))
+            if (resultMapperCache.TryGetValue(type, columns, hash, out var value))
             {
                 return (Func<IDataRecord, T>)value;
             }
 
-            return (Func<IDataRecord, T>)resultMapperCache.AddIfNotExist(type, columns, CreateMapperInternal<T>);
+            return (Func<IDataRecord, T>)resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>);
         }
 
         private object CreateMapperInternal<T>(Type type, ColumnInfo[] columns)

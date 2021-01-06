@@ -10,7 +10,7 @@ namespace Smart.Data.Mapper
     [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
     internal sealed class ResultMapperCache
     {
-        private static readonly Node EmptyNode = new(typeof(EmptyKey), Array.Empty<ColumnInfo>(), default!);
+        private static readonly Node EmptyNode = new(typeof(EmptyKey), Array.Empty<ColumnInfo>(), default!, 0);
 
         private const int InitialSize = 64;
 
@@ -36,25 +36,6 @@ namespace Smart.Data.Mapper
         //--------------------------------------------------------------------------------
         // Private
         //--------------------------------------------------------------------------------
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int CalculateHash(Type targetType, Span<ColumnInfo> columns)
-        {
-            unchecked
-            {
-                var hash = targetType.GetHashCode();
-
-                ref var start = ref MemoryMarshal.GetReference(columns);
-                ref var end = ref Unsafe.Add(ref start, columns.Length);
-                while (Unsafe.IsAddressLessThan(ref start, ref end))
-                {
-                    hash = (hash * 31) + (start.Name.GetHashCode(StringComparison.Ordinal) ^ start.Type.GetHashCode());
-                    start = ref Unsafe.Add(ref start, 1);
-                }
-
-                return hash;
-            }
-        }
 
         private static int CalculateDepth(Node node)
         {
@@ -147,7 +128,7 @@ namespace Smart.Data.Mapper
                     var next = node.Next;
                     node.Next = null;
 
-                    UpdateLink(ref nodes[CalculateHash(node.TargetType, node.Columns) & (nodes.Length - 1)], node);
+                    UpdateLink(ref nodes[node.Hash & (nodes.Length - 1)], node);
 
                     node = next;
                 }
@@ -169,7 +150,7 @@ namespace Smart.Data.Mapper
 
                 RelocateNodes(newNodes, nodes);
 
-                UpdateLink(ref newNodes[CalculateHash(node.TargetType, node.Columns) & (newNodes.Length - 1)], node);
+                UpdateLink(ref newNodes[node.Hash & (newNodes.Length - 1)], node);
 
                 Interlocked.MemoryBarrier();
 
@@ -181,7 +162,7 @@ namespace Smart.Data.Mapper
             {
                 Interlocked.MemoryBarrier();
 
-                var hash = CalculateHash(node.TargetType, node.Columns);
+                var hash = node.Hash;
 
                 UpdateLink(ref nodes[hash & (nodes.Length - 1)], node);
 
@@ -220,18 +201,17 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsMatchColumn(ColumnInfo[] columns1, Span<ColumnInfo> columns2)
+        private static bool IsMatchColumn(Span<ColumnInfo> columns1, Span<ColumnInfo> columns2)
         {
             if (columns1.Length != columns2.Length)
             {
                 return false;
             }
 
+            ref var column1 = ref MemoryMarshal.GetReference(columns1);
+            ref var column2 = ref MemoryMarshal.GetReference(columns2);
             for (var i = 0; i < columns1.Length; i++)
             {
-                var column1 = columns1[i];
-                var column2 = columns2[i];
-
                 if (column1.Type != column2.Type)
                 {
                     return false;
@@ -241,16 +221,19 @@ namespace Smart.Data.Mapper
                 {
                     return false;
                 }
+
+                column1 = ref Unsafe.Add(ref column1, 1);
+                column2 = ref Unsafe.Add(ref column2, 1);
             }
 
             return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, [NotNullWhen(true)] out object? value)
+        public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, int hash, [NotNullWhen(true)] out object? value)
         {
             var temp = nodes;
-            var node = temp[CalculateHash(targetType, columns) & (temp.Length - 1)];
+            var node = temp[hash & (temp.Length - 1)];
             do
             {
                 if (node.TargetType == targetType && IsMatchColumn(node.Columns, columns))
@@ -266,12 +249,12 @@ namespace Smart.Data.Mapper
             return false;
         }
 
-        public object AddIfNotExist(Type targetType, Span<ColumnInfo> columns, Func<Type, ColumnInfo[], object> valueFactory)
+        public object AddIfNotExist(Type targetType, Span<ColumnInfo> columns, int hash, Func<Type, ColumnInfo[], object> valueFactory)
         {
             lock (sync)
             {
                 // Double checked locking
-                if (TryGetValue(targetType, columns, out var currentValue))
+                if (TryGetValue(targetType, columns, hash, out var currentValue))
                 {
                     return currentValue;
                 }
@@ -282,12 +265,12 @@ namespace Smart.Data.Mapper
                 var value = valueFactory(targetType, copyColumns);
 
                 // Check if added by recursive
-                if (TryGetValue(targetType, columns, out currentValue))
+                if (TryGetValue(targetType, columns, hash, out currentValue))
                 {
                     return currentValue;
                 }
 
-                AddNode(new Node(targetType, copyColumns, value));
+                AddNode(new Node(targetType, copyColumns, hash, value));
 
                 return value;
             }
@@ -309,14 +292,17 @@ namespace Smart.Data.Mapper
 
             public readonly ColumnInfo[] Columns;
 
+            public readonly int Hash;
+
             public readonly object Value;
 
             public Node? Next;
 
-            public Node(Type targetType, ColumnInfo[] columns, object value)
+            public Node(Type targetType, ColumnInfo[] columns, int hash, object value)
             {
                 TargetType = targetType;
                 Columns = columns;
+                Hash = hash;
                 Value = value;
             }
         }
