@@ -7,11 +7,11 @@ namespace Smart.Data.Mapper.Builders
 
     public static class SqlUpdate<T>
     {
-        private static readonly string? ByKeySql;
+        private static readonly string ByKeySql;
 
         private static readonly string UpdateSql;
 
-        private static readonly string? KeyConditionSql;
+        private static readonly string KeyConditionSql;
 
         static SqlUpdate()
         {
@@ -45,14 +45,14 @@ namespace Smart.Data.Mapper.Builders
             }
             else
             {
-                KeyConditionSql = null;
-                ByKeySql = null;
+                KeyConditionSql = string.Empty;
+                ByKeySql = string.Empty;
             }
         }
 
-        public static string? ByKey() => ByKeySql;
+        public static string ByKey() => ByKeySql;
 
-        public static string? ByKey(string set) => KeyConditionSql is not null ? String.Concat(UpdateSql, set, KeyConditionSql) : null;
+        public static string ByKey(string set) => !String.IsNullOrEmpty(KeyConditionSql) ? String.Concat(UpdateSql, set, KeyConditionSql) : string.Empty;
 
         public static string Set(string set, string condition) => String.Concat(UpdateSql, set, " WHERE ", condition);
     }

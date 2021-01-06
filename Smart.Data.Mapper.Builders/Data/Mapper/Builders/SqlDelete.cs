@@ -8,7 +8,7 @@ namespace Smart.Data.Mapper.Builders
     {
         private static readonly string AllSql;
 
-        private static readonly string? ByKeySql;
+        private static readonly string ByKeySql;
 
         private static readonly string WhereSqlBase;
 
@@ -34,13 +34,13 @@ namespace Smart.Data.Mapper.Builders
             }
             else
             {
-                ByKeySql = null;
+                ByKeySql = string.Empty;
             }
         }
 
         public static string All() => AllSql;
 
-        public static string? ByKey() => ByKeySql;
+        public static string ByKey() => ByKeySql;
 
         public static string Where(string condition) => WhereSqlBase + condition;
     }

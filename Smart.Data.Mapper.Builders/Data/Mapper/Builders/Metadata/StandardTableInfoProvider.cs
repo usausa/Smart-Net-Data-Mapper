@@ -7,18 +7,18 @@ namespace Smart.Data.Mapper.Builders.Metadata
 
     using Smart.Data.Mapper.Attributes;
 
-    public sealed class StandardTableInfoProvider : ITableInfoProvider
+    public sealed class StandardTableInfoProvider : ITableMetadataProvider
     {
         public static StandardTableInfoProvider Default { get; } = new();
 
         public IList<string> RemoveSuffix { get; } = new List<string>(new[] { "Entity" });
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-        public TableInfo Create(Type type)
+        public TableMetadata Create(Type type)
         {
             var columns = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
                 .Where(IsTargetProperty)
-                .Select(x => new ColumnInfo(x, x.GetCustomAttribute<NameAttribute>()?.Name ?? x.Name))
+                .Select(x => new ColumnMetadata(x, x.GetCustomAttribute<NameAttribute>()?.Name ?? x.Name))
                 .ToArray();
             var keyColumns = columns
                 .Select(x => new { Column = x, Attribute = x.Property.GetCustomAttribute<PrimaryKeyAttribute>() })
@@ -30,7 +30,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
                 .Where(x => x.Property.GetCustomAttribute<PrimaryKeyAttribute>() is null)
                 .ToArray();
 
-            return new TableInfo(ResolveName(type), columns, keyColumns, nonKeyColumns);
+            return new TableMetadata(ResolveName(type), columns, keyColumns, nonKeyColumns);
         }
 
         private static bool IsTargetProperty(PropertyInfo pi)

@@ -7,11 +7,11 @@ namespace Smart.Data.Mapper.Builders
 
     public static class SqlSelect<T>
     {
-        private static readonly string? ByKeySql;
+        private static readonly string ByKeySql;
 
         private static readonly string SelectSqlBase;
 
-        private static readonly string? OrderSqlBase;
+        private static readonly string OrderSqlBase;
 
         static SqlSelect()
         {
@@ -44,12 +44,12 @@ namespace Smart.Data.Mapper.Builders
             }
             else
             {
-                ByKeySql = null;
-                OrderSqlBase = null;
+                ByKeySql = string.Empty;
+                OrderSqlBase = string.Empty;
             }
         }
 
-        public static string? ByKey() => ByKeySql;
+        public static string ByKey() => ByKeySql;
 
         public static string All() =>
             !String.IsNullOrEmpty(OrderSqlBase)
