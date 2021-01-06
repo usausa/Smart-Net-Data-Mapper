@@ -4,6 +4,7 @@ namespace Smart.Data.Mapper
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
     using System.Threading;
 
     [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
@@ -42,10 +43,15 @@ namespace Smart.Data.Mapper
             unchecked
             {
                 var hash = targetType.GetHashCode();
-                for (var i = 0; i < columns.Length; i++)
+
+                ref var start = ref MemoryMarshal.GetReference(columns);
+                ref var end = ref Unsafe.Add(ref start, columns.Length);
+                while (Unsafe.IsAddressLessThan(ref start, ref end))
                 {
-                    hash = (hash * 31) + (columns[i].Name.GetHashCode(StringComparison.Ordinal) ^ columns[i].Type.GetHashCode());
+                    hash = (hash * 31) + (start.Name.GetHashCode(StringComparison.Ordinal) ^ start.Type.GetHashCode());
+                    start = ref Unsafe.Add(ref start, 1);
                 }
+
                 return hash;
             }
         }
