@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper.Benchmark
+﻿namespace Smart.Data.Mapper.Benchmark
 {
     using System;
     using System.Diagnostics.CodeAnalysis;
@@ -205,7 +205,8 @@ namespace Smart.Data.Mapper.Benchmark
         [Benchmark]
         public void DapperQuery100()
         {
-            foreach (var dummy in Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, false))
+            using var en = Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, false).GetEnumerator();
+            while (en.MoveNext())
             {
             }
         }
@@ -213,7 +214,8 @@ namespace Smart.Data.Mapper.Benchmark
         [Benchmark]
         public void SmartQuery100()
         {
-            foreach (var dummy in mockQuery.Query<DataEntity>(QuerySql))
+            using var en = mockQuery.Query<DataEntity>(QuerySql).GetEnumerator();
+            while (en.MoveNext())
             {
             }
         }
