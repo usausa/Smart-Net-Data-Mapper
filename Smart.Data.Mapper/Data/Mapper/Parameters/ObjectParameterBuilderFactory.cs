@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper.Parameters
+﻿namespace Smart.Data.Mapper.Parameters
 {
     using System;
     using System.Data;
@@ -69,14 +69,7 @@ namespace Smart.Data.Mapper.Parameters
                 else
                 {
                     var parser = config.CreateParser(value!.GetType(), destinationType);
-                    if (parser is null)
-                    {
-                        setter(target, value);
-                    }
-                    else
-                    {
-                        setter(target, parser(value));
-                    }
+                    setter(target, parser is null ? value : parser(value));
                 }
             };
         }

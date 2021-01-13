@@ -1,4 +1,4 @@
-namespace Smart.Data.Mapper.Mappers
+﻿namespace Smart.Data.Mapper.Mappers
 {
     using System;
     using System.Collections.Generic;
@@ -58,14 +58,9 @@ namespace Smart.Data.Mapper.Mappers
                 var defaultValue = pi.PropertyType.GetDefaultValue();
 
                 var parser = config.CreateParser(column.Type, pi.PropertyType);
-                if (parser is null)
-                {
-                    list.Add(new MapEntry(i, CreateParser(setter!, defaultValue)));
-                }
-                else
-                {
-                    list.Add(new MapEntry(i, CreateParser(setter!, defaultValue, parser)));
-                }
+                list.Add(parser is null
+                    ? new MapEntry(i, CreateParser(setter!, defaultValue))
+                    : new MapEntry(i, CreateParser(setter!, defaultValue, parser)));
             }
 
             return list.ToArray();
