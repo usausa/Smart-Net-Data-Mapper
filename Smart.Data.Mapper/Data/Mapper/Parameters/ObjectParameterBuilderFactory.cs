@@ -1,4 +1,4 @@
-﻿namespace Smart.Data.Mapper.Parameters
+namespace Smart.Data.Mapper.Parameters
 {
     using System;
     using System.Data;

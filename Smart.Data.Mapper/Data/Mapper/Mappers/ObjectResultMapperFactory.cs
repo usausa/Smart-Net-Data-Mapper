@@ -1,4 +1,4 @@
-﻿namespace Smart.Data.Mapper.Mappers
+namespace Smart.Data.Mapper.Mappers
 {
     using System;
     using System.Collections.Generic;

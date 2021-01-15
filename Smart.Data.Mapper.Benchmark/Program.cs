@@ -1,4 +1,4 @@
-﻿namespace Smart.Data.Mapper.Benchmark
+namespace Smart.Data.Mapper.Benchmark
 {
     using System;
     using System.Diagnostics.CodeAnalysis;

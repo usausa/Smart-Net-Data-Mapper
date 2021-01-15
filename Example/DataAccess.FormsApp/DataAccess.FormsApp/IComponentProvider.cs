@@ -1,4 +1,4 @@
-﻿namespace DataAccess.FormsApp
+namespace DataAccess.FormsApp
 {
     using Smart.Resolver;
 
