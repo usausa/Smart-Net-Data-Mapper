@@ -71,7 +71,6 @@ namespace Smart.Data.Mapper
             public Value? Value6 { get; set; }
 
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Ignore")]
-            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2011:DoNotAssignPropertyWithinTtsSetter", Justification = "Ignore")]
             public int Value7
             {
                 // ReSharper disable once ValueParameterNotUsed
@@ -105,6 +104,7 @@ namespace Smart.Data.Mapper
             public string? Output7 { get; set; }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1602:EnumerationItemsMustBeDocumented", Justification = "Ignore")]
         protected enum Value
         {
             Zero = 0,

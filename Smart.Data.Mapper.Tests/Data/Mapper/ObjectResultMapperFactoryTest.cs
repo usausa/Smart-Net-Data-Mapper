@@ -72,6 +72,7 @@ namespace Smart.Data.Mapper
             public int Column7 { get; set; }
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1602:EnumerationItemsMustBeDocumented", Justification = "Ignore")]
         protected enum Value
         {
             Zero = 0,
