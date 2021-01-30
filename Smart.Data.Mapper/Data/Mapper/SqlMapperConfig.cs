@@ -262,7 +262,7 @@ namespace Smart.Data.Mapper
                 entry = typeHandleEntriesCache.AddIfNotExist(destinationType, CreateTypeHandleInternal);
             }
 
-            if (entry!.TypeHandler != null)
+            if (entry.TypeHandler != null)
             {
                 return entry.TypeHandler.CreateParse(destinationType);
             }
@@ -283,7 +283,7 @@ namespace Smart.Data.Mapper
                 entry = typeHandleEntriesCache.AddIfNotExist(type, CreateTypeHandleInternal);
             }
 
-            if (!entry!.CanUseAsParameter)
+            if (!entry.CanUseAsParameter)
             {
                 throw new SqlMapperException($"Type cannot use as parameter. type=[{type.FullName}]");
             }
@@ -354,7 +354,7 @@ namespace Smart.Data.Mapper
                 parameterBuilder = parameterBuilderCache.AddIfNotExist(type, CreateParameterBuilderInternal);
             }
 
-            return parameterBuilder!;
+            return parameterBuilder;
         }
 
         private ParameterBuilder CreateParameterBuilderInternal(Type type)

@@ -144,7 +144,7 @@ namespace Smart.Data.Mapper.Mappers
 
             var typeInfo = typeBuilder.CreateTypeInfo();
             var holderType = typeInfo!.AsType();
-            var holder = Activator.CreateInstance(holderType);
+            var holder = Activator.CreateInstance(holderType)!;
 
             foreach (var entry in entries)
             {
@@ -155,7 +155,7 @@ namespace Smart.Data.Mapper.Mappers
                 }
             }
 
-            return holder!;
+            return holder;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
