@@ -8,6 +8,7 @@ namespace Smart.Data.Mapper
 
     using Xunit;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
     public class ObjectParameterBuilderFactoryTest
     {
         [Fact]
@@ -70,6 +71,7 @@ namespace Smart.Data.Mapper
 
             public Value? Value6 { get; set; }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Ignore")]
             public int Value7
             {

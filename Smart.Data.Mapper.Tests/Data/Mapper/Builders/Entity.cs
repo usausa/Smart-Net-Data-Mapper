@@ -20,6 +20,7 @@ namespace Smart.Data.Mapper.Builders
         [Ignore]
         public int IgnoreValue { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
         public int WriteOnlyValue
         {
             set => IgnoreValue = value;

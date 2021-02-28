@@ -44,6 +44,7 @@ namespace Smart.Data.Mapper.Benchmark
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
     [Config(typeof(BenchmarkConfig))]
     public class DataMapperBenchmark
     {

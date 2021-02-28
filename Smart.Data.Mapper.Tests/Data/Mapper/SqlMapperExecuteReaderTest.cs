@@ -13,6 +13,7 @@ namespace Smart.Data.Mapper
     using Xunit;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
     public class SqlMapperExecuteReaderTest
     {
         //--------------------------------------------------------------------------------
