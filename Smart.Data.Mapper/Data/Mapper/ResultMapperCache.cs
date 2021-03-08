@@ -132,7 +132,7 @@ namespace Smart.Data.Mapper
 
                     node = next;
                 }
-                while (node != null);
+                while (node is not null);
             }
         }
 
@@ -243,7 +243,7 @@ namespace Smart.Data.Mapper
                 }
                 node = node.Next;
             }
-            while (node != null);
+            while (node is not null);
 
             value = default;
             return false;
