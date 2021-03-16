@@ -39,7 +39,8 @@ namespace Smart.Data.Mapper.Benchmark
             AddExporter(CsvExporter.Default);
             //AddExporter(CsvMeasurementsExporter.Default);
             //AddExporter(RPlotExporter.Default);
-            AddJob(Job.LongRun);
+            AddJob(Job.MediumRun);
+            //AddJob(Job.LongRun);
         }
     }
 
@@ -48,6 +49,8 @@ namespace Smart.Data.Mapper.Benchmark
     [Config(typeof(BenchmarkConfig))]
     public class DataMapperBenchmark
     {
+        private const int N = 1000;
+
         [AllowNull]
         private MockRepeatDbConnection mockExecute;
 
@@ -124,45 +127,63 @@ namespace Smart.Data.Mapper.Benchmark
         private const string ExecuteSql =
             "INSERT INTO Table (Id, Data) VALUES (@Id, @Data)";
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void DapperExecute()
         {
-            Dapper.SqlMapper.Execute(mockExecute, ExecuteSql, new { Id = 1, Data = "test" });
+            for (var i = 0; i < N; i++)
+            {
+                Dapper.SqlMapper.Execute(mockExecute, ExecuteSql, new { Id = 1, Data = "test" });
+            }
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void SmartExecute()
         {
-            mockExecute.Execute(ExecuteSql, new { Id = 1, Data = "test" });
+            for (var i = 0; i < N; i++)
+            {
+                mockExecute.Execute(ExecuteSql, new { Id = 1, Data = "test" });
+            }
         }
 
         private const string ExecuteWithParameter10Sql =
             "INSERT INTO Table (Id, Name, Amount, Qty, Flag1, Flag2, DateTimeOffset, CreatedBy, UpdatedAt, UpdatedBy) " +
             "VALUES (@Id, @Name, @Amount, @Qty, @Flag1, @Flag2, @DateTimeOffset, @CreatedBy, @UpdatedAt, @UpdatedBy)";
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void DapperExecuteWithParameter10()
         {
-            Dapper.SqlMapper.Execute(mockExecute, ExecuteWithParameter10Sql, new LargeDataEntity());
+            for (var i = 0; i < N; i++)
+            {
+                Dapper.SqlMapper.Execute(mockExecute, ExecuteWithParameter10Sql, new LargeDataEntity());
+            }
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void SmartExecuteWithParameter10()
         {
-            mockExecute.Execute(ExecuteWithParameter10Sql, new LargeDataEntity());
+            for (var i = 0; i < N; i++)
+            {
+                mockExecute.Execute(ExecuteWithParameter10Sql, new LargeDataEntity());
+            }
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void DapperExecuteWithOverParameter()
         {
-            // [MEMO] Dapper optimize parameters
-            Dapper.SqlMapper.Execute(mockExecute, ExecuteSql, new LargeDataEntity());
+            for (var i = 0; i < N; i++)
+            {
+                // [MEMO] Dapper optimize parameters
+                Dapper.SqlMapper.Execute(mockExecute, ExecuteSql, new LargeDataEntity());
+            }
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void SmartExecuteWithOverParameter()
         {
-            mockExecute.Execute(ExecuteSql, new LargeDataEntity());
+            for (var i = 0; i < N; i++)
+            {
+                mockExecute.Execute(ExecuteSql, new LargeDataEntity());
+            }
         }
 
         //--------------------------------------------------------------------------------
@@ -172,28 +193,48 @@ namespace Smart.Data.Mapper.Benchmark
         private const string ExecuteScalarSql =
             "SELECT COUNT(*) FROM Table";
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public long DapperExecuteScalar()
         {
-            return Dapper.SqlMapper.ExecuteScalar<long>(mockExecuteScalar, ExecuteScalarSql);
+            long ret = default;
+            for (var i = 0; i < N; i++)
+            {
+                ret = Dapper.SqlMapper.ExecuteScalar<long>(mockExecuteScalar, ExecuteScalarSql);
+            }
+            return ret;
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public long SmartExecuteScalar()
         {
-            return mockExecuteScalar.ExecuteScalar<long>(ExecuteScalarSql);
+            long ret = default;
+            for (var i = 0; i < N; i++)
+            {
+                ret = mockExecuteScalar.ExecuteScalar<long>(ExecuteScalarSql);
+            }
+            return ret;
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public long DapperExecuteScalarWithConvert()
         {
-            return Dapper.SqlMapper.ExecuteScalar<int>(mockExecuteScalar, ExecuteScalarSql);
+            long ret = default;
+            for (var i = 0; i < N; i++)
+            {
+                ret = Dapper.SqlMapper.ExecuteScalar<int>(mockExecuteScalar, ExecuteScalarSql);
+            }
+            return ret;
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public long SmartExecuteScalarWithConvert()
         {
-            return mockExecuteScalar.ExecuteScalar<int>(ExecuteScalarSql);
+            long ret = default;
+            for (var i = 0; i < N; i++)
+            {
+                ret = mockExecuteScalar.ExecuteScalar<int>(ExecuteScalarSql);
+            }
+            return ret;
         }
 
         //--------------------------------------------------------------------------------
@@ -203,29 +244,47 @@ namespace Smart.Data.Mapper.Benchmark
         private const string QuerySql =
             "SELECT * FROM Data ORDER BY Id";
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void DapperQuery100()
         {
-            using var en = Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, false).GetEnumerator();
-            while (en.MoveNext())
+            for (var i = 0; i < N; i++)
             {
+                using var en = Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, false).GetEnumerator();
+                while (en.MoveNext())
+                {
+                }
             }
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public void SmartQuery100()
         {
-            using var en = mockQuery.Query<DataEntity>(QuerySql).GetEnumerator();
-            while (en.MoveNext())
+            for (var i = 0; i < N; i++)
             {
+                using var en = mockQuery.Query<DataEntity>(QuerySql).GetEnumerator();
+                while (en.MoveNext())
+                {
+                }
             }
         }
 
-        [Benchmark]
-        public void DapperQuery100Bufferd() => Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, true);
+        [Benchmark(OperationsPerInvoke = N)]
+        public void DapperQuery100Bufferd()
+        {
+            for (var i = 0; i < N; i++)
+            {
+                Dapper.SqlMapper.Query<DataEntity>(mockQuery, QuerySql, true);
+            }
+        }
 
-        [Benchmark]
-        public void SmartQuery100Bufferd() => mockQuery.QueryList<DataEntity>(QuerySql);
+        [Benchmark(OperationsPerInvoke = N)]
+        public void SmartQuery100Bufferd()
+        {
+            for (var i = 0; i < N; i++)
+            {
+                mockQuery.QueryList<DataEntity>(QuerySql);
+            }
+        }
 
         //--------------------------------------------------------------------------------
         // Query
@@ -234,16 +293,26 @@ namespace Smart.Data.Mapper.Benchmark
         private const string QueryFirstSql =
             "SELECT * FROM LargeData WHERE Id = 1";
 
-        [Benchmark]
-        public LargeDataEntity DapperQueryFirst()
+        [Benchmark(OperationsPerInvoke = N)]
+        public LargeDataEntity? DapperQueryFirst()
         {
-            return Dapper.SqlMapper.QueryFirstOrDefault<LargeDataEntity>(mockQueryFirst, QueryFirstSql);
+            LargeDataEntity? ret = default;
+            for (var i = 0; i < N; i++)
+            {
+                ret = Dapper.SqlMapper.QueryFirstOrDefault<LargeDataEntity>(mockQueryFirst, QueryFirstSql);
+            }
+            return ret;
         }
 
-        [Benchmark]
+        [Benchmark(OperationsPerInvoke = N)]
         public LargeDataEntity? SmartQueryFirst()
         {
-            return mockQueryFirst.QueryFirstOrDefault<LargeDataEntity>(QueryFirstSql);
+            LargeDataEntity? ret = default;
+            for (var i = 0; i < N; i++)
+            {
+                ret = mockQueryFirst.QueryFirstOrDefault<LargeDataEntity>(QueryFirstSql);
+            }
+            return ret;
         }
     }
 
