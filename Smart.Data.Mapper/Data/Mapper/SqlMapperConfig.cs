@@ -25,7 +25,7 @@ namespace Smart.Data.Mapper
         private static readonly IResultMapperFactory[] DefaultResultMapperFactories =
         {
             new SingleResultMapperFactory(),
-            ReflectionHelper.IsCodegenAllowed ? (IResultMapperFactory)EmitObjectResultMapperFactory.Instance : ObjectResultMapperFactory.Instance
+            ReflectionHelper.IsCodegenAllowed ? EmitObjectResultMapperFactory.Instance : ObjectResultMapperFactory.Instance
         };
 
         private static readonly Dictionary<Type, DbType> DefaultTypeMap = new()
