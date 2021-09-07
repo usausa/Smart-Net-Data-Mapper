@@ -134,7 +134,7 @@ namespace Smart.Data.Mapper
         //--------------------------------------------------------------------------------
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static T? ExecuteScalar<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T ExecuteScalar<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
@@ -160,7 +160,7 @@ namespace Smart.Data.Mapper
 
                     if (result is null)
                     {
-                        return default;
+                        return default!;
                     }
 
                     return config.Convert<T>(result);
@@ -176,13 +176,13 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static T? ExecuteScalar<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public static T ExecuteScalar<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             return ExecuteScalar<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-        public static async ValueTask<T?> ExecuteScalarAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static async ValueTask<T> ExecuteScalarAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
             await using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
@@ -208,7 +208,7 @@ namespace Smart.Data.Mapper
 
                     if (result is null)
                     {
-                        return default;
+                        return default!;
                     }
 
                     return config.Convert<T>(result);
@@ -224,7 +224,7 @@ namespace Smart.Data.Mapper
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static ValueTask<T?> ExecuteScalarAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
+        public static ValueTask<T> ExecuteScalarAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             return ExecuteScalarAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
         }

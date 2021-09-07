@@ -51,7 +51,7 @@ namespace Smart.Data.Mapper.Builders.Metadata
             {
                 if (name.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
                 {
-                    return name.Substring(0, name.Length - suffix.Length);
+                    return name[..^suffix.Length];
                 }
             }
 

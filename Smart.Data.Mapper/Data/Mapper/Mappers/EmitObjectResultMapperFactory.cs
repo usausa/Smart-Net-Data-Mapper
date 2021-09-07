@@ -159,17 +159,17 @@ namespace Smart.Data.Mapper.Mappers
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T? GetValue<T>(IDataRecord reader, int index)
+        private static T GetValue<T>(IDataRecord reader, int index)
         {
             var value = reader.GetValue(index);
-            return value is DBNull ? default : (T)value;
+            return value is DBNull ? default! : (T)value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static T? GetValueWithConvert<T>(IDataRecord reader, int index, Func<object, object> parser)
+        private static T GetValueWithConvert<T>(IDataRecord reader, int index, Func<object, object> parser)
         {
             var value = reader.GetValue(index);
-            return value is DBNull ? default : (T)parser(value);
+            return value is DBNull ? default! : (T)parser(value);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]

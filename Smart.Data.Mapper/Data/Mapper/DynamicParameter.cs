@@ -39,15 +39,15 @@ namespace Smart.Data.Mapper
             parameters[name] = new ParameterInfo(name, value, dbType, size, direction);
         }
 
-        public T? Get<T>(string name)
+        public T Get<T>(string name)
         {
             var value = parameters[name].AttachedParam?.Value ?? DBNull.Value;
             if (value == DBNull.Value)
             {
-                return default;
+                return default!;
             }
 
-            return (T)value!;
+            return (T)value;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
