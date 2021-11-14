@@ -66,10 +66,10 @@ namespace Smart.Data.Mapper
         // Lifecycle
         //--------------------------------------------------------------------------------
 
-        private static void Prepare()
+        private static void Prepare(string database)
         {
-            File.Delete("Test.db");
-            using var con = new SqliteConnection("Data Source=Test.db");
+            File.Delete(database);
+            using var con = new SqliteConnection($"Data Source={database}");
             con.Open();
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -79,8 +79,8 @@ namespace Smart.Data.Mapper
         [Fact]
         public void ExecuteReaderLife()
         {
-            Prepare();
-            using var reader = new SqliteConnection("Data Source=Test.db").ExecuteReader("SELECT * FROM Data ORDER BY Id");
+            Prepare("ExecuteReaderLife.db");
+            using var reader = new SqliteConnection("Data Source=ExecuteReaderLife.db").ExecuteReader("SELECT * FROM Data ORDER BY Id");
             Assert.True(reader.Read());
             Assert.Equal(1, reader.GetInt64(0));
             Assert.Equal("test1", reader.GetString(1));
@@ -95,8 +95,8 @@ namespace Smart.Data.Mapper
         [Fact]
         public async ValueTask ExecuteReaderLifeAsync()
         {
-            Prepare();
-            using var reader = await new SqliteConnection("Data Source=Test.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
+            Prepare("ExecuteReaderLifeAsync.db");
+            using var reader = await new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
             Assert.True(reader.Read());
             Assert.Equal(1, reader.GetInt64(0));
             Assert.Equal("test1", reader.GetString(1));
