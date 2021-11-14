@@ -43,7 +43,7 @@ namespace Smart.Data.Mapper
         public async ValueTask QueryAsync()
         {
             await using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+            await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
@@ -66,7 +66,7 @@ namespace Smart.Data.Mapper
         public async ValueTask QueryCancelAsync()
         {
             await using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+            await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
             await Assert.ThrowsAsync<OperationCanceledException>(async () =>

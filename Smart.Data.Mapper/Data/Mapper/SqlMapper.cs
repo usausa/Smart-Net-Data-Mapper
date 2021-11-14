@@ -304,8 +304,10 @@ namespace Smart.Data.Mapper
             }
             catch (Exception)
             {
-                // ReSharper disable once MethodHasAsyncOverload
-                reader?.Dispose();
+                if (reader is not null)
+                {
+                    await reader.DisposeAsync().ConfigureAwait(false);
+                }
                 cmd?.Dispose();
                 throw;
             }

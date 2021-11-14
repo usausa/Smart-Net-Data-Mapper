@@ -37,7 +37,7 @@ namespace Smart.Data.Mapper
         public async ValueTask ExecuteScalarByObjectParameterAsync()
         {
             await using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+            await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
@@ -64,7 +64,7 @@ namespace Smart.Data.Mapper
         public async ValueTask ResultIsNullAsync()
         {
             await using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+            await con.OpenAsync().ConfigureAwait(false);
 
             var value = await con.ExecuteScalarAsync<long>("SELECT NULL").ConfigureAwait(false);
 
@@ -88,7 +88,7 @@ namespace Smart.Data.Mapper
         public async ValueTask ResultIsConvertedAsync()
         {
             await using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+            await con.OpenAsync().ConfigureAwait(false);
 
             var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
 
@@ -104,7 +104,7 @@ namespace Smart.Data.Mapper
         public async ValueTask ExecuteScalarCancelAsync()
         {
             await using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+            await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
             var cancel = new CancellationToken(true);
