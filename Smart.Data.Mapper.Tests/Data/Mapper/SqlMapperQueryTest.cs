@@ -42,7 +42,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask QueryAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -65,7 +67,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask QueryCancelAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -99,7 +103,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask WithoutOpenMustClosedAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             var list = con.QueryAsync<DataEntity>("SELECT 1, 'test1'");
 
             Assert.Single(await list.ToListAsync().ConfigureAwait(false));
@@ -151,7 +157,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync().ConfigureAwait(false)).ConfigureAwait(false);
 
             Assert.Equal(ConnectionState.Closed, con.State);
@@ -161,7 +169,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
         {
+#pragma warning disable CA2007
             await using var con = new CommandUnsupportedConnection();
+#pragma warning restore CA2007
             await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync().ConfigureAwait(false)).ConfigureAwait(false);
 
             Assert.Equal(ConnectionState.Closed, con.State);
@@ -178,7 +188,9 @@ namespace Smart.Data.Mapper
                 opt.Add(new PostProcessErrorParameterBuilderFactory());
             });
 
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ToListAsync().ConfigureAwait(false)).ConfigureAwait(false);
 
             Assert.Equal(ConnectionState.Closed, con.State);
@@ -240,7 +252,9 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             var list = con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
             Assert.Single(await list.ToListAsync().ConfigureAwait(false));
@@ -260,7 +274,9 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             var list = con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'");
 
             Assert.Single(await list.ToListAsync().ConfigureAwait(false));

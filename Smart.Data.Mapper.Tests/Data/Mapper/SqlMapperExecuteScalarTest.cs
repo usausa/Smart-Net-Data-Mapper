@@ -36,7 +36,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ExecuteScalarByObjectParameterAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -63,7 +65,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ResultIsNullAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
 
             var value = await con.ExecuteScalarAsync<long>("SELECT NULL").ConfigureAwait(false);
@@ -87,7 +91,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ResultIsConvertedAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
 
             var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
@@ -103,7 +109,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ExecuteScalarCancelAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -135,7 +143,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask WithoutOpenAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             var value = await con.ExecuteScalarAsync<long>("SELECT 1").ConfigureAwait(false);
 
             Assert.Equal(1L, value);
@@ -196,7 +206,9 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object()).ConfigureAwait(false);
 
             Assert.True(factory.BuildCalled);
@@ -215,7 +227,9 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.ExecuteScalarAsync<long>(config, "SELECT 1").ConfigureAwait(false);
 
             Assert.False(factory.BuildCalled);

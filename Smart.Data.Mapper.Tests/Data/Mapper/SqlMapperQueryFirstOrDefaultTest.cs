@@ -42,7 +42,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask QueryFirstOrDefaultAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
             con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
             con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -66,7 +68,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask QueryFirstOrDefaultCancelAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.OpenAsync().ConfigureAwait(false);
 
             var cancel = new CancellationToken(true);
@@ -96,7 +100,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask WithoutOpenAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT 1, 'test1'").ConfigureAwait(false);
 
             Assert.Equal(ConnectionState.Closed, con.State);
@@ -120,7 +126,9 @@ namespace Smart.Data.Mapper
 
         public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
         {
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryFirstOrDefaultAsync<DataEntity>("x").ConfigureAwait(false)).ConfigureAwait(false);
 
             Assert.Equal(ConnectionState.Closed, con.State);
@@ -180,7 +188,9 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false);
 
             Assert.True(factory.BuildCalled);
@@ -199,7 +209,9 @@ namespace Smart.Data.Mapper
                 opt.Add(factory);
             });
 
+#pragma warning disable CA2007
             await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
             await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'").ConfigureAwait(false);
 
             Assert.False(factory.BuildCalled);
