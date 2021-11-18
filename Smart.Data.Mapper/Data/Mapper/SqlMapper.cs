@@ -57,30 +57,29 @@ namespace Smart.Data.Mapper
         public static int Execute(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+            using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            try
             {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
-
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        con.Open();
-                    }
-
-                    var result = cmd.ExecuteNonQuery();
-
-                    builder.PostProcess?.Invoke(cmd, param!);
-
-                    return result;
+                    con.Open();
                 }
-                finally
+
+                var result = cmd.ExecuteNonQuery();
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                return result;
+            }
+            finally
+            {
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        con.Close();
-                    }
+                    con.Close();
                 }
             }
         }
@@ -95,30 +94,31 @@ namespace Smart.Data.Mapper
         public static async ValueTask<int> ExecuteAsync(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            await using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+#pragma warning disable CA2007
+            await using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+#pragma warning restore CA2007
+
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            try
             {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
-
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        await con.OpenAsync(cancel).ConfigureAwait(false);
-                    }
-
-                    var result = await cmd.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
-
-                    builder.PostProcess?.Invoke(cmd, param!);
-
-                    return result;
+                    await con.OpenAsync(cancel).ConfigureAwait(false);
                 }
-                finally
+
+                var result = await cmd.ExecuteNonQueryAsync(cancel).ConfigureAwait(false);
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                return result;
+            }
+            finally
+            {
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        await con.CloseAsync().ConfigureAwait(false);
-                    }
+                    await con.CloseAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -137,40 +137,39 @@ namespace Smart.Data.Mapper
         public static T ExecuteScalar<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+            using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            try
             {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
-
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        con.Open();
-                    }
-
-                    var result = cmd.ExecuteScalar();
-
-                    builder.PostProcess?.Invoke(cmd, param!);
-
-                    if (result is T scalar)
-                    {
-                        return scalar;
-                    }
-
-                    if (result is null)
-                    {
-                        return default!;
-                    }
-
-                    return config.Convert<T>(result);
+                    con.Open();
                 }
-                finally
+
+                var result = cmd.ExecuteScalar();
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                if (result is T scalar)
                 {
-                    if (wasClosed)
-                    {
-                        con.Close();
-                    }
+                    return scalar;
+                }
+
+                if (result is null)
+                {
+                    return default!;
+                }
+
+                return config.Convert<T>(result);
+            }
+            finally
+            {
+                if (wasClosed)
+                {
+                    con.Close();
                 }
             }
         }
@@ -185,40 +184,41 @@ namespace Smart.Data.Mapper
         public static async ValueTask<T> ExecuteScalarAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            await using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+#pragma warning disable CA2007
+            await using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+#pragma warning restore CA2007
+
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            try
             {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
-
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        await con.OpenAsync(cancel).ConfigureAwait(false);
-                    }
-
-                    var result = await cmd.ExecuteScalarAsync(cancel).ConfigureAwait(false);
-
-                    builder.PostProcess?.Invoke(cmd, param!);
-
-                    if (result is T scalar)
-                    {
-                        return scalar;
-                    }
-
-                    if (result is null)
-                    {
-                        return default!;
-                    }
-
-                    return config.Convert<T>(result);
+                    await con.OpenAsync(cancel).ConfigureAwait(false);
                 }
-                finally
+
+                var result = await cmd.ExecuteScalarAsync(cancel).ConfigureAwait(false);
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                if (result is T scalar)
                 {
-                    if (wasClosed)
-                    {
-                        await con.CloseAsync().ConfigureAwait(false);
-                    }
+                    return scalar;
+                }
+
+                if (result is null)
+                {
+                    return default!;
+                }
+
+                return config.Convert<T>(result);
+            }
+            finally
+            {
+                if (wasClosed)
+                {
+                    await con.CloseAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -242,6 +242,7 @@ namespace Smart.Data.Mapper
             try
             {
                 cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+
                 var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param!);
 
@@ -287,6 +288,7 @@ namespace Smart.Data.Mapper
             try
             {
                 cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+
                 var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
                 builder.Build?.Invoke(cmd, param!);
 
@@ -334,40 +336,38 @@ namespace Smart.Data.Mapper
         public static IEnumerable<T> Query<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
-            {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
+            using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
 
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            if (wasClosed)
+            {
+                con.Open();
+            }
+
+            try
+            {
+                using var reader = cmd.ExecuteReader(CommandBehaviorQuery);
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                if (reader.Read())
+                {
+                    var mapper = config.CreateResultMapper<T>(reader);
+
+                    do
+                    {
+                        yield return mapper(reader);
+                    }
+                    while (reader.Read());
+                }
+            }
+            finally
+            {
                 if (wasClosed)
                 {
-                    con.Open();
-                }
-
-                try
-                {
-                    using (var reader = cmd.ExecuteReader(CommandBehaviorQuery))
-                    {
-                        builder.PostProcess?.Invoke(cmd, param!);
-
-                        if (reader.Read())
-                        {
-                            var mapper = config.CreateResultMapper<T>(reader);
-
-                            do
-                            {
-                                yield return mapper(reader);
-                            }
-                            while (reader.Read());
-                        }
-                    }
-                }
-                finally
-                {
-                    if (wasClosed)
-                    {
-                        con.Close();
-                    }
+                    con.Close();
                 }
             }
         }
@@ -384,31 +384,33 @@ namespace Smart.Data.Mapper
             var wasClosed = con.State == ConnectionState.Closed;
             try
             {
-                await using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+#pragma warning disable CA2007
+                await using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+#pragma warning restore CA2007
+
+                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+                builder.Build?.Invoke(cmd, param!);
+
+                if (wasClosed)
                 {
-                    var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                    builder.Build?.Invoke(cmd, param!);
+                    await con.OpenAsync(cancel).ConfigureAwait(false);
+                }
 
-                    if (wasClosed)
+#pragma warning disable CA2007
+                await using var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQuery, cancel).ConfigureAwait(false);
+#pragma warning restore CA2007
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                if (await reader.ReadAsync(cancel).ConfigureAwait(false))
+                {
+                    var mapper = config.CreateResultMapper<T>(reader);
+
+                    do
                     {
-                        await con.OpenAsync(cancel).ConfigureAwait(false);
+                        yield return mapper(reader);
                     }
-
-                    await using (var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQuery, cancel).ConfigureAwait(false))
-                    {
-                        builder.PostProcess?.Invoke(cmd, param!);
-
-                        if (await reader.ReadAsync(cancel).ConfigureAwait(false))
-                        {
-                            var mapper = config.CreateResultMapper<T>(reader);
-
-                            do
-                            {
-                                yield return mapper(reader);
-                            }
-                            while (await reader.ReadAsync(cancel).ConfigureAwait(false));
-                        }
-                    }
+                    while (await reader.ReadAsync(cancel).ConfigureAwait(false));
                 }
             }
             finally
@@ -435,43 +437,41 @@ namespace Smart.Data.Mapper
         public static List<T> QueryList<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
-            {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
+            using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
 
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            if (wasClosed)
+            {
+                con.Open();
+            }
+
+            try
+            {
+                using var reader = cmd.ExecuteReader(CommandBehaviorQuery);
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                var list = new List<T>();
+                if (reader.Read())
+                {
+                    var mapper = config.CreateResultMapper<T>(reader);
+
+                    do
+                    {
+                        list.Add(mapper(reader));
+                    }
+                    while (reader.Read());
+                }
+
+                return list;
+            }
+            finally
+            {
                 if (wasClosed)
                 {
-                    con.Open();
-                }
-
-                try
-                {
-                    using (var reader = cmd.ExecuteReader(CommandBehaviorQuery))
-                    {
-                        builder.PostProcess?.Invoke(cmd, param!);
-
-                        var list = new List<T>();
-                        if (reader.Read())
-                        {
-                            var mapper = config.CreateResultMapper<T>(reader);
-
-                            do
-                            {
-                                list.Add(mapper(reader));
-                            }
-                            while (reader.Read());
-                        }
-
-                        return list;
-                    }
-                }
-                finally
-                {
-                    if (wasClosed)
-                    {
-                        con.Close();
-                    }
+                    con.Close();
                 }
             }
         }
@@ -487,43 +487,45 @@ namespace Smart.Data.Mapper
         public static async ValueTask<List<T>> QueryListAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            await using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
-            {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
+#pragma warning disable CA2007
+            await using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+#pragma warning restore CA2007
 
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            if (wasClosed)
+            {
+                await con.OpenAsync(cancel).ConfigureAwait(false);
+            }
+
+            try
+            {
+#pragma warning disable CA2007
+                await using var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQuery, cancel).ConfigureAwait(false);
+#pragma warning restore CA2007
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                var list = new List<T>();
+                if (await reader.ReadAsync(cancel).ConfigureAwait(false))
+                {
+                    var mapper = config.CreateResultMapper<T>(reader);
+
+                    do
+                    {
+                        list.Add(mapper(reader));
+                    }
+                    while (await reader.ReadAsync(cancel).ConfigureAwait(false));
+                }
+
+                return list;
+            }
+            finally
+            {
                 if (wasClosed)
                 {
-                    await con.OpenAsync(cancel).ConfigureAwait(false);
-                }
-
-                try
-                {
-                    await using (var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQuery, cancel).ConfigureAwait(false))
-                    {
-                        builder.PostProcess?.Invoke(cmd, param!);
-
-                        var list = new List<T>();
-                        if (await reader.ReadAsync(cancel).ConfigureAwait(false))
-                        {
-                            var mapper = config.CreateResultMapper<T>(reader);
-
-                            do
-                            {
-                                list.Add(mapper(reader));
-                            }
-                            while (await reader.ReadAsync(cancel).ConfigureAwait(false));
-                        }
-
-                        return list;
-                    }
-                }
-                finally
-                {
-                    if (wasClosed)
-                    {
-                        await con.CloseAsync().ConfigureAwait(false);
-                    }
+                    await con.CloseAsync().ConfigureAwait(false);
                 }
             }
         }
@@ -542,37 +544,35 @@ namespace Smart.Data.Mapper
         public static T? QueryFirstOrDefault<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+            using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            try
             {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
-
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        con.Open();
-                    }
-
-                    using (var reader = cmd.ExecuteReader(CommandBehaviorQueryFirstOrDefault))
-                    {
-                        builder.PostProcess?.Invoke(cmd, param!);
-
-                        if (reader.Read())
-                        {
-                            var mapper = config.CreateResultMapper<T>(reader);
-                            return mapper(reader);
-                        }
-
-                        return default;
-                    }
+                    con.Open();
                 }
-                finally
+
+                using var reader = cmd.ExecuteReader(CommandBehaviorQueryFirstOrDefault);
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                if (reader.Read())
                 {
-                    if (wasClosed)
-                    {
-                        con.Close();
-                    }
+                    var mapper = config.CreateResultMapper<T>(reader);
+                    return mapper(reader);
+                }
+
+                return default;
+            }
+            finally
+            {
+                if (wasClosed)
+                {
+                    con.Close();
                 }
             }
         }
@@ -587,37 +587,39 @@ namespace Smart.Data.Mapper
         public static async ValueTask<T?> QueryFirstOrDefaultAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
         {
             var wasClosed = con.State == ConnectionState.Closed;
-            await using (var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType))
+#pragma warning disable CA2007
+            await using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+#pragma warning restore CA2007
+
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
+
+            try
             {
-                var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-                builder.Build?.Invoke(cmd, param!);
-
-                try
+                if (wasClosed)
                 {
-                    if (wasClosed)
-                    {
-                        await con.OpenAsync(cancel).ConfigureAwait(false);
-                    }
-
-                    await using (var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQueryFirstOrDefault, cancel).ConfigureAwait(false))
-                    {
-                        builder.PostProcess?.Invoke(cmd, param!);
-
-                        if (await reader.ReadAsync(cancel).ConfigureAwait(false))
-                        {
-                            var mapper = config.CreateResultMapper<T>(reader);
-                            return mapper(reader);
-                        }
-
-                        return default;
-                    }
+                    await con.OpenAsync(cancel).ConfigureAwait(false);
                 }
-                finally
+
+#pragma warning disable CA2007
+                await using var reader = await cmd.ExecuteReaderAsync(CommandBehaviorQueryFirstOrDefault, cancel).ConfigureAwait(false);
+#pragma warning restore CA2007
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                if (await reader.ReadAsync(cancel).ConfigureAwait(false))
                 {
-                    if (wasClosed)
-                    {
-                        await con.CloseAsync().ConfigureAwait(false);
-                    }
+                    var mapper = config.CreateResultMapper<T>(reader);
+                    return mapper(reader);
+                }
+
+                return default;
+            }
+            finally
+            {
+                if (wasClosed)
+                {
+                    await con.CloseAsync().ConfigureAwait(false);
                 }
             }
         }
