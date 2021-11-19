@@ -1,12 +1,11 @@
-namespace Smart.Data.Mapper.Handlers
+namespace Smart.Data.Mapper.Handlers;
+
+using System;
+using System.Data;
+
+public interface ITypeHandler
 {
-    using System;
-    using System.Data;
+    void SetValue(IDbDataParameter parameter, object value);
 
-    public interface ITypeHandler
-    {
-        void SetValue(IDbDataParameter parameter, object value);
-
-        Func<object, object> CreateParse(Type type);
-    }
+    Func<object, object> CreateParse(Type type);
 }

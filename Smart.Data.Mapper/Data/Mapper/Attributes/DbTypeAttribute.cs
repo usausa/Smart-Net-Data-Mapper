@@ -1,16 +1,15 @@
-namespace Smart.Data.Mapper.Attributes
+namespace Smart.Data.Mapper.Attributes;
+
+using System;
+using System.Data;
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class DbTypeAttribute : Attribute
 {
-    using System;
-    using System.Data;
+    public DbType DbType { get; }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class DbTypeAttribute : Attribute
+    public DbTypeAttribute(DbType dbType)
     {
-        public DbType DbType { get; }
-
-        public DbTypeAttribute(DbType dbType)
-        {
-            DbType = dbType;
-        }
+        DbType = dbType;
     }
 }

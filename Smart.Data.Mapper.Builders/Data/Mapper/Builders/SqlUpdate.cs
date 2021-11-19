@@ -1,59 +1,58 @@
-namespace Smart.Data.Mapper.Builders
+namespace Smart.Data.Mapper.Builders;
+
+using System;
+using System.Text;
+
+using Smart.Data.Mapper.Builders.Metadata;
+
+public static class SqlUpdate<T>
 {
-    using System;
-    using System.Text;
+    private static readonly string ByKeySql;
 
-    using Smart.Data.Mapper.Builders.Metadata;
+    private static readonly string UpdateSql;
 
-    public static class SqlUpdate<T>
+    private static readonly string KeyConditionSql;
+
+    static SqlUpdate()
     {
-        private static readonly string ByKeySql;
+        var tableInfo = TableInfo<T>.Instance;
+        var sql = new StringBuilder(256);
 
-        private static readonly string UpdateSql;
+        UpdateSql = $"UPDATE {tableInfo.Name} SET ";
 
-        private static readonly string KeyConditionSql;
-
-        static SqlUpdate()
+        if ((tableInfo.KeyColumns.Count > 0) &&
+            (tableInfo.NonKeyColumns.Count > 0))
         {
-            var tableInfo = TableInfo<T>.Instance;
-            var sql = new StringBuilder(256);
+            sql.Append(" WHERE ");
+            BuildHelper.BuildKeyCondition(sql, tableInfo);
 
-            UpdateSql = $"UPDATE {tableInfo.Name} SET ";
+            KeyConditionSql = sql.ToString();
 
-            if ((tableInfo.KeyColumns.Count > 0) &&
-                (tableInfo.NonKeyColumns.Count > 0))
+            sql.Clear();
+            sql.Append(UpdateSql);
+            foreach (var column in tableInfo.NonKeyColumns)
             {
-                sql.Append(" WHERE ");
-                BuildHelper.BuildKeyCondition(sql, tableInfo);
-
-                KeyConditionSql = sql.ToString();
-
-                sql.Clear();
-                sql.Append(UpdateSql);
-                foreach (var column in tableInfo.NonKeyColumns)
-                {
-                    sql.Append(column.Name);
-                    sql.Append(" = ");
-                    sql.Append('@');
-                    sql.Append(column.Property.Name);
-                    sql.Append(", ");
-                }
-                sql.Length -= 2;
-                sql.Append(KeyConditionSql);
-
-                ByKeySql = sql.ToString();
+                sql.Append(column.Name);
+                sql.Append(" = ");
+                sql.Append('@');
+                sql.Append(column.Property.Name);
+                sql.Append(", ");
             }
-            else
-            {
-                KeyConditionSql = string.Empty;
-                ByKeySql = string.Empty;
-            }
+            sql.Length -= 2;
+            sql.Append(KeyConditionSql);
+
+            ByKeySql = sql.ToString();
         }
-
-        public static string ByKey() => ByKeySql;
-
-        public static string ByKey(string set) => !String.IsNullOrEmpty(KeyConditionSql) ? String.Concat(UpdateSql, set, KeyConditionSql) : string.Empty;
-
-        public static string Set(string set, string condition) => String.Concat(UpdateSql, set, " WHERE ", condition);
+        else
+        {
+            KeyConditionSql = string.Empty;
+            ByKeySql = string.Empty;
+        }
     }
+
+    public static string ByKey() => ByKeySql;
+
+    public static string ByKey(string set) => !String.IsNullOrEmpty(KeyConditionSql) ? String.Concat(UpdateSql, set, KeyConditionSql) : string.Empty;
+
+    public static string Set(string set, string condition) => String.Concat(UpdateSql, set, " WHERE ", condition);
 }

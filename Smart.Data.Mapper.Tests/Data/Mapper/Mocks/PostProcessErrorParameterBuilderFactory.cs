@@ -1,16 +1,15 @@
-namespace Smart.Data.Mapper.Mocks
+namespace Smart.Data.Mapper.Mocks;
+
+using System;
+
+using Smart.Data.Mapper.Parameters;
+
+public sealed class PostProcessErrorParameterBuilderFactory : IParameterBuilderFactory
 {
-    using System;
+    public bool IsMatch(Type type) => true;
 
-    using Smart.Data.Mapper.Parameters;
-
-    public sealed class PostProcessErrorParameterBuilderFactory : IParameterBuilderFactory
+    public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
     {
-        public bool IsMatch(Type type) => true;
-
-        public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
-        {
-            return new(null, (_, _) => throw new NotSupportedException());
-        }
+        return new(null, (_, _) => throw new NotSupportedException());
     }
 }

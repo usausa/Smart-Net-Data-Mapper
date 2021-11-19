@@ -1,29 +1,28 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System;
+using System.Data;
+using System.Reflection;
+
+using Smart.Data.Mapper.Parameters;
+
+public interface ISqlMapperConfig
 {
-    using System;
-    using System.Data;
-    using System.Reflection;
+    Func<T> CreateFactory<T>();
 
-    using Smart.Data.Mapper.Parameters;
+    Func<object?, object?>? CreateGetter(PropertyInfo pi);
 
-    public interface ISqlMapperConfig
-    {
-        Func<T> CreateFactory<T>();
+    Action<object?, object?>? CreateSetter(PropertyInfo pi);
 
-        Func<object?, object?>? CreateGetter(PropertyInfo pi);
+    T Convert<T>(object source);
 
-        Action<object?, object?>? CreateSetter(PropertyInfo pi);
+    Func<PropertyInfo[], string, PropertyInfo?> GetPropertySelector();
 
-        T Convert<T>(object source);
+    Func<object, object>? CreateParser(Type sourceType, Type destinationType);
 
-        Func<PropertyInfo[], string, PropertyInfo?> GetPropertySelector();
+    TypeHandleEntry LookupTypeHandle(Type type);
 
-        Func<object, object>? CreateParser(Type sourceType, Type destinationType);
+    ParameterBuilder CreateParameterBuilder(Type type);
 
-        TypeHandleEntry LookupTypeHandle(Type type);
-
-        ParameterBuilder CreateParameterBuilder(Type type);
-
-        Func<IDataRecord, T> CreateResultMapper<T>(IDataReader reader);
-    }
+    Func<IDataRecord, T> CreateResultMapper<T>(IDataReader reader);
 }

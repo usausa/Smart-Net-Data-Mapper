@@ -1,18 +1,17 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "Ignore")]
+public readonly struct ColumnInfo
 {
-    using System;
+    public string Name { get; }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "Ignore")]
-    public readonly struct ColumnInfo
+    public Type Type { get; }
+
+    public ColumnInfo(string name, Type type)
     {
-        public string Name { get; }
-
-        public Type Type { get; }
-
-        public ColumnInfo(string name, Type type)
-        {
-            Name = name;
-            Type = type;
-        }
+        Name = name;
+        Type = type;
     }
 }

@@ -1,11 +1,10 @@
-namespace Smart.Data.Mapper.Parameters
+namespace Smart.Data.Mapper.Parameters;
+
+using System;
+
+public interface IParameterBuilderFactory
 {
-    using System;
+    bool IsMatch(Type type);
 
-    public interface IParameterBuilderFactory
-    {
-        bool IsMatch(Type type);
-
-        ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type);
-    }
+    ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type);
 }

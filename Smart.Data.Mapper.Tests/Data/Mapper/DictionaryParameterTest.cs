@@ -1,51 +1,50 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System;
+using System.Collections.Generic;
+
+using Microsoft.Data.Sqlite;
+
+using Smart.Data.Mapper.Mocks;
+
+using Xunit;
+
+public class DictionaryParameterTest
 {
-    using System;
-    using System.Collections.Generic;
+    [Fact]
 
-    using Microsoft.Data.Sqlite;
-
-    using Smart.Data.Mapper.Mocks;
-
-    using Xunit;
-
-    public class DictionaryParameterTest
+    public void ParameterByDictionary()
     {
-        [Fact]
-
-        public void ParameterByDictionary()
+        SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
         {
-            SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
-            {
-                config[typeof(DateTime)] = new DateTimeTypeHandler();
-            });
+            config[typeof(DateTime)] = new DateTimeTypeHandler();
+        });
 
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text, Date int)");
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.Open();
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text, Date int)");
 
-            var parameter = new Dictionary<string, object?>
-            {
-                { "Id", 1 },
-                { "Name", null },
-                { "Date", new DateTime(2000, 1, 1) }
-            };
-            con.Execute("INSERT INTO Data (Id, Name, Date) VALUES (@Id, @Name, @Date)", parameter);
-
-            var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
-
-            Assert.Equal(1L, entity!.Id);
-            Assert.Null(entity.Name);
-            Assert.Equal(new DateTime(2000, 1, 1), entity.Date);
-        }
-
-        protected class DataEntity
+        var parameter = new Dictionary<string, object?>
         {
-            public int Id { get; set; }
+            { "Id", 1 },
+            { "Name", null },
+            { "Date", new DateTime(2000, 1, 1) }
+        };
+        con.Execute("INSERT INTO Data (Id, Name, Date) VALUES (@Id, @Name, @Date)", parameter);
 
-            public string? Name { get; set; }
+        var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
-            public DateTime Date { get; set; }
-        }
+        Assert.Equal(1L, entity!.Id);
+        Assert.Null(entity.Name);
+        Assert.Equal(new DateTime(2000, 1, 1), entity.Date);
+    }
+
+    protected class DataEntity
+    {
+        public int Id { get; set; }
+
+        public string? Name { get; set; }
+
+        public DateTime Date { get; set; }
     }
 }

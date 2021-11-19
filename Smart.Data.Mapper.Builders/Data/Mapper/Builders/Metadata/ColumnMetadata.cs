@@ -1,17 +1,16 @@
-namespace Smart.Data.Mapper.Builders.Metadata
+namespace Smart.Data.Mapper.Builders.Metadata;
+
+using System.Reflection;
+
+public class ColumnMetadata
 {
-    using System.Reflection;
+    public PropertyInfo Property { get; }
 
-    public class ColumnMetadata
+    public string Name { get; }
+
+    public ColumnMetadata(PropertyInfo property, string name)
     {
-        public PropertyInfo Property { get; }
-
-        public string Name { get; }
-
-        public ColumnMetadata(PropertyInfo property, string name)
-        {
-            Property = property;
-            Name = name;
-        }
+        Property = property;
+        Name = name;
     }
 }

@@ -1,97 +1,96 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Common;
+
+public sealed class DynamicParameter : IDynamicParameter
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data;
-    using System.Data.Common;
+    private readonly Dictionary<string, ParameterInfo> parameters = new();
 
-    public sealed class DynamicParameter : IDynamicParameter
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+    private sealed class ParameterInfo
     {
-        private readonly Dictionary<string, ParameterInfo> parameters = new();
+        public readonly string Name;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
-        private sealed class ParameterInfo
+        public readonly object? Value;
+
+        public readonly DbType? DbType;
+
+        public readonly int? Size;
+
+        public readonly ParameterDirection Direction;
+
+        public IDbDataParameter? AttachedParam;
+
+        public ParameterInfo(string name, object? value, DbType? dbType, int? size, ParameterDirection direction)
         {
-            public readonly string Name;
+            Name = name;
+            Value = value;
+            DbType = dbType;
+            Size = size;
+            Direction = direction;
+        }
+    }
 
-            public readonly object? Value;
+    public void Add(string name, object? value, DbType? dbType = null, int? size = null, ParameterDirection direction = ParameterDirection.Input)
+    {
+        parameters[name] = new ParameterInfo(name, value, dbType, size, direction);
+    }
 
-            public readonly DbType? DbType;
-
-            public readonly int? Size;
-
-            public readonly ParameterDirection Direction;
-
-            public IDbDataParameter? AttachedParam;
-
-            public ParameterInfo(string name, object? value, DbType? dbType, int? size, ParameterDirection direction)
-            {
-                Name = name;
-                Value = value;
-                DbType = dbType;
-                Size = size;
-                Direction = direction;
-            }
+    public T Get<T>(string name)
+    {
+        var value = parameters[name].AttachedParam?.Value ?? DBNull.Value;
+        if (value == DBNull.Value)
+        {
+            return default!;
         }
 
-        public void Add(string name, object? value, DbType? dbType = null, int? size = null, ParameterDirection direction = ParameterDirection.Input)
-        {
-            parameters[name] = new ParameterInfo(name, value, dbType, size, direction);
-        }
+        return (T)value;
+    }
 
-        public T Get<T>(string name)
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    public void Build(ISqlMapperConfig config, DbCommand cmd)
+    {
+        foreach (var parameter in parameters.Values)
         {
-            var value = parameters[name].AttachedParam?.Value ?? DBNull.Value;
-            if (value == DBNull.Value)
+            var param = cmd.CreateParameter();
+            param.ParameterName = parameter.Name;
+
+            param.Direction = parameter.Direction;
+
+            if ((parameter.Direction == ParameterDirection.Input) ||
+                (parameter.Direction == ParameterDirection.InputOutput))
             {
-                return default!;
-            }
-
-            return (T)value;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-        public void Build(ISqlMapperConfig config, DbCommand cmd)
-        {
-            foreach (var parameter in parameters.Values)
-            {
-                var param = cmd.CreateParameter();
-                param.ParameterName = parameter.Name;
-
-                param.Direction = parameter.Direction;
-
-                if ((parameter.Direction == ParameterDirection.Input) ||
-                    (parameter.Direction == ParameterDirection.InputOutput))
+                var value = parameter.Value;
+                if (value is null)
                 {
-                    var value = parameter.Value;
-                    if (value is null)
+                    param.Value = DBNull.Value;
+                }
+                else
+                {
+                    var entry = config.LookupTypeHandle(value.GetType());
+                    param.DbType = parameter.DbType ?? entry.DbType;
+
+                    if (parameter.Size.HasValue)
                     {
-                        param.Value = DBNull.Value;
+                        param.Size = parameter.Size.Value;
+                    }
+
+                    if (entry.TypeHandler is not null)
+                    {
+                        entry.TypeHandler.SetValue(param, value);
                     }
                     else
                     {
-                        var entry = config.LookupTypeHandle(value.GetType());
-                        param.DbType = parameter.DbType ?? entry.DbType;
-
-                        if (parameter.Size.HasValue)
-                        {
-                            param.Size = parameter.Size.Value;
-                        }
-
-                        if (entry.TypeHandler is not null)
-                        {
-                            entry.TypeHandler.SetValue(param, value);
-                        }
-                        else
-                        {
-                            param.Value = value;
-                        }
+                        param.Value = value;
                     }
                 }
-
-                cmd.Parameters.Add(param);
-                parameter.AttachedParam = param;
             }
+
+            cmd.Parameters.Add(param);
+            parameter.AttachedParam = param;
         }
     }
 }

@@ -1,239 +1,238 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Microsoft.Data.Sqlite;
+
+using Smart.Data.Mapper.Mocks;
+
+using Xunit;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
+public class SqlMapperExecuteScalarTest
 {
-    using System.Data;
-    using System.Threading;
-    using System.Threading.Tasks;
+    //--------------------------------------------------------------------------------
+    // Execute
+    //--------------------------------------------------------------------------------
 
-    using Microsoft.Data.Sqlite;
+    [Fact]
 
-    using Smart.Data.Mapper.Mocks;
-
-    using Xunit;
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
-    public class SqlMapperExecuteScalarTest
+    public void ExecuteScalarByObjectParameter()
     {
-        //--------------------------------------------------------------------------------
-        // Execute
-        //--------------------------------------------------------------------------------
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.Open();
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        [Fact]
+        var count = con.ExecuteScalar<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
 
-        public void ExecuteScalarByObjectParameter()
-        {
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+        Assert.Equal(1L, count);
+    }
 
-            var count = con.ExecuteScalar<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
+    [Fact]
 
-            Assert.Equal(1L, count);
-        }
-
-        [Fact]
-
-        public async ValueTask ExecuteScalarByObjectParameterAsync()
-        {
+    public async ValueTask ExecuteScalarByObjectParameterAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.OpenAsync().ConfigureAwait(false);
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+        await con.OpenAsync().ConfigureAwait(false);
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-            var count = await con.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 }).ConfigureAwait(false);
+        var count = await con.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 }).ConfigureAwait(false);
 
-            Assert.Equal(1L, count);
-        }
+        Assert.Equal(1L, count);
+    }
 
-        [Fact]
+    [Fact]
 
-        public void ResultIsNull()
-        {
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+    public void ResultIsNull()
+    {
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.Open();
 
-            var value = con.ExecuteScalar<long>("SELECT NULL");
+        var value = con.ExecuteScalar<long>("SELECT NULL");
 
-            Assert.Equal(default, value);
-        }
+        Assert.Equal(default, value);
+    }
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask ResultIsNullAsync()
-        {
+    public async ValueTask ResultIsNullAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync().ConfigureAwait(false);
 
-            var value = await con.ExecuteScalarAsync<long>("SELECT NULL").ConfigureAwait(false);
+        var value = await con.ExecuteScalarAsync<long>("SELECT NULL").ConfigureAwait(false);
 
-            Assert.Equal(default, value);
-        }
+        Assert.Equal(default, value);
+    }
 
-        [Fact]
+    [Fact]
 
-        public void ResultIsConverted()
-        {
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
+    public void ResultIsConverted()
+    {
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.Open();
 
-            var value = con.ExecuteScalar<string>("SELECT 0");
+        var value = con.ExecuteScalar<string>("SELECT 0");
 
-            Assert.Equal("0", value);
-        }
+        Assert.Equal("0", value);
+    }
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask ResultIsConvertedAsync()
-        {
+    public async ValueTask ResultIsConvertedAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync().ConfigureAwait(false);
 
-            var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
+        var value = await con.ExecuteScalarAsync<string>("SELECT 0").ConfigureAwait(false);
 
-            Assert.Equal("0", value);
-        }
+        Assert.Equal("0", value);
+    }
 
-        //--------------------------------------------------------------------------------
-        // Cancel
-        //--------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
+    // Cancel
+    //--------------------------------------------------------------------------------
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask ExecuteScalarCancelAsync()
-        {
+    public async ValueTask ExecuteScalarCancelAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.OpenAsync().ConfigureAwait(false);
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        await con.OpenAsync().ConfigureAwait(false);
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-            var cancel = new CancellationToken(true);
-            await Assert.ThrowsAsync<TaskCanceledException>(async () =>
-                    await con.ExecuteScalarAsync<long>(
-                        "SELECT COUNT(*) FROM Data WHERE Id = @Id",
-                        new { Id = 1 },
-                        cancel: cancel).ConfigureAwait(false))
-                .ConfigureAwait(false);
-        }
+        var cancel = new CancellationToken(true);
+        await Assert.ThrowsAsync<TaskCanceledException>(async () =>
+                await con.ExecuteScalarAsync<long>(
+                    "SELECT COUNT(*) FROM Data WHERE Id = @Id",
+                    new { Id = 1 },
+                    cancel: cancel).ConfigureAwait(false))
+            .ConfigureAwait(false);
+    }
 
-        //--------------------------------------------------------------------------------
-        // Open
-        //--------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
+    // Open
+    //--------------------------------------------------------------------------------
 
-        [Fact]
+    [Fact]
 
-        public void WithoutOpen()
-        {
-            using var con = new SqliteConnection("Data Source=:memory:");
-            var value = con.ExecuteScalar<long>("SELECT 1");
+    public void WithoutOpen()
+    {
+        using var con = new SqliteConnection("Data Source=:memory:");
+        var value = con.ExecuteScalar<long>("SELECT 1");
 
-            Assert.Equal(1L, value);
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
+        Assert.Equal(1L, value);
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask WithoutOpenAsync()
-        {
+    public async ValueTask WithoutOpenAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            var value = await con.ExecuteScalarAsync<long>("SELECT 1").ConfigureAwait(false);
+        var value = await con.ExecuteScalarAsync<long>("SELECT 1").ConfigureAwait(false);
 
-            Assert.Equal(1L, value);
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
+        Assert.Equal(1L, value);
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
 
-        //--------------------------------------------------------------------------------
-        // Parameter
-        //--------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
+    // Parameter
+    //--------------------------------------------------------------------------------
 
-        [Fact]
+    [Fact]
 
-        public void ProcessParameter()
+    public void ProcessParameter()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
         {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(factory);
-            });
+            opt.Clear();
+            opt.Add(factory);
+        });
 
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.ExecuteScalar<long>(config, "SELECT 1", new object());
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.ExecuteScalar<long>(config, "SELECT 1", new object());
 
-            Assert.True(factory.BuildCalled);
-            Assert.True(factory.PostProcessCalled);
-        }
+        Assert.True(factory.BuildCalled);
+        Assert.True(factory.PostProcessCalled);
+    }
 
-        [Fact]
+    [Fact]
 
-        public void ProcessParameterIsNothing()
+    public void ProcessParameterIsNothing()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
         {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(factory);
-            });
+            opt.Clear();
+            opt.Add(factory);
+        });
 
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.ExecuteScalar<long>(config, "SELECT 1");
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.ExecuteScalar<long>(config, "SELECT 1");
 
-            Assert.False(factory.BuildCalled);
-            Assert.False(factory.PostProcessCalled);
-        }
+        Assert.False(factory.BuildCalled);
+        Assert.False(factory.PostProcessCalled);
+    }
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask ProcessParameterAsync()
+    public async ValueTask ProcessParameterAsync()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
         {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(factory);
-            });
+            opt.Clear();
+            opt.Add(factory);
+        });
 
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object()).ConfigureAwait(false);
+        await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object()).ConfigureAwait(false);
 
-            Assert.True(factory.BuildCalled);
-            Assert.True(factory.PostProcessCalled);
-        }
+        Assert.True(factory.BuildCalled);
+        Assert.True(factory.PostProcessCalled);
+    }
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask ProcessParameterIsNothingAsync()
+    public async ValueTask ProcessParameterIsNothingAsync()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
         {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(factory);
-            });
+            opt.Clear();
+            opt.Add(factory);
+        });
 
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.ExecuteScalarAsync<long>(config, "SELECT 1").ConfigureAwait(false);
+        await con.ExecuteScalarAsync<long>(config, "SELECT 1").ConfigureAwait(false);
 
-            Assert.False(factory.BuildCalled);
-            Assert.False(factory.PostProcessCalled);
-        }
+        Assert.False(factory.BuildCalled);
+        Assert.False(factory.PostProcessCalled);
     }
 }

@@ -1,20 +1,19 @@
-namespace Smart.Data.Mapper.Mocks
+namespace Smart.Data.Mapper.Mocks;
+
+using System;
+
+using Smart.Data.Mapper.Parameters;
+
+public sealed class MockParameterBuilderFactory : IParameterBuilderFactory
 {
-    using System;
+    public bool BuildCalled { get; private set; }
 
-    using Smart.Data.Mapper.Parameters;
+    public bool PostProcessCalled { get; private set; }
 
-    public sealed class MockParameterBuilderFactory : IParameterBuilderFactory
+    public bool IsMatch(Type type) => true;
+
+    public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
     {
-        public bool BuildCalled { get; private set; }
-
-        public bool PostProcessCalled { get; private set; }
-
-        public bool IsMatch(Type type) => true;
-
-        public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
-        {
-            return new((_, _) => { BuildCalled = true; }, (_, _) => { PostProcessCalled = true; });
-        }
+        return new((_, _) => { BuildCalled = true; }, (_, _) => { PostProcessCalled = true; });
     }
 }

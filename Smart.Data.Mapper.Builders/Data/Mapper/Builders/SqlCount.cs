@@ -1,32 +1,31 @@
-namespace Smart.Data.Mapper.Builders
+namespace Smart.Data.Mapper.Builders;
+
+using System.Text;
+
+using Smart.Data.Mapper.Builders.Metadata;
+
+public static class SqlCount<T>
 {
-    using System.Text;
+    private static readonly string AllSql;
 
-    using Smart.Data.Mapper.Builders.Metadata;
+    private static readonly string ByConditionSqlBase;
 
-    public static class SqlCount<T>
+    static SqlCount()
     {
-        private static readonly string AllSql;
+        var tableInfo = TableInfo<T>.Instance;
+        var sql = new StringBuilder(256);
 
-        private static readonly string ByConditionSqlBase;
+        sql.Append("SELECT COUNT(*) FROM ");
+        sql.Append(tableInfo.Name);
 
-        static SqlCount()
-        {
-            var tableInfo = TableInfo<T>.Instance;
-            var sql = new StringBuilder(256);
+        AllSql = sql.ToString();
 
-            sql.Append("SELECT COUNT(*) FROM ");
-            sql.Append(tableInfo.Name);
+        sql.Append(" WHERE ");
 
-            AllSql = sql.ToString();
-
-            sql.Append(" WHERE ");
-
-            ByConditionSqlBase = sql.ToString();
-        }
-
-        public static string All() => AllSql;
-
-        public static string Where(string condition) => ByConditionSqlBase + condition;
+        ByConditionSqlBase = sql.ToString();
     }
+
+    public static string All() => AllSql;
+
+    public static string Where(string condition) => ByConditionSqlBase + condition;
 }

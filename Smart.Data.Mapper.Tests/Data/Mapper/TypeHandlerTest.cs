@@ -1,45 +1,44 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System;
+
+using Microsoft.Data.Sqlite;
+
+using Smart.Data.Mapper.Mocks;
+
+using Xunit;
+
+public class TypeHandlerTest
 {
-    using System;
+    [Fact]
 
-    using Microsoft.Data.Sqlite;
-
-    using Smart.Data.Mapper.Mocks;
-
-    using Xunit;
-
-    public class TypeHandlerTest
+    public void ExecuteScalarByObjectParameter()
     {
-        [Fact]
-
-        public void ExecuteScalarByObjectParameter()
+        SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
         {
-            SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
-            {
-                config[typeof(DateTime)] = new DateTimeTypeHandler();
-            });
+            config[typeof(DateTime)] = new DateTimeTypeHandler();
+        });
 
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Date int)");
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.Open();
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Date int)");
 
-            var date = new DateTime(2000, 1, 1);
-            con.Execute("INSERT INTO Data (Id, Date) VALUES (@Id, @Date)", new DataEntity { Id = 1, Date = date });
+        var date = new DateTime(2000, 1, 1);
+        con.Execute("INSERT INTO Data (Id, Date) VALUES (@Id, @Date)", new DataEntity { Id = 1, Date = date });
 
-            var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
+        var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
-            Assert.Equal(date, entity!.Date);
+        Assert.Equal(date, entity!.Date);
 
-            var rawValue = con.ExecuteScalar<long>("SELECT Date FROM Data WHERE Id = @Id", new { Id = 1 });
+        var rawValue = con.ExecuteScalar<long>("SELECT Date FROM Data WHERE Id = @Id", new { Id = 1 });
 
-            Assert.Equal(date.Ticks, rawValue);
-        }
+        Assert.Equal(date.Ticks, rawValue);
+    }
 
-        protected class DataEntity
-        {
-            public int Id { get; set; }
+    protected class DataEntity
+    {
+        public int Id { get; set; }
 
-            public DateTime Date { get; set; }
-        }
+        public DateTime Date { get; set; }
     }
 }

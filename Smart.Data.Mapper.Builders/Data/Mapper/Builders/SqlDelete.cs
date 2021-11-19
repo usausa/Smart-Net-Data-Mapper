@@ -1,47 +1,46 @@
-namespace Smart.Data.Mapper.Builders
+namespace Smart.Data.Mapper.Builders;
+
+using System.Text;
+
+using Smart.Data.Mapper.Builders.Metadata;
+
+public static class SqlDelete<T>
 {
-    using System.Text;
+    private static readonly string AllSql;
 
-    using Smart.Data.Mapper.Builders.Metadata;
+    private static readonly string ByKeySql;
 
-    public static class SqlDelete<T>
+    private static readonly string WhereSqlBase;
+
+    static SqlDelete()
     {
-        private static readonly string AllSql;
+        var tableInfo = TableInfo<T>.Instance;
+        var sql = new StringBuilder(256);
 
-        private static readonly string ByKeySql;
+        sql.Append("DELETE FROM ");
+        sql.Append(tableInfo.Name);
 
-        private static readonly string WhereSqlBase;
+        AllSql = sql.ToString();
 
-        static SqlDelete()
+        sql.Append(" WHERE ");
+
+        WhereSqlBase = sql.ToString();
+
+        if (tableInfo.KeyColumns.Count > 0)
         {
-            var tableInfo = TableInfo<T>.Instance;
-            var sql = new StringBuilder(256);
+            BuildHelper.BuildKeyCondition(sql, tableInfo);
 
-            sql.Append("DELETE FROM ");
-            sql.Append(tableInfo.Name);
-
-            AllSql = sql.ToString();
-
-            sql.Append(" WHERE ");
-
-            WhereSqlBase = sql.ToString();
-
-            if (tableInfo.KeyColumns.Count > 0)
-            {
-                BuildHelper.BuildKeyCondition(sql, tableInfo);
-
-                ByKeySql = sql.ToString();
-            }
-            else
-            {
-                ByKeySql = string.Empty;
-            }
+            ByKeySql = sql.ToString();
         }
-
-        public static string All() => AllSql;
-
-        public static string ByKey() => ByKeySql;
-
-        public static string Where(string condition) => WhereSqlBase + condition;
+        else
+        {
+            ByKeySql = string.Empty;
+        }
     }
+
+    public static string All() => AllSql;
+
+    public static string ByKey() => ByKeySql;
+
+    public static string Where(string condition) => WhereSqlBase + condition;
 }

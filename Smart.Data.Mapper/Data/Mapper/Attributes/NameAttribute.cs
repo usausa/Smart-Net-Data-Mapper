@@ -1,15 +1,14 @@
-namespace Smart.Data.Mapper.Attributes
+namespace Smart.Data.Mapper.Attributes;
+
+using System;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
+public sealed class NameAttribute : Attribute
 {
-    using System;
+    public string Name { get; }
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
-    public sealed class NameAttribute : Attribute
+    public NameAttribute(string name)
     {
-        public string Name { get; }
-
-        public NameAttribute(string name)
-        {
-            Name = name;
-        }
+        Name = name;
     }
 }

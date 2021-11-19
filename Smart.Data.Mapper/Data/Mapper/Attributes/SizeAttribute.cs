@@ -1,15 +1,14 @@
-namespace Smart.Data.Mapper.Attributes
+namespace Smart.Data.Mapper.Attributes;
+
+using System;
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class SizeAttribute : Attribute
 {
-    using System;
+    public int Size { get; }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class SizeAttribute : Attribute
+    public SizeAttribute(int size)
     {
-        public int Size { get; }
-
-        public SizeAttribute(int size)
-        {
-            Size = size;
-        }
+        Size = size;
     }
 }

@@ -1,362 +1,361 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
+
+[DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
+internal sealed class ResultMapperCache
 {
-    using System;
-    using System.Diagnostics;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
-    using System.Threading;
+    private static readonly Node EmptyNode = new(typeof(EmptyKey), Array.Empty<ColumnInfo>(), default!, 0);
 
-    [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
-    internal sealed class ResultMapperCache
+    private const int InitialSize = 64;
+
+    private const int Factor = 3;
+
+    private readonly object sync = new();
+
+    private Node[] nodes;
+
+    private int depth;
+
+    private int count;
+
+    //--------------------------------------------------------------------------------
+    // Constructor
+    //--------------------------------------------------------------------------------
+
+    public ResultMapperCache()
     {
-        private static readonly Node EmptyNode = new(typeof(EmptyKey), Array.Empty<ColumnInfo>(), default!, 0);
+        nodes = CreateInitialTable();
+    }
 
-        private const int InitialSize = 64;
+    //--------------------------------------------------------------------------------
+    // Private
+    //--------------------------------------------------------------------------------
 
-        private const int Factor = 3;
-
-        private readonly object sync = new();
-
-        private Node[] nodes;
-
-        private int depth;
-
-        private int count;
-
-        //--------------------------------------------------------------------------------
-        // Constructor
-        //--------------------------------------------------------------------------------
-
-        public ResultMapperCache()
+    private static int CalculateDepth(Node node)
+    {
+        var length = 1;
+        var next = node.Next;
+        while (next is not null)
         {
-            nodes = CreateInitialTable();
+            length++;
+            next = next.Next;
         }
 
-        //--------------------------------------------------------------------------------
-        // Private
-        //--------------------------------------------------------------------------------
+        return length;
+    }
 
-        private static int CalculateDepth(Node node)
+    private static int CalculateDepth(Node[] targetNodes)
+    {
+        var depth = 0;
+
+        for (var i = 0; i < targetNodes.Length; i++)
         {
-            var length = 1;
-            var next = node.Next;
-            while (next is not null)
+            var node = targetNodes[i];
+            if (node != EmptyNode)
             {
-                length++;
-                next = next.Next;
+                depth = Math.Max(CalculateDepth(node), depth);
+            }
+        }
+
+        return depth;
+    }
+
+    private static int CalculateSize(int requestSize)
+    {
+        uint size = 0;
+
+        for (var i = 1L; i < requestSize; i *= 2)
+        {
+            size = (size << 1) + 1;
+        }
+
+        return (int)(size + 1);
+    }
+
+    private static Node[] CreateInitialTable()
+    {
+        var newNodes = new Node[InitialSize];
+
+        for (var i = 0; i < newNodes.Length; i++)
+        {
+            newNodes[i] = EmptyNode;
+        }
+
+        return newNodes;
+    }
+
+    private static Node FindLastNode(Node node)
+    {
+        while (node.Next is not null)
+        {
+            node = node.Next;
+        }
+
+        return node;
+    }
+
+    private static void UpdateLink(ref Node node, Node addNode)
+    {
+        if (node == EmptyNode)
+        {
+            node = addNode;
+        }
+        else
+        {
+            var last = FindLastNode(node);
+            last.Next = addNode;
+        }
+    }
+
+    private static void RelocateNodes(Node[] nodes, Node[] oldNodes)
+    {
+        for (var i = 0; i < oldNodes.Length; i++)
+        {
+            var node = oldNodes[i];
+            if (node == EmptyNode)
+            {
+                continue;
             }
 
-            return length;
-        }
-
-        private static int CalculateDepth(Node[] targetNodes)
-        {
-            var depth = 0;
-
-            for (var i = 0; i < targetNodes.Length; i++)
+            do
             {
-                var node = targetNodes[i];
-                if (node != EmptyNode)
-                {
-                    depth = Math.Max(CalculateDepth(node), depth);
-                }
+                var next = node.Next;
+                node.Next = null;
+
+                UpdateLink(ref nodes[node.Hash & (nodes.Length - 1)], node);
+
+                node = next;
             }
-
-            return depth;
+            while (node is not null);
         }
+    }
 
-        private static int CalculateSize(int requestSize)
+    private void AddNode(Node node)
+    {
+        var requestSize = Math.Max(InitialSize, (count + 1) * Factor);
+        var size = CalculateSize(requestSize);
+        if (size > nodes.Length)
         {
-            uint size = 0;
-
-            for (var i = 1L; i < requestSize; i *= 2)
-            {
-                size = (size << 1) + 1;
-            }
-
-            return (int)(size + 1);
-        }
-
-        private static Node[] CreateInitialTable()
-        {
-            var newNodes = new Node[InitialSize];
-
+            var newNodes = new Node[size];
             for (var i = 0; i < newNodes.Length; i++)
             {
                 newNodes[i] = EmptyNode;
             }
 
-            return newNodes;
-        }
+            RelocateNodes(newNodes, nodes);
 
-        private static Node FindLastNode(Node node)
+            UpdateLink(ref newNodes[node.Hash & (newNodes.Length - 1)], node);
+
+            Interlocked.MemoryBarrier();
+
+            nodes = newNodes;
+            depth = CalculateDepth(newNodes);
+            count++;
+        }
+        else
         {
-            while (node.Next is not null)
-            {
-                node = node.Next;
-            }
+            Interlocked.MemoryBarrier();
 
-            return node;
+            var hash = node.Hash;
+
+            UpdateLink(ref nodes[hash & (nodes.Length - 1)], node);
+
+            depth = Math.Max(CalculateDepth(nodes[hash & (nodes.Length - 1)]), depth);
+            count++;
         }
+    }
 
-        private static void UpdateLink(ref Node node, Node addNode)
-        {
-            if (node == EmptyNode)
-            {
-                node = addNode;
-            }
-            else
-            {
-                var last = FindLastNode(node);
-                last.Next = addNode;
-            }
-        }
+    //--------------------------------------------------------------------------------
+    // Public
+    //--------------------------------------------------------------------------------
 
-        private static void RelocateNodes(Node[] nodes, Node[] oldNodes)
-        {
-            for (var i = 0; i < oldNodes.Length; i++)
-            {
-                var node = oldNodes[i];
-                if (node == EmptyNode)
-                {
-                    continue;
-                }
-
-                do
-                {
-                    var next = node.Next;
-                    node.Next = null;
-
-                    UpdateLink(ref nodes[node.Hash & (nodes.Length - 1)], node);
-
-                    node = next;
-                }
-                while (node is not null);
-            }
-        }
-
-        private void AddNode(Node node)
-        {
-            var requestSize = Math.Max(InitialSize, (count + 1) * Factor);
-            var size = CalculateSize(requestSize);
-            if (size > nodes.Length)
-            {
-                var newNodes = new Node[size];
-                for (var i = 0; i < newNodes.Length; i++)
-                {
-                    newNodes[i] = EmptyNode;
-                }
-
-                RelocateNodes(newNodes, nodes);
-
-                UpdateLink(ref newNodes[node.Hash & (newNodes.Length - 1)], node);
-
-                Interlocked.MemoryBarrier();
-
-                nodes = newNodes;
-                depth = CalculateDepth(newNodes);
-                count++;
-            }
-            else
-            {
-                Interlocked.MemoryBarrier();
-
-                var hash = node.Hash;
-
-                UpdateLink(ref nodes[hash & (nodes.Length - 1)], node);
-
-                depth = Math.Max(CalculateDepth(nodes[hash & (nodes.Length - 1)]), depth);
-                count++;
-            }
-        }
-
-        //--------------------------------------------------------------------------------
-        // Public
-        //--------------------------------------------------------------------------------
-
-        public DiagnosticsInfo Diagnostics
-        {
-            get
-            {
-                lock (sync)
-                {
-                    return new DiagnosticsInfo(nodes.Length, depth, count);
-                }
-            }
-        }
-
-        public void Clear()
+    public DiagnosticsInfo Diagnostics
+    {
+        get
         {
             lock (sync)
             {
-                var newNodes = CreateInitialTable();
-
-                Interlocked.MemoryBarrier();
-
-                nodes = newNodes;
-                depth = 0;
-                count = 0;
+                return new DiagnosticsInfo(nodes.Length, depth, count);
             }
         }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsMatchColumn(Span<ColumnInfo> columns1, Span<ColumnInfo> columns2)
+    public void Clear()
+    {
+        lock (sync)
         {
-            if (columns1.Length != columns2.Length)
-            {
-                return false;
-            }
+            var newNodes = CreateInitialTable();
 
-            ref var column1 = ref MemoryMarshal.GetReference(columns1);
-            ref var column2 = ref MemoryMarshal.GetReference(columns2);
-            for (var i = 0; i < columns1.Length; i++)
-            {
-                if ((column1.Type != column2.Type) || !IsNameEquals(column1.Name, column2.Name))
-                {
-                    return false;
-                }
+            Interlocked.MemoryBarrier();
 
-                column1 = ref Unsafe.Add(ref column1, 1);
-                column2 = ref Unsafe.Add(ref column2, 1);
-            }
-
-            return true;
+            nodes = newNodes;
+            depth = 0;
+            count = 0;
         }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe bool IsNameEquals(string name1, string name2)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsMatchColumn(Span<ColumnInfo> columns1, Span<ColumnInfo> columns2)
+    {
+        if (columns1.Length != columns2.Length)
         {
-            var length = name1.Length;
-            if (length != name2.Length)
-            {
-                return false;
-            }
-
-            fixed (char* pName1 = name1)
-            fixed (char* pName2 = name2)
-            {
-                var p1 = pName1;
-                var p2 = pName2;
-                var i = 0;
-                for (; i <= length - 4; i += 4)
-                {
-                    if (*(long*)(p1 + i) != *(long*)(p2 + i))
-                    {
-                        return false;
-                    }
-                }
-
-                for (; i < length; i++)
-                {
-                    if (p1[i] != p2[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, int hash, [NotNullWhen(true)] out object? value)
-        {
-            var temp = nodes;
-            var node = temp[hash & (temp.Length - 1)];
-            do
-            {
-                if (node.TargetType == targetType && IsMatchColumn(node.Columns, columns))
-                {
-                    value = node.Value;
-                    return true;
-                }
-                node = node.Next;
-            }
-            while (node is not null);
-
-            value = default;
             return false;
         }
 
-        public object AddIfNotExist(Type targetType, Span<ColumnInfo> columns, int hash, Func<Type, ColumnInfo[], object> valueFactory)
+        ref var column1 = ref MemoryMarshal.GetReference(columns1);
+        ref var column2 = ref MemoryMarshal.GetReference(columns2);
+        for (var i = 0; i < columns1.Length; i++)
         {
-            lock (sync)
+            if ((column1.Type != column2.Type) || !IsNameEquals(column1.Name, column2.Name))
             {
-                // Double checked locking
-                if (TryGetValue(targetType, columns, hash, out var currentValue))
+                return false;
+            }
+
+            column1 = ref Unsafe.Add(ref column1, 1);
+            column2 = ref Unsafe.Add(ref column2, 1);
+        }
+
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static unsafe bool IsNameEquals(string name1, string name2)
+    {
+        var length = name1.Length;
+        if (length != name2.Length)
+        {
+            return false;
+        }
+
+        fixed (char* pName1 = name1)
+        fixed (char* pName2 = name2)
+        {
+            var p1 = pName1;
+            var p2 = pName2;
+            var i = 0;
+            for (; i <= length - 4; i += 4)
+            {
+                if (*(long*)(p1 + i) != *(long*)(p2 + i))
                 {
-                    return currentValue;
+                    return false;
                 }
+            }
 
-                var copyColumns = new ColumnInfo[columns.Length];
-                columns.CopyTo(new Span<ColumnInfo>(copyColumns));
-
-                var value = valueFactory(targetType, copyColumns);
-
-                // Check if added by recursive
-                if (TryGetValue(targetType, columns, hash, out currentValue))
+            for (; i < length; i++)
+            {
+                if (p1[i] != p2[i])
                 {
-                    return currentValue;
+                    return false;
                 }
-
-                AddNode(new Node(targetType, copyColumns, hash, value));
-
-                return value;
             }
         }
 
-        //--------------------------------------------------------------------------------
-        // Inner
-        //--------------------------------------------------------------------------------
+        return true;
+    }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Framework only")]
-        private sealed class EmptyKey
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, int hash, [NotNullWhen(true)] out object? value)
+    {
+        var temp = nodes;
+        var node = temp[hash & (temp.Length - 1)];
+        do
         {
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
-        private sealed class Node
-        {
-            public readonly Type TargetType;
-
-            public readonly ColumnInfo[] Columns;
-
-            public readonly int Hash;
-
-            public readonly object Value;
-
-            public Node? Next;
-
-            public Node(Type targetType, ColumnInfo[] columns, int hash, object value)
+            if (node.TargetType == targetType && IsMatchColumn(node.Columns, columns))
             {
-                TargetType = targetType;
-                Columns = columns;
-                Hash = hash;
-                Value = value;
+                value = node.Value;
+                return true;
             }
+            node = node.Next;
         }
+        while (node is not null);
 
-        //--------------------------------------------------------------------------------
-        // Diagnostics
-        //--------------------------------------------------------------------------------
+        value = default;
+        return false;
+    }
 
-        public sealed class DiagnosticsInfo
+    public object AddIfNotExist(Type targetType, Span<ColumnInfo> columns, int hash, Func<Type, ColumnInfo[], object> valueFactory)
+    {
+        lock (sync)
         {
-            public int Width { get; }
-
-            public int Depth { get; }
-
-            public int Count { get; }
-
-            public DiagnosticsInfo(int width, int depth, int count)
+            // Double checked locking
+            if (TryGetValue(targetType, columns, hash, out var currentValue))
             {
-                Width = width;
-                Depth = depth;
-                Count = count;
+                return currentValue;
             }
 
-            public override string ToString() => $"Count={Count}, Width={Width}, Depth={Depth}";
+            var copyColumns = new ColumnInfo[columns.Length];
+            columns.CopyTo(new Span<ColumnInfo>(copyColumns));
+
+            var value = valueFactory(targetType, copyColumns);
+
+            // Check if added by recursive
+            if (TryGetValue(targetType, columns, hash, out currentValue))
+            {
+                return currentValue;
+            }
+
+            AddNode(new Node(targetType, copyColumns, hash, value));
+
+            return value;
         }
+    }
+
+    //--------------------------------------------------------------------------------
+    // Inner
+    //--------------------------------------------------------------------------------
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Framework only")]
+    private sealed class EmptyKey
+    {
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+    private sealed class Node
+    {
+        public readonly Type TargetType;
+
+        public readonly ColumnInfo[] Columns;
+
+        public readonly int Hash;
+
+        public readonly object Value;
+
+        public Node? Next;
+
+        public Node(Type targetType, ColumnInfo[] columns, int hash, object value)
+        {
+            TargetType = targetType;
+            Columns = columns;
+            Hash = hash;
+            Value = value;
+        }
+    }
+
+    //--------------------------------------------------------------------------------
+    // Diagnostics
+    //--------------------------------------------------------------------------------
+
+    public sealed class DiagnosticsInfo
+    {
+        public int Width { get; }
+
+        public int Depth { get; }
+
+        public int Count { get; }
+
+        public DiagnosticsInfo(int width, int depth, int count)
+        {
+            Width = width;
+            Depth = depth;
+            Count = count;
+        }
+
+        public override string ToString() => $"Count={Count}, Width={Width}, Depth={Depth}";
     }
 }

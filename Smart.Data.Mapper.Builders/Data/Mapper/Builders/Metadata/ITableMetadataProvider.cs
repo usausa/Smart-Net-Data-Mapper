@@ -1,9 +1,8 @@
-namespace Smart.Data.Mapper.Builders.Metadata
-{
-    using System;
+namespace Smart.Data.Mapper.Builders.Metadata;
 
-    public interface ITableMetadataProvider
-    {
-        TableMetadata Create(Type type);
-    }
+using System;
+
+public interface ITableMetadataProvider
+{
+    TableMetadata Create(Type type);
 }

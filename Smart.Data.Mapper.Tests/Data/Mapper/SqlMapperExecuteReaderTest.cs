@@ -1,378 +1,377 @@
-namespace Smart.Data.Mapper
+namespace Smart.Data.Mapper;
+
+using System;
+using System.Data;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+
+using Microsoft.Data.Sqlite;
+
+using Smart.Data.Mapper.Mocks;
+
+using Xunit;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
+public class SqlMapperExecuteReaderTest
 {
-    using System;
-    using System.Data;
-    using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
+    //--------------------------------------------------------------------------------
+    // Execute
+    //--------------------------------------------------------------------------------
 
-    using Microsoft.Data.Sqlite;
-
-    using Smart.Data.Mapper.Mocks;
-
-    using Xunit;
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
-    public class SqlMapperExecuteReaderTest
+    [Fact]
+    public void ExecuteReader()
     {
-        //--------------------------------------------------------------------------------
-        // Execute
-        //--------------------------------------------------------------------------------
+        using var con = new SqliteConnection("Data Source=:memory:");
+        con.Open();
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        [Fact]
-        public void ExecuteReader()
-        {
-            using var con = new SqliteConnection("Data Source=:memory:");
-            con.Open();
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+        using var reader = con.ExecuteReader("SELECT * FROM Data ORDER BY Id");
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
 
-            using var reader = con.ExecuteReader("SELECT * FROM Data ORDER BY Id");
-            Assert.True(reader.Read());
-            Assert.Equal(1, reader.GetInt64(0));
-            Assert.Equal("test1", reader.GetString(1));
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
 
-            Assert.True(reader.Read());
-            Assert.Equal(2, reader.GetInt64(0));
-            Assert.Equal("test2", reader.GetString(1));
+        Assert.False(reader.Read());
+    }
 
-            Assert.False(reader.Read());
-        }
-
-        [Fact]
-        public async ValueTask ExecuteReaderAsync()
-        {
+    [Fact]
+    public async ValueTask ExecuteReaderAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.OpenAsync().ConfigureAwait(false);
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+        await con.OpenAsync().ConfigureAwait(false);
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-            using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
-            Assert.True(reader.Read());
-            Assert.Equal(1, reader.GetInt64(0));
-            Assert.Equal("test1", reader.GetString(1));
+        using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
 
-            Assert.True(reader.Read());
-            Assert.Equal(2, reader.GetInt64(0));
-            Assert.Equal("test2", reader.GetString(1));
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
 
-            Assert.False(reader.Read());
-        }
+        Assert.False(reader.Read());
+    }
 
-        //--------------------------------------------------------------------------------
-        // Lifecycle
-        //--------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
+    // Lifecycle
+    //--------------------------------------------------------------------------------
 
-        private static void Prepare(string database)
-        {
-            File.Delete(database);
-            using var con = new SqliteConnection($"Data Source={database}");
-            con.Open();
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
-            con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
-        }
+    private static void Prepare(string database)
+    {
+        File.Delete(database);
+        using var con = new SqliteConnection($"Data Source={database}");
+        con.Open();
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+    }
 
-        [Fact]
-        public void ExecuteReaderLife()
-        {
-            Prepare("ExecuteReaderLife.db");
-            using var reader = new SqliteConnection("Data Source=ExecuteReaderLife.db").ExecuteReader("SELECT * FROM Data ORDER BY Id");
-            Assert.True(reader.Read());
-            Assert.Equal(1, reader.GetInt64(0));
-            Assert.Equal("test1", reader.GetString(1));
+    [Fact]
+    public void ExecuteReaderLife()
+    {
+        Prepare("ExecuteReaderLife.db");
+        using var reader = new SqliteConnection("Data Source=ExecuteReaderLife.db").ExecuteReader("SELECT * FROM Data ORDER BY Id");
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
 
-            Assert.True(reader.Read());
-            Assert.Equal(2, reader.GetInt64(0));
-            Assert.Equal("test2", reader.GetString(1));
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
 
-            Assert.False(reader.Read());
-        }
+        Assert.False(reader.Read());
+    }
 
-        [Fact]
-        public async ValueTask ExecuteReaderLifeAsync()
-        {
-            Prepare("ExecuteReaderLifeAsync.db");
-            using var reader = await new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
-            Assert.True(reader.Read());
-            Assert.Equal(1, reader.GetInt64(0));
-            Assert.Equal("test1", reader.GetString(1));
+    [Fact]
+    public async ValueTask ExecuteReaderLifeAsync()
+    {
+        Prepare("ExecuteReaderLifeAsync.db");
+        using var reader = await new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
 
-            Assert.True(reader.Read());
-            Assert.Equal(2, reader.GetInt64(0));
-            Assert.Equal("test2", reader.GetString(1));
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
 
-            Assert.False(reader.Read());
-        }
+        Assert.False(reader.Read());
+    }
 
-        //--------------------------------------------------------------------------------
-        // Cancel
-        //--------------------------------------------------------------------------------
+    //--------------------------------------------------------------------------------
+    // Cancel
+    //--------------------------------------------------------------------------------
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask ExecuteReaderCancelAsync()
-        {
+    public async ValueTask ExecuteReaderCancelAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            await con.OpenAsync().ConfigureAwait(false);
-            con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        await con.OpenAsync().ConfigureAwait(false);
+        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-            await Assert.ThrowsAsync<OperationCanceledException>(async () =>
-            {
-                var cancel = new CancellationToken(true);
-                using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel).ConfigureAwait(false))
-                {
-                }
-            }).ConfigureAwait(false);
-        }
-
-        //--------------------------------------------------------------------------------
-        // Open
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-
-        public void WithoutOpen()
+        await Assert.ThrowsAsync<OperationCanceledException>(async () =>
         {
-            using var con = new SqliteConnection("Data Source=:memory:");
-            using (var reader = con.ExecuteReader("SELECT 1, 'test1'"))
+            var cancel = new CancellationToken(true);
+            using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel).ConfigureAwait(false))
             {
-                Assert.Equal(ConnectionState.Open, con.State);
-                Assert.True(reader.Read());
-                Assert.False(reader.Read());
             }
+        }).ConfigureAwait(false);
+    }
 
-            Assert.Equal(ConnectionState.Closed, con.State);
+    //--------------------------------------------------------------------------------
+    // Open
+    //--------------------------------------------------------------------------------
+
+    [Fact]
+
+    public void WithoutOpen()
+    {
+        using var con = new SqliteConnection("Data Source=:memory:");
+        using (var reader = con.ExecuteReader("SELECT 1, 'test1'"))
+        {
+            Assert.Equal(ConnectionState.Open, con.State);
+            Assert.True(reader.Read());
+            Assert.False(reader.Read());
         }
 
-        [Fact]
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
 
-        public async ValueTask WithoutOpenAsync()
-        {
+    [Fact]
+
+    public async ValueTask WithoutOpenAsync()
+    {
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'").ConfigureAwait(false))
+        using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'").ConfigureAwait(false))
+        {
+            Assert.Equal(ConnectionState.Open, con.State);
+            Assert.True(reader.Read());
+            Assert.False(reader.Read());
+        }
+
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
+
+    //--------------------------------------------------------------------------------
+    // Close
+    //--------------------------------------------------------------------------------
+
+    [Fact]
+
+    public void ClosedConnectionMustClosedWhenQueryError()
+    {
+        using var con = new SqliteConnection("Data Source=:memory:");
+        Assert.Throws<SqliteException>(() =>
+        {
+            using (con.ExecuteReader("x"))
             {
-                Assert.Equal(ConnectionState.Open, con.State);
-                Assert.True(reader.Read());
-                Assert.False(reader.Read());
             }
+        });
 
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
 
-        //--------------------------------------------------------------------------------
-        // Close
-        //--------------------------------------------------------------------------------
+    [Fact]
 
-        [Fact]
-
-        public void ClosedConnectionMustClosedWhenQueryError()
+    public void ClosedConnectionMustClosedWhenWhenCommandError()
+    {
+        using var con = new CommandUnsupportedConnection();
+        Assert.Throws<NotSupportedException>(() =>
         {
-            using var con = new SqliteConnection("Data Source=:memory:");
-            Assert.Throws<SqliteException>(() =>
+            using (con.ExecuteReader("x"))
             {
-                using (con.ExecuteReader("x"))
-                {
-                }
-            });
+            }
+        });
 
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
 
-        [Fact]
+    [Fact]
 
-        public void ClosedConnectionMustClosedWhenWhenCommandError()
+    public void ClosedConnectionMustClosedWhenPostProcessError()
+    {
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
         {
-            using var con = new CommandUnsupportedConnection();
-            Assert.Throws<NotSupportedException>(() =>
-            {
-                using (con.ExecuteReader("x"))
-                {
-                }
-            });
+            opt.Clear();
+            opt.Add(new PostProcessErrorParameterBuilderFactory());
+        });
 
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
-
-        [Fact]
-
-        public void ClosedConnectionMustClosedWhenPostProcessError()
+        using var con = new SqliteConnection("Data Source=:memory:");
+        Assert.Throws<NotSupportedException>(() =>
         {
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(new PostProcessErrorParameterBuilderFactory());
-            });
-
-            using var con = new SqliteConnection("Data Source=:memory:");
-            Assert.Throws<NotSupportedException>(() =>
-            {
-                using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
-                {
-                }
-            });
-
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
-
-        [Fact]
-
-        public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
-        {
-#pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
-            await Assert.ThrowsAsync<SqliteException>(async () =>
-            {
-                using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
-                {
-                }
-            }).ConfigureAwait(false);
-
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
-
-        [Fact]
-
-        public async ValueTask ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
-        {
-#pragma warning disable CA2007
-            await using var con = new CommandUnsupportedConnection();
-#pragma warning restore CA2007
-            await Assert.ThrowsAsync<NotSupportedException>(async () =>
-            {
-                using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
-                {
-                }
-            }).ConfigureAwait(false);
-
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
-
-        [Fact]
-
-        public async ValueTask ClosedConnectionMustClosedWhenPostProcessErrorAsync()
-        {
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(new PostProcessErrorParameterBuilderFactory());
-            });
-
-#pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
-            await Assert.ThrowsAsync<NotSupportedException>(async () =>
-            {
-                using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
-                {
-                }
-            }).ConfigureAwait(false);
-
-            Assert.Equal(ConnectionState.Closed, con.State);
-        }
-
-        //--------------------------------------------------------------------------------
-        // Parameter
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-
-        public void ProcessParameter()
-        {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(factory);
-            });
-
-            using var con = new SqliteConnection("Data Source=:memory:");
             using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
             {
             }
+        });
 
-            Assert.True(factory.BuildCalled);
-            Assert.True(factory.PostProcessCalled);
-        }
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
 
-        [Fact]
+    [Fact]
 
-        public void ProcessParameterIsNothing()
+    public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
+    {
+#pragma warning disable CA2007
+        await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
+        await Assert.ThrowsAsync<SqliteException>(async () =>
         {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(factory);
-            });
-
-            using var con = new SqliteConnection("Data Source=:memory:");
-            using (con.ExecuteReader(config, "SELECT 1, 'test1'"))
+            using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
             {
             }
+        }).ConfigureAwait(false);
 
-            Assert.False(factory.BuildCalled);
-            Assert.False(factory.PostProcessCalled);
-        }
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
 
-        [Fact]
+    [Fact]
 
-        public async ValueTask ProcessParameterAsync()
+    public async ValueTask ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
+    {
+#pragma warning disable CA2007
+        await using var con = new CommandUnsupportedConnection();
+#pragma warning restore CA2007
+        await Assert.ThrowsAsync<NotSupportedException>(async () =>
         {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
+            using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
             {
-                opt.Clear();
-                opt.Add(factory);
-            });
+            }
+        }).ConfigureAwait(false);
+
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
+
+    [Fact]
+
+    public async ValueTask ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+    {
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
+        {
+            opt.Clear();
+            opt.Add(new PostProcessErrorParameterBuilderFactory());
+        });
 
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
+        await Assert.ThrowsAsync<NotSupportedException>(async () =>
+        {
             using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
             {
             }
+        }).ConfigureAwait(false);
 
-            Assert.True(factory.BuildCalled);
-            Assert.True(factory.PostProcessCalled);
+        Assert.Equal(ConnectionState.Closed, con.State);
+    }
+
+    //--------------------------------------------------------------------------------
+    // Parameter
+    //--------------------------------------------------------------------------------
+
+    [Fact]
+
+    public void ProcessParameter()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
+        {
+            opt.Clear();
+            opt.Add(factory);
+        });
+
+        using var con = new SqliteConnection("Data Source=:memory:");
+        using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
+        {
         }
 
-        [Fact]
+        Assert.True(factory.BuildCalled);
+        Assert.True(factory.PostProcessCalled);
+    }
 
-        public async ValueTask ProcessParameterIsNothingAsync()
+    [Fact]
+
+    public void ProcessParameterIsNothing()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
         {
-            var factory = new MockParameterBuilderFactory();
-            var config = new SqlMapperConfig();
-            config.ConfigureParameterBuilderFactories(opt =>
-            {
-                opt.Clear();
-                opt.Add(factory);
-            });
+            opt.Clear();
+            opt.Add(factory);
+        });
+
+        using var con = new SqliteConnection("Data Source=:memory:");
+        using (con.ExecuteReader(config, "SELECT 1, 'test1'"))
+        {
+        }
+
+        Assert.False(factory.BuildCalled);
+        Assert.False(factory.PostProcessCalled);
+    }
+
+    [Fact]
+
+    public async ValueTask ProcessParameterAsync()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
+        {
+            opt.Clear();
+            opt.Add(factory);
+        });
 
 #pragma warning disable CA2007
-            await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-            using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'").ConfigureAwait(false))
-            {
-            }
-
-            Assert.False(factory.BuildCalled);
-            Assert.False(factory.PostProcessCalled);
+        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
+        {
         }
+
+        Assert.True(factory.BuildCalled);
+        Assert.True(factory.PostProcessCalled);
+    }
+
+    [Fact]
+
+    public async ValueTask ProcessParameterIsNothingAsync()
+    {
+        var factory = new MockParameterBuilderFactory();
+        var config = new SqlMapperConfig();
+        config.ConfigureParameterBuilderFactories(opt =>
+        {
+            opt.Clear();
+            opt.Add(factory);
+        });
+
+#pragma warning disable CA2007
+        await using var con = new SqliteConnection("Data Source=:memory:");
+#pragma warning restore CA2007
+        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'").ConfigureAwait(false))
+        {
+        }
+
+        Assert.False(factory.BuildCalled);
+        Assert.False(factory.PostProcessCalled);
     }
 }

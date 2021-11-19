@@ -1,9 +1,8 @@
-namespace Smart.Data.Mapper.Attributes
-{
-    using System;
+namespace Smart.Data.Mapper.Attributes;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class IgnoreAttribute : Attribute
-    {
-    }
+using System;
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class IgnoreAttribute : Attribute
+{
 }

@@ -1,15 +1,14 @@
-namespace Smart.Data.Mapper.Attributes
+namespace Smart.Data.Mapper.Attributes;
+
+using System;
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class PrimaryKeyAttribute : Attribute
 {
-    using System;
+    public int Order { get; }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class PrimaryKeyAttribute : Attribute
+    public PrimaryKeyAttribute(int order = 0)
     {
-        public int Order { get; }
-
-        public PrimaryKeyAttribute(int order = 0)
-        {
-            Order = order;
-        }
+        Order = order;
     }
 }

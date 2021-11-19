@@ -1,16 +1,15 @@
-namespace Smart.Data.Mapper.Attributes
+namespace Smart.Data.Mapper.Attributes;
+
+using System;
+using System.Data;
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class DirectionAttribute : Attribute
 {
-    using System;
-    using System.Data;
+    public ParameterDirection Direction { get; }
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class DirectionAttribute : Attribute
+    public DirectionAttribute(ParameterDirection direction)
     {
-        public ParameterDirection Direction { get; }
-
-        public DirectionAttribute(ParameterDirection direction)
-        {
-            Direction = direction;
-        }
+        Direction = direction;
     }
 }

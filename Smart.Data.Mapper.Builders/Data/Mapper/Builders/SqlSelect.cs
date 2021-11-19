@@ -1,106 +1,105 @@
-namespace Smart.Data.Mapper.Builders
+namespace Smart.Data.Mapper.Builders;
+
+using System;
+using System.Text;
+
+using Smart.Data.Mapper.Builders.Metadata;
+
+public static class SqlSelect<T>
 {
-    using System;
-    using System.Text;
+    private static readonly string ByKeySql;
 
-    using Smart.Data.Mapper.Builders.Metadata;
+    private static readonly string SelectSqlBase;
 
-    public static class SqlSelect<T>
+    private static readonly string OrderSqlBase;
+
+    static SqlSelect()
     {
-        private static readonly string ByKeySql;
+        var tableInfo = TableInfo<T>.Instance;
+        var sql = new StringBuilder(256);
 
-        private static readonly string SelectSqlBase;
+        sql.Append("SELECT * FROM ");
+        sql.Append(tableInfo.Name);
 
-        private static readonly string OrderSqlBase;
+        SelectSqlBase = sql.ToString();
 
-        static SqlSelect()
+        if (tableInfo.KeyColumns.Count > 0)
+        {
+            sql.Append(" WHERE ");
+            BuildHelper.BuildKeyCondition(sql, tableInfo);
+
+            ByKeySql = sql.ToString();
+
+            sql.Clear();
+            sql.Append(" ORDER BY ");
+            foreach (var column in tableInfo.KeyColumns)
+            {
+                sql.Append(column.Name);
+                sql.Append(", ");
+            }
+
+            sql.Length -= 2;
+
+            OrderSqlBase = sql.ToString();
+        }
+        else
+        {
+            ByKeySql = string.Empty;
+            OrderSqlBase = string.Empty;
+        }
+    }
+
+    public static string ByKey() => ByKeySql;
+
+    public static string All() =>
+        !String.IsNullOrEmpty(OrderSqlBase)
+            ? SelectSqlBase + OrderSqlBase
+            : SelectSqlBase;
+
+    public static string Where(string condition) =>
+        !String.IsNullOrEmpty(OrderSqlBase)
+            ? SelectSqlBase + " WHERE " + condition + OrderSqlBase
+            : SelectSqlBase + " WHERE " + condition;
+
+    public static string Build(string? condition = null, string? order = null, string? column = null, string? group = null)
+    {
+        var sql = new StringBuilder(256);
+
+        if (!String.IsNullOrEmpty(column))
         {
             var tableInfo = TableInfo<T>.Instance;
-            var sql = new StringBuilder(256);
-
-            sql.Append("SELECT * FROM ");
+            sql.Append("SELECT ");
+            sql.Append(column);
+            sql.Append(" FROM ");
             sql.Append(tableInfo.Name);
-
-            SelectSqlBase = sql.ToString();
-
-            if (tableInfo.KeyColumns.Count > 0)
-            {
-                sql.Append(" WHERE ");
-                BuildHelper.BuildKeyCondition(sql, tableInfo);
-
-                ByKeySql = sql.ToString();
-
-                sql.Clear();
-                sql.Append(" ORDER BY ");
-                foreach (var column in tableInfo.KeyColumns)
-                {
-                    sql.Append(column.Name);
-                    sql.Append(", ");
-                }
-
-                sql.Length -= 2;
-
-                OrderSqlBase = sql.ToString();
-            }
-            else
-            {
-                ByKeySql = string.Empty;
-                OrderSqlBase = string.Empty;
-            }
         }
-
-        public static string ByKey() => ByKeySql;
-
-        public static string All() =>
-            !String.IsNullOrEmpty(OrderSqlBase)
-                ? SelectSqlBase + OrderSqlBase
-                : SelectSqlBase;
-
-        public static string Where(string condition) =>
-            !String.IsNullOrEmpty(OrderSqlBase)
-                ? SelectSqlBase + " WHERE " + condition + OrderSqlBase
-                : SelectSqlBase + " WHERE " + condition;
-
-        public static string Build(string? condition = null, string? order = null, string? column = null, string? group = null)
+        else
         {
-            var sql = new StringBuilder(256);
-
-            if (!String.IsNullOrEmpty(column))
-            {
-                var tableInfo = TableInfo<T>.Instance;
-                sql.Append("SELECT ");
-                sql.Append(column);
-                sql.Append(" FROM ");
-                sql.Append(tableInfo.Name);
-            }
-            else
-            {
-                sql.Append(SelectSqlBase);
-            }
-
-            if (!String.IsNullOrEmpty(condition))
-            {
-                sql.Append(" WHERE ");
-                sql.Append(condition);
-            }
-
-            if (!String.IsNullOrEmpty(group))
-            {
-                sql.Append(" GROUP BY ");
-                sql.Append(group);
-            }
-
-            if (!String.IsNullOrEmpty(order))
-            {
-                sql.Append(" ORDER BY ");
-                sql.Append(order);
-            }
-            else if (!String.IsNullOrEmpty(OrderSqlBase))
-            {
-                sql.Append(OrderSqlBase);
-            }
-
-            return sql.ToString();
+            sql.Append(SelectSqlBase);
         }
+
+        if (!String.IsNullOrEmpty(condition))
+        {
+            sql.Append(" WHERE ");
+            sql.Append(condition);
+        }
+
+        if (!String.IsNullOrEmpty(group))
+        {
+            sql.Append(" GROUP BY ");
+            sql.Append(group);
+        }
+
+        if (!String.IsNullOrEmpty(order))
+        {
+            sql.Append(" ORDER BY ");
+            sql.Append(order);
+        }
+        else if (!String.IsNullOrEmpty(OrderSqlBase))
+        {
+            sql.Append(OrderSqlBase);
+        }
+
+        return sql.ToString();
     }
 }
