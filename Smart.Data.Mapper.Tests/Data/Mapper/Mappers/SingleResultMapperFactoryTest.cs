@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper.Mappers;
 
-using System.Linq;
-
 using Microsoft.Data.Sqlite;
 
 using Xunit;

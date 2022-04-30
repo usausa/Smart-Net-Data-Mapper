@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper.Mocks;
 
-using System;
-
 using Smart.Converter;
 
 public class DummyObjectConverter : IObjectConverter

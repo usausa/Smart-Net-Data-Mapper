@@ -1,9 +1,5 @@
 namespace Smart.Data.Mapper.Benchmark;
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Columns;
 using BenchmarkDotNet.Configs;
@@ -51,17 +47,13 @@ public class DataMapperBenchmark
 {
     private const int N = 1000;
 
-    [AllowNull]
-    private MockRepeatDbConnection mockExecute;
+    private MockRepeatDbConnection mockExecute = default!;
 
-    [AllowNull]
-    private MockRepeatDbConnection mockExecuteScalar;
+    private MockRepeatDbConnection mockExecuteScalar = default!;
 
-    [AllowNull]
-    private MockRepeatDbConnection mockQuery;
+    private MockRepeatDbConnection mockQuery = default!;
 
-    [AllowNull]
-    private MockRepeatDbConnection mockQueryFirst;
+    private MockRepeatDbConnection mockQueryFirst = default!;
 
     [GlobalSetup]
     public void Setup()

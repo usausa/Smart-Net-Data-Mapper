@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper.Mappers;
 
-using System;
 using System.Data;
 
 public interface IResultMapperFactory

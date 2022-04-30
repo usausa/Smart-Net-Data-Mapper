@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System;
-
 using Xunit;
 
 public class SqlMapperExceptionTest

@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System;
 using System.Data;
 
 using Smart.Data.Mapper.Attributes;

@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System;
-
 public class SqlMapperException : Exception
 {
     public SqlMapperException()

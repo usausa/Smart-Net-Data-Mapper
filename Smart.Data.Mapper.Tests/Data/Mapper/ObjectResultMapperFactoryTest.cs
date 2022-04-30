@@ -1,9 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using Smart.Data.Mapper.Attributes;
 using Smart.Mock.Data;
 

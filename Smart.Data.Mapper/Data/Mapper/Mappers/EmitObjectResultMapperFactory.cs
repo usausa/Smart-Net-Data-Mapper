@@ -1,9 +1,6 @@
 namespace Smart.Data.Mapper.Mappers;
 
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;

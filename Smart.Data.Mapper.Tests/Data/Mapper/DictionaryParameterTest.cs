@@ -1,8 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System;
-using System.Collections.Generic;
-
 using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;

@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper.Parameters;
 
-using System;
 using System.Data.Common;
 
 public sealed class ParameterBuilder

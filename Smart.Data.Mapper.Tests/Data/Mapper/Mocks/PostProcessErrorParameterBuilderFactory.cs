@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper.Mocks;
 
-using System;
-
 using Smart.Data.Mapper.Parameters;
 
 public sealed class PostProcessErrorParameterBuilderFactory : IParameterBuilderFactory

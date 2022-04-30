@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper.Mocks;
 
-using System;
 using System.Data;
 
 using Smart.Data.Mapper.Handlers;

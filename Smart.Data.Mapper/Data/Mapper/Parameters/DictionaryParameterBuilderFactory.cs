@@ -1,8 +1,5 @@
 namespace Smart.Data.Mapper.Parameters;
 
-using System;
-using System.Collections.Generic;
-
 public sealed class DictionaryParameterBuilderFactory : IParameterBuilderFactory
 {
     public static DictionaryParameterBuilderFactory Instance { get; } = new();

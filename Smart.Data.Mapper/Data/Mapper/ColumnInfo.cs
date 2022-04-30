@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System;
-
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1815:OverrideEqualsAndOperatorEqualsOnValueTypes", Justification = "Ignore")]
 public readonly struct ColumnInfo
 {

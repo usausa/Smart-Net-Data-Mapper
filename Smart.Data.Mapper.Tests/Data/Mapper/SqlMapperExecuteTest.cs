@@ -1,8 +1,6 @@
 namespace Smart.Data.Mapper;
 
 using System.Data;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.Data.Sqlite;
 

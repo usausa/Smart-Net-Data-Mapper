@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper.Attributes;
 
-using System;
 using System.Data;
 
 [AttributeUsage(AttributeTargets.Property)]

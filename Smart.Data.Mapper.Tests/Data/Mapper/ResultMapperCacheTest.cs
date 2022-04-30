@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System.Collections.Generic;
-
 using Smart.Mock.Data;
 
 using Xunit;

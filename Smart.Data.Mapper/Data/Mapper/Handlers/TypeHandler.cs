@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper.Handlers;
 
-using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 

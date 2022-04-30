@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper.Mocks;
 
-using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;

@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper.Parameters;
 
-using System;
-
 public sealed class DynamicParameterBuilderFactory : IParameterBuilderFactory
 {
     public static DynamicParameterBuilderFactory Instance { get; } = new();

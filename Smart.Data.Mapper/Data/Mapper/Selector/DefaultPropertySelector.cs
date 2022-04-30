@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper.Selector;
 
-using System;
-using System.Linq;
 using System.Reflection;
 
 using Smart.Data.Mapper.Attributes;

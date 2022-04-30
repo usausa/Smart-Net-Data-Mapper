@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper;
 
-using System.Collections.Generic;
 using System.Data;
 
 using Smart.Converter;

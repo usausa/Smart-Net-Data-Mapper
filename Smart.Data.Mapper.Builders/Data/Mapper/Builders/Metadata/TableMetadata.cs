@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper.Builders.Metadata;
 
-using System.Collections.Generic;
-
 public sealed class TableMetadata
 {
     public string Name { get; }

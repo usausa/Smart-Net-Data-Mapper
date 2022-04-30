@@ -1,6 +1,5 @@
 namespace Smart.Data.Mapper.Builders;
 
-using System;
 using System.Text;
 
 using Smart.Data.Mapper.Builders.Metadata;

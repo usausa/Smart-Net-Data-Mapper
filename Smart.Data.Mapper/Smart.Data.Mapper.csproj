@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
@@ -21,9 +21,9 @@
 
   <PropertyGroup>
     <PackageId>Usa.Smart.Data.Mapper</PackageId>
-    <Title>Smart.Data.Mapper .NET</Title>
-    <Description>Smart data mapper library for .NET</Description>
-    <Summary>Smart data mapper library for .NET</Summary>
+    <Title>Smart.Data.Mapper</Title>
+    <Description>Smart data mapper library</Description>
+    <Summary>Smart data mapper library</Summary>
     <PackageTags>smart ado.net orm micro-orm</PackageTags>
   </PropertyGroup>
 

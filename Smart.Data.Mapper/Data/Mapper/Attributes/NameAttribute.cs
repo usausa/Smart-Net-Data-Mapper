@@ -1,7 +1,5 @@
 namespace Smart.Data.Mapper.Attributes;
 
-using System;
-
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Property)]
 public sealed class NameAttribute : Attribute
 {
