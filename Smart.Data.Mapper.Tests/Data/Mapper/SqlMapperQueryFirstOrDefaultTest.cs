@@ -37,7 +37,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     [Fact]
 
-    public async ValueTask QueryFirstOrDefaultAsync()
+    public async Task QueryFirstOrDefaultAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -63,7 +63,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     [Fact]
 
-    public async ValueTask QueryFirstOrDefaultCancelAsync()
+    public async Task QueryFirstOrDefaultCancelAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -95,7 +95,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     [Fact]
 
-    public async ValueTask WithoutOpenAsync()
+    public async Task WithoutOpenAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -121,7 +121,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -175,7 +175,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterAsync()
+    public async Task ProcessParameterAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();
@@ -196,7 +196,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterIsNothingAsync()
+    public async Task ProcessParameterIsNothingAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();

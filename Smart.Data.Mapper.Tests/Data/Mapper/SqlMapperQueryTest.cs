@@ -36,7 +36,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask QueryAsync()
+    public async Task QueryAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -61,7 +61,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask QueryCancelAsync()
+    public async Task QueryCancelAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -97,7 +97,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask WithoutOpenMustClosedAsync()
+    public async Task WithoutOpenMustClosedAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -151,7 +151,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -163,7 +163,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
     {
 #pragma warning disable CA2007
         await using var con = new CommandUnsupportedConnection();
@@ -175,7 +175,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenPostProcessErrorAsync()
     {
         var config = new SqlMapperConfig();
         config.ConfigureParameterBuilderFactories(opt =>
@@ -238,7 +238,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterAsync()
+    public async Task ProcessParameterAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();
@@ -260,7 +260,7 @@ public class SqlMapperQueryTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterIsNothingAsync()
+    public async Task ProcessParameterIsNothingAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();

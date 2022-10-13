@@ -38,7 +38,7 @@ public class SqlMapperExecuteReaderTest
     }
 
     [Fact]
-    public async ValueTask ExecuteReaderAsync()
+    public async Task ExecuteReaderAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -91,7 +91,7 @@ public class SqlMapperExecuteReaderTest
     }
 
     [Fact]
-    public async ValueTask ExecuteReaderLifeAsync()
+    public async Task ExecuteReaderLifeAsync()
     {
         Prepare("ExecuteReaderLifeAsync.db");
         using var reader = await new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
@@ -112,7 +112,7 @@ public class SqlMapperExecuteReaderTest
 
     [Fact]
 
-    public async ValueTask ExecuteReaderCancelAsync()
+    public async Task ExecuteReaderCancelAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -150,7 +150,7 @@ public class SqlMapperExecuteReaderTest
 
     [Fact]
 
-    public async ValueTask WithoutOpenAsync()
+    public async Task WithoutOpenAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -223,7 +223,7 @@ public class SqlMapperExecuteReaderTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenQueryErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -240,7 +240,7 @@ public class SqlMapperExecuteReaderTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
     {
 #pragma warning disable CA2007
         await using var con = new CommandUnsupportedConnection();
@@ -257,7 +257,7 @@ public class SqlMapperExecuteReaderTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenPostProcessErrorAsync()
     {
         var config = new SqlMapperConfig();
         config.ConfigureParameterBuilderFactories(opt =>
@@ -327,7 +327,7 @@ public class SqlMapperExecuteReaderTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterAsync()
+    public async Task ProcessParameterAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();
@@ -350,7 +350,7 @@ public class SqlMapperExecuteReaderTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterIsNothingAsync()
+    public async Task ProcessParameterIsNothingAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();

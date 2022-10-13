@@ -36,7 +36,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask QueryListAsync()
+    public async Task QueryListAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -61,7 +61,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask QueryListCancelAsync()
+    public async Task QueryListCancelAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -95,7 +95,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask WithoutOpenAsync()
+    public async Task WithoutOpenAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -148,7 +148,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenQueryListErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenQueryListErrorAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -160,7 +160,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
     {
 #pragma warning disable CA2007
         await using var con = new CommandUnsupportedConnection();
@@ -172,7 +172,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask ClosedConnectionMustClosedWhenPostProcessErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenPostProcessErrorAsync()
     {
         var config = new SqlMapperConfig();
         config.ConfigureParameterBuilderFactories(opt =>
@@ -235,7 +235,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterAsync()
+    public async Task ProcessParameterAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();
@@ -257,7 +257,7 @@ public class SqlMapperQueryListTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterIsNothingAsync()
+    public async Task ProcessParameterIsNothingAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();

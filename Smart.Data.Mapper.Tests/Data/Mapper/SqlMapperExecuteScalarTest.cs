@@ -32,7 +32,7 @@ public class SqlMapperExecuteScalarTest
 
     [Fact]
 
-    public async ValueTask ExecuteScalarByObjectParameterAsync()
+    public async Task ExecuteScalarByObjectParameterAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -61,7 +61,7 @@ public class SqlMapperExecuteScalarTest
 
     [Fact]
 
-    public async ValueTask ResultIsNullAsync()
+    public async Task ResultIsNullAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -87,7 +87,7 @@ public class SqlMapperExecuteScalarTest
 
     [Fact]
 
-    public async ValueTask ResultIsConvertedAsync()
+    public async Task ResultIsConvertedAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -105,7 +105,7 @@ public class SqlMapperExecuteScalarTest
 
     [Fact]
 
-    public async ValueTask ExecuteScalarCancelAsync()
+    public async Task ExecuteScalarCancelAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -139,7 +139,7 @@ public class SqlMapperExecuteScalarTest
 
     [Fact]
 
-    public async ValueTask WithoutOpenAsync()
+    public async Task WithoutOpenAsync()
     {
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
@@ -194,7 +194,7 @@ public class SqlMapperExecuteScalarTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterAsync()
+    public async Task ProcessParameterAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();
@@ -215,7 +215,7 @@ public class SqlMapperExecuteScalarTest
 
     [Fact]
 
-    public async ValueTask ProcessParameterIsNothingAsync()
+    public async Task ProcessParameterIsNothingAsync()
     {
         var factory = new MockParameterBuilderFactory();
         var config = new SqlMapperConfig();
