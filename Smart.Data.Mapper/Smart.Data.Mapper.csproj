@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net7.0;net6.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>..\Smart.Data.Mapper.ruleset</CodeAnalysisRuleSet>
     <RootNamespace>Smart</RootNamespace>
@@ -15,8 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Usa.Smart.Converter" Version="2.1.0" />
-    <PackageReference Include="Usa.Smart.Core" Version="2.1.0" />
+    <PackageReference Include="Usa.Smart.Converter" Version="2.2.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="2.2.0" />
   </ItemGroup>
 
   <PropertyGroup>
