@@ -153,7 +153,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
                 continue;
             }
 
-            list.Add(new MapEntry(i, pi, column.Type == pi.PropertyType ? null : config.CreateParser(column.Type, pi.PropertyType)));
+            list.Add(new MapEntry(i, pi, config.CreateParser(column.Type, pi.PropertyType)));
         }
 
         return list.ToArray();
