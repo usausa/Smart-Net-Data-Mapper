@@ -33,7 +33,11 @@ public class ObjectResultMapperFactoryTest
         con.SetupCommand(cmd => cmd.SetupResult(reader));
 
         var config = new SqlMapperConfig();
-        config.ConfigureResultMapperFactories(x => x.Add(ObjectResultMapperFactory.Instance));
+        config.ConfigureResultMapperFactories(c =>
+        {
+            c.Clear();
+            c.Add(ObjectResultMapperFactory.Instance);
+        });
         var list = con.Query<DataEntity>(config, "SELECT * FROM Data").ToList();
 
         Assert.Equal(2, list.Count);
