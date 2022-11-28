@@ -304,7 +304,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return new TypeHandleEntry(findDbType || (handler != null), dbType, handler);
     }
 
-    Func<IDataRecord, T> ISqlMapperConfig.CreateResultMapper<T>(IDataReader reader)
+    RecordMapper<T> ISqlMapperConfig.CreateResultMapper<T>(IDataReader reader)
     {
         var fieldCount = reader.FieldCount;
         if ((columnInfoPool is null) || (columnInfoPool.Length < fieldCount))
@@ -326,10 +326,10 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
 
         if (resultMapperCache.TryGetValue(type, columns, hash, out var value))
         {
-            return (Func<IDataRecord, T>)value;
+            return (RecordMapper<T>)value;
         }
 
-        return (Func<IDataRecord, T>)resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>);
+        return (RecordMapper<T>)resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>);
     }
 
     private object CreateMapperInternal<T>(Type type, ColumnInfo[] columns)

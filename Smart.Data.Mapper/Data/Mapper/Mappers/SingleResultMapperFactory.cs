@@ -48,30 +48,36 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-    public Func<IDataRecord, T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    public RecordMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
-        var defaultValue = default(T);
         var parser = config.CreateParser(columns[0].Type, typeof(T));
         return parser is null
-            ? CreateConvertMapper(defaultValue!)
-            : CreateConvertMapper(defaultValue!, parser);
+            ? new Mapper<T>()
+            : new ParserMapper<T>(parser);
     }
 
-    private static Func<IDataRecord, T> CreateConvertMapper<T>(T defaultValue)
+    private sealed class Mapper<T> : RecordMapper<T>
     {
-        return record =>
+        public override T Map(IDataRecord record)
         {
             var value = record.GetValue(0);
-            return value is DBNull ? defaultValue : (T)value;
-        };
+            return value is DBNull ? default! : (T)value;
+        }
     }
 
-    private static Func<IDataRecord, T> CreateConvertMapper<T>(T defaultValue, Func<object, object> parser)
+    private sealed class ParserMapper<T> : RecordMapper<T>
     {
-        return record =>
+        private readonly Func<object, object> parser;
+
+        public ParserMapper(Func<object, object> parser)
+        {
+            this.parser = parser;
+        }
+
+        public override T Map(IDataRecord record)
         {
             var value = record.GetValue(0);
-            return value is DBNull ? defaultValue : (T)parser(value);
-        };
+            return value is DBNull ? default! : (T)parser(value);
+        }
     }
 }

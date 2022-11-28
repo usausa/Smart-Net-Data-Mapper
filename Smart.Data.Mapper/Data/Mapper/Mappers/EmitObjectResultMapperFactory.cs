@@ -16,28 +16,13 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
     private readonly MethodInfo getValueWithConvertMethod;
 
+    private readonly HashSet<string> targetAssemblies = new();
+
     private int typeNo;
 
     private AssemblyBuilder? assemblyBuilder;
 
-    private ModuleBuilder? moduleBuilder;
-
-    private ModuleBuilder ModuleBuilder
-    {
-        get
-        {
-            if (moduleBuilder is null)
-            {
-                assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
-                    new AssemblyName("EmitObjectResultMapperFactoryAssembly"),
-                    AssemblyBuilderAccess.Run);
-                moduleBuilder = assemblyBuilder.DefineDynamicModule(
-                    "EmitObjectResultMapperFactoryModule");
-            }
-
-            return moduleBuilder;
-        }
-    }
+    private ModuleBuilder moduleBuilder = default!;
 
     private EmitObjectResultMapperFactory()
     {
@@ -47,12 +32,36 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
     public bool IsMatch(Type type) => true;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-    public Func<IDataRecord, T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    private void PrepareAssembly(Type type)
     {
-        var entries = CreateMapEntries(config, type, columns);
-        var holder = CreateHolder(entries);
-        var holderType = holder.GetType();
+        if (assemblyBuilder is null)
+        {
+            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
+                new AssemblyName("EmitObjectResultMapperFactoryAssembly"),
+                AssemblyBuilderAccess.Run);
+            moduleBuilder = assemblyBuilder.DefineDynamicModule(
+                "EmitObjectResultMapperFactoryModule");
+
+            assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
+                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new[] { typeof(string) })!,
+                new object[] { typeof(EmitObjectResultMapperFactory).Assembly.GetName().Name! }));
+        }
+
+        var assemblyName = type.Assembly.GetName().Name;
+        if ((assemblyName is not null) && !targetAssemblies.Contains(assemblyName))
+        {
+            assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
+                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new[] { typeof(string) })!,
+                new object[] { assemblyName }));
+
+            targetAssemblies.Add(assemblyName);
+        }
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    public RecordMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    {
+        PrepareAssembly(type);
 
         var ci = type.GetConstructor(Type.EmptyTypes);
         if (ci is null)
@@ -60,8 +69,26 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
             throw new ArgumentException($"Default constructor not found. type=[{type.FullName}]", nameof(type));
         }
 
-        var dynamicMethod = new DynamicMethod(string.Empty, type, new[] { holderType, typeof(IDataRecord) }, true);
-        var ilGenerator = dynamicMethod.GetILGenerator();
+        var entries = CreateMapEntries(config, type, columns);
+
+        // Define type
+        var typeBuilder = moduleBuilder.DefineType(
+            $"Holder_{typeNo}",
+            TypeAttributes.Public | TypeAttributes.AutoLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
+        typeNo++;
+
+        // Set base type
+        var baseType = typeof(RecordMapper<>).MakeGenericType(type);
+        typeBuilder.SetParent(baseType);
+
+        // Define method
+        var methodBuilder = typeBuilder.DefineMethod(
+            nameof(RecordMapper<T>.Map),
+            MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig,
+            type,
+            new[] { typeof(IDataRecord) });
+
+        var ilGenerator = methodBuilder.GetILGenerator();
 
         ilGenerator.Emit(OpCodes.Newobj, ci);
 
@@ -77,9 +104,13 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
             }
             else
             {
-                var field = holderType.GetField($"parser{entry.Index}");
+                var field = typeBuilder.DefineField(
+                    $"parser{entry.Index}",
+                    typeof(Func<object, object>),
+                    FieldAttributes.Public);
+
                 ilGenerator.Emit(OpCodes.Ldarg_0);
-                ilGenerator.Emit(OpCodes.Ldfld, field!);
+                ilGenerator.Emit(OpCodes.Ldfld, field);
                 var method = getValueWithConvertMethod.MakeGenericMethod(entry.Property.PropertyType);
                 ilGenerator.Emit(OpCodes.Call, method);
             }
@@ -88,8 +119,21 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
         ilGenerator.Emit(OpCodes.Ret);
 
-        var funcType = typeof(Func<,>).MakeGenericType(typeof(IDataRecord), type);
-        return (Func<IDataRecord, T>)dynamicMethod.CreateDelegate(funcType, holder);
+        // Create instance
+        var typeInfo = typeBuilder.CreateTypeInfo();
+        var holderType = typeInfo!.AsType();
+        var holder = (RecordMapper<T>)Activator.CreateInstance(holderType)!;
+
+        foreach (var entry in entries)
+        {
+            if (entry.Parser is not null)
+            {
+                var field = holderType.GetField($"parser{entry.Index}");
+                field!.SetValue(holder, entry.Parser);
+            }
+        }
+
+        return holder;
     }
 
     private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
@@ -109,7 +153,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
                 continue;
             }
 
-            list.Add(new MapEntry(i, pi, config.CreateParser(column.Type, pi.PropertyType)));
+            list.Add(new MapEntry(i, pi, column.Type == pi.PropertyType ? null : config.CreateParser(column.Type, pi.PropertyType)));
         }
 
         return list.ToArray();
@@ -118,41 +162,6 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
     private static bool IsTargetProperty(PropertyInfo pi)
     {
         return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
-    }
-
-    private object CreateHolder(MapEntry[] entries)
-    {
-        var typeBuilder = ModuleBuilder.DefineType(
-            $"Holder_{typeNo}",
-            TypeAttributes.Public | TypeAttributes.AutoLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
-        typeNo++;
-
-        // Define setter fields
-        foreach (var entry in entries)
-        {
-            if (entry.Parser is not null)
-            {
-                typeBuilder.DefineField(
-                    $"parser{entry.Index}",
-                    typeof(Func<object, object>),
-                    FieldAttributes.Public);
-            }
-        }
-
-        var typeInfo = typeBuilder.CreateTypeInfo();
-        var holderType = typeInfo!.AsType();
-        var holder = Activator.CreateInstance(holderType)!;
-
-        foreach (var entry in entries)
-        {
-            if (entry.Parser is not null)
-            {
-                var field = holderType.GetField($"parser{entry.Index}");
-                field!.SetValue(holder, entry.Parser);
-            }
-        }
-
-        return holder;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

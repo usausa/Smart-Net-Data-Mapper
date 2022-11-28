@@ -16,23 +16,9 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
     public bool IsMatch(Type type) => true;
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-    public Func<IDataRecord, T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    public RecordMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
-        var objectFactory = config.CreateFactory<T>();
-        var entries = CreateMapEntries(config, type, columns);
-
-        return record =>
-        {
-            var obj = objectFactory();
-
-            for (var i = 0; i < entries.Length; i++)
-            {
-                var entry = entries[i];
-                entry.Setter(obj!, record.GetValue(entry.Index));
-            }
-
-            return obj;
-        };
+        return new Mapper<T>(config.CreateFactory<T>(), CreateMapEntries(config, type, columns));
     }
 
     private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
@@ -89,6 +75,31 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
         {
             Index = index;
             Setter = setter;
+        }
+    }
+
+    private sealed class Mapper<T> : RecordMapper<T>
+    {
+        private readonly Func<T> factory;
+
+        private readonly MapEntry[] entries;
+
+        public Mapper(Func<T> factory, MapEntry[] entries)
+        {
+            this.factory = factory;
+            this.entries = entries;
+        }
+
+        public override T Map(IDataRecord record)
+        {
+            var obj = factory();
+
+            foreach (var entry in entries)
+            {
+                entry.Setter(obj!, record.GetValue(entry.Index));
+            }
+
+            return obj;
         }
     }
 }

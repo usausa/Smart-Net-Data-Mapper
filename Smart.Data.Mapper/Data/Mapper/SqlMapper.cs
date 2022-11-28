@@ -354,7 +354,7 @@ public static class SqlMapper
 
                 do
                 {
-                    yield return mapper(reader);
+                    yield return mapper.Map(reader);
                 }
                 while (reader.Read());
             }
@@ -404,7 +404,7 @@ public static class SqlMapper
 
                 do
                 {
-                    yield return mapper(reader);
+                    yield return mapper.Map(reader);
                 }
                 while (await reader.ReadAsync(cancel).ConfigureAwait(false));
             }
@@ -456,7 +456,7 @@ public static class SqlMapper
 
                 do
                 {
-                    list.Add(mapper(reader));
+                    list.Add(mapper.Map(reader));
                 }
                 while (reader.Read());
             }
@@ -510,7 +510,7 @@ public static class SqlMapper
 
                 do
                 {
-                    list.Add(mapper(reader));
+                    list.Add(mapper.Map(reader));
                 }
                 while (await reader.ReadAsync(cancel).ConfigureAwait(false));
             }
@@ -559,7 +559,7 @@ public static class SqlMapper
             if (reader.Read())
             {
                 var mapper = config.CreateResultMapper<T>(reader);
-                return mapper(reader);
+                return mapper.Map(reader);
             }
 
             return default;
@@ -606,7 +606,7 @@ public static class SqlMapper
             if (await reader.ReadAsync(cancel).ConfigureAwait(false))
             {
                 var mapper = config.CreateResultMapper<T>(reader);
-                return mapper(reader);
+                return mapper.Map(reader);
             }
 
             return default;

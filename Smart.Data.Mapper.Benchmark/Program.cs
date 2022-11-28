@@ -23,6 +23,10 @@ public class BenchmarkConfig : ManualConfig
 {
     public BenchmarkConfig()
     {
+        AddExporter(MarkdownExporter.GitHub);
+        AddExporter(CsvExporter.Default);
+        //AddExporter(CsvMeasurementsExporter.Default);
+        //AddExporter(RPlotExporter.Default);
         AddColumn(
             StatisticColumn.Mean,
             StatisticColumn.Min,
@@ -31,12 +35,7 @@ public class BenchmarkConfig : ManualConfig
             StatisticColumn.Error,
             StatisticColumn.StdDev);
         AddDiagnoser(MemoryDiagnoser.Default);
-        AddExporter(MarkdownExporter.Default, MarkdownExporter.GitHub);
-        AddExporter(CsvExporter.Default);
-        //AddExporter(CsvMeasurementsExporter.Default);
-        //AddExporter(RPlotExporter.Default);
         AddJob(Job.MediumRun);
-        //AddJob(Job.LongRun);
     }
 }
 
