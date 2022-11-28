@@ -3,6 +3,7 @@ namespace Smart.Data.Mapper;
 using System.Data;
 using System.Reflection;
 
+using Smart.Data.Mapper.Mappers;
 using Smart.Data.Mapper.Parameters;
 
 public interface ISqlMapperConfig
