@@ -4,5 +4,5 @@ public interface IResultMapperFactory
 {
     bool IsMatch(Type type);
 
-    RecordMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns);
+    ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns);
 }

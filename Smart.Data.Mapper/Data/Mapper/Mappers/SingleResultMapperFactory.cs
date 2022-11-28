@@ -48,7 +48,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
-    public RecordMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         var parser = config.CreateParser(columns[0].Type, typeof(T));
         return parser is null
@@ -56,7 +56,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
             : new ParserMapper<T>(parser);
     }
 
-    private sealed class Mapper<T> : RecordMapper<T>
+    private sealed class Mapper<T> : ResultMapper<T>
     {
         public override T Map(IDataRecord record)
         {
@@ -65,7 +65,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
         }
     }
 
-    private sealed class ParserMapper<T> : RecordMapper<T>
+    private sealed class ParserMapper<T> : ResultMapper<T>
     {
         private readonly Func<object, object> parser;
 

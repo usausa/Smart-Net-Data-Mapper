@@ -24,5 +24,5 @@ public interface ISqlMapperConfig
 
     ParameterBuilder CreateParameterBuilder(Type type);
 
-    RecordMapper<T> CreateResultMapper<T>(IDataReader reader);
+    ResultMapper<T> CreateResultMapper<T>(IDataReader reader);
 }

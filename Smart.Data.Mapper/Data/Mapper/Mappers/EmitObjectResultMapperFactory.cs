@@ -59,7 +59,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-    public RecordMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         PrepareAssembly(type);
 
@@ -78,12 +78,12 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         typeNo++;
 
         // Set base type
-        var baseType = typeof(RecordMapper<>).MakeGenericType(type);
+        var baseType = typeof(ResultMapper<>).MakeGenericType(type);
         typeBuilder.SetParent(baseType);
 
         // Define method
         var methodBuilder = typeBuilder.DefineMethod(
-            nameof(RecordMapper<T>.Map),
+            nameof(ResultMapper<T>.Map),
             MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig,
             type,
             new[] { typeof(IDataRecord) });
@@ -122,7 +122,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         // Create instance
         var typeInfo = typeBuilder.CreateTypeInfo();
         var holderType = typeInfo!.AsType();
-        var holder = (RecordMapper<T>)Activator.CreateInstance(holderType)!;
+        var holder = (ResultMapper<T>)Activator.CreateInstance(holderType)!;
 
         foreach (var entry in entries)
         {
