@@ -198,6 +198,8 @@ internal sealed class ResultMapperCache
         }
     }
 
+#pragma warning disable CA1307
+#pragma warning disable CA1309
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsMatchColumn(Span<ColumnInfo> columns1, Span<ColumnInfo> columns2)
     {
@@ -225,6 +227,8 @@ internal sealed class ResultMapperCache
 
         return true;
     }
+#pragma warning restore CA1309
+#pragma warning restore CA1307
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, int hash, [NotNullWhen(true)] out object? value)
