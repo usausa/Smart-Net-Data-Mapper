@@ -201,14 +201,15 @@ internal sealed class ResultMapperCache
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsMatchColumn(Span<ColumnInfo> columns1, Span<ColumnInfo> columns2)
     {
-        if (columns1.Length != columns2.Length)
+        var length = columns1.Length;
+        if (length != columns2.Length)
         {
             return false;
         }
 
         ref var column1 = ref MemoryMarshal.GetReference(columns1);
         ref var column2 = ref MemoryMarshal.GetReference(columns2);
-        for (var i = 0; i < columns1.Length; i++)
+        do
         {
             if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name))
             {
@@ -217,7 +218,10 @@ internal sealed class ResultMapperCache
 
             column1 = ref Unsafe.Add(ref column1, 1);
             column2 = ref Unsafe.Add(ref column2, 1);
+
+            length--;
         }
+        while (length != 0);
 
         return true;
     }
