@@ -210,48 +210,13 @@ internal sealed class ResultMapperCache
         ref var column2 = ref MemoryMarshal.GetReference(columns2);
         for (var i = 0; i < columns1.Length; i++)
         {
-            if ((column1.Type != column2.Type) || !IsNameEquals(column1.Name, column2.Name))
+            if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name))
             {
                 return false;
             }
 
             column1 = ref Unsafe.Add(ref column1, 1);
             column2 = ref Unsafe.Add(ref column2, 1);
-        }
-
-        return true;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static unsafe bool IsNameEquals(string name1, string name2)
-    {
-        var length = name1.Length;
-        if (length != name2.Length)
-        {
-            return false;
-        }
-
-        fixed (char* pName1 = name1)
-        fixed (char* pName2 = name2)
-        {
-            var p1 = pName1;
-            var p2 = pName2;
-            var i = 0;
-            for (; i <= length - 4; i += 4)
-            {
-                if (*(long*)(p1 + i) != *(long*)(p2 + i))
-                {
-                    return false;
-                }
-            }
-
-            for (; i < length; i++)
-            {
-                if (p1[i] != p2[i])
-                {
-                    return false;
-                }
-            }
         }
 
         return true;
