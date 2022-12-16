@@ -21,7 +21,7 @@ public class MapTypeTest
         var entity = con.QueryFirstOrDefault<RecordEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
         Assert.NotNull(entity);
-        Assert.Equal(1, entity!.Id);
+        Assert.Equal(1, entity.Id);
         Assert.Equal("test1", entity.Name);
     }
 
@@ -47,7 +47,7 @@ public class MapTypeTest
         var entity = con.QueryFirstOrDefault<InitOnlyEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
 
         Assert.NotNull(entity);
-        Assert.Equal(1, entity!.Id);
+        Assert.Equal(1, entity.Id);
         Assert.Equal("test1", entity.Name);
     }
 
