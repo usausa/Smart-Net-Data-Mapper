@@ -210,21 +210,20 @@ internal sealed class ResultMapperCache
         }
 
         ref var column1 = ref MemoryMarshal.GetReference(columns1);
-        ref var end = ref Unsafe.Add(ref column1, length);
         ref var column2 = ref MemoryMarshal.GetReference(columns2);
-
-    Compare:
-        if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name))
+        do
         {
-            return false;
-        }
+            if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name))
+            {
+                return false;
+            }
 
-        column1 = ref Unsafe.Add(ref column1, 1);
-        if (Unsafe.IsAddressLessThan(ref column1, ref end))
-        {
+            column1 = ref Unsafe.Add(ref column1, 1);
             column2 = ref Unsafe.Add(ref column2, 1);
-            goto Compare;
+
+            length--;
         }
+        while (length != 0);
 
         return true;
     }
