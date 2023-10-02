@@ -8,6 +8,7 @@ using Smart.Data.Mapper.Mocks;
 
 using Xunit;
 
+#pragma warning disable CA1849
 [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
 public class SqlMapperQueryListTest
 {
@@ -284,3 +285,4 @@ public class SqlMapperQueryListTest
         public string? Name { get; set; }
     }
 }
+#pragma warning restore CA1849
