@@ -8,13 +8,6 @@
     <MSBuildWarningsAsMessages>SA0001</MSBuildWarningsAsMessages>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(TargetFramework)' != 'net7.0'">
-    <NoWarn>$(NoWarn),CS8602</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)' == 'net7.0'">
-    <WarningsAsErrors>nullable</WarningsAsErrors>
-  </PropertyGroup>
-
   <PropertyGroup>
     <Version>2.3.3</Version>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
