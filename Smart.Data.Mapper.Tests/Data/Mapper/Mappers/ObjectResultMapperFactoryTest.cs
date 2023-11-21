@@ -5,7 +5,7 @@ using Smart.Mock.Data;
 
 using Xunit;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
 public class ObjectResultMapperFactoryTest
 {
     [Fact]

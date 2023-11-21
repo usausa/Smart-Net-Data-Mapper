@@ -15,7 +15,7 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
 
     public bool IsMatch(Type type) => true;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         return new Mapper<T>(config.CreateFactory<T>(), CreateMapEntries(config, type, columns));

@@ -35,10 +35,10 @@ public class SqlMapperExecuteTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
-        var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" }).ConfigureAwait(false);
+        var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
 
         Assert.Equal(1, effect);
     }
@@ -54,7 +54,7 @@ public class SqlMapperExecuteTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
         var cancel = new CancellationToken(true);
@@ -62,8 +62,8 @@ public class SqlMapperExecuteTest
                 await con.ExecuteAsync(
                     "INSERT INTO Data (Id, Name) VALUES (@Id, @Name)",
                     new { Id = 1, Name = "test" },
-                    cancel: cancel).ConfigureAwait(false))
-            .ConfigureAwait(false);
+                    cancel: cancel))
+            ;
     }
 
     //--------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ public class SqlMapperExecuteTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
+        await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1");
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -149,7 +149,7 @@ public class SqlMapperExecuteTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object()).ConfigureAwait(false);
+        await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object());
 
         Assert.True(factory.BuildCalled);
         Assert.True(factory.PostProcessCalled);
@@ -170,7 +170,7 @@ public class SqlMapperExecuteTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1").ConfigureAwait(false);
+        await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1");
 
         Assert.False(factory.BuildCalled);
         Assert.False(factory.PostProcessCalled);

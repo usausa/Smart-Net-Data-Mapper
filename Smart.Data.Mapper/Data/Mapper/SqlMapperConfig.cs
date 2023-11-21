@@ -178,7 +178,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public SqlMapperConfig ConfigureParameterBuilderFactories(Action<IList<IParameterBuilderFactory>> action)
     {
         var list = new List<IParameterBuilderFactory>(parameterBuilderFactories);
@@ -195,7 +195,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public SqlMapperConfig ConfigureResultMapperFactories(Action<IList<IResultMapperFactory>> action)
     {
         var list = new List<IResultMapperFactory>(resultMapperFactories);
@@ -212,7 +212,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public SqlMapperConfig ConfigureTypeMap(Action<IDictionary<Type, DbType>> action)
     {
         var dictionary = new Dictionary<Type, DbType>(typeMap);
@@ -229,7 +229,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public SqlMapperConfig ConfigureTypeHandlers(Action<IDictionary<Type, ITypeHandler>> action)
     {
         var dictionary = new Dictionary<Type, ITypeHandler>(typeHandlers);
@@ -332,7 +332,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return (ResultMapper<T>)resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>);
     }
 
-    private object CreateMapperInternal<T>(Type type, ColumnInfo[] columns)
+    private ResultMapper<T> CreateMapperInternal<T>(Type type, ColumnInfo[] columns)
     {
         foreach (var factory in resultMapperFactories)
         {

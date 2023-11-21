@@ -17,7 +17,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
 
     public bool IsMatch(Type type) => true;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
     {
         var entries = CreateParameterEntries(config, type);
@@ -119,7 +119,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
 
     private static Action<DbCommand, object>? CreatePostProcessAction(ParameterEntry[] entries)
     {
-        if (entries.Any(x => x.Setter is not null))
+        if (entries.Any(static x => x.Setter is not null))
         {
             return (cmd, parameter) =>
             {

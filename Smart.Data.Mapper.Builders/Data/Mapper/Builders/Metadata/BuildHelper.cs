@@ -4,7 +4,7 @@ using System.Text;
 
 public static class BuildHelper
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public static void BuildKeyCondition(StringBuilder sql, TableMetadata tableInfo)
     {
         foreach (var column in tableInfo.KeyColumns)

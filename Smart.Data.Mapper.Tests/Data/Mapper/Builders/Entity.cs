@@ -20,7 +20,7 @@ public class Entity
     [Ignore]
     public int IgnoreValue { get; set; }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
     public int WriteOnlyValue
     {
         set => IgnoreValue = value;

@@ -10,21 +10,21 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
 
     public IList<string> RemoveSuffix { get; } = new List<string>(new[] { "Entity" });
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public TableMetadata Create(Type type)
     {
         var columns = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
             .Where(IsTargetProperty)
-            .Select(x => new ColumnMetadata(x, x.GetCustomAttribute<NameAttribute>()?.Name ?? x.Name))
+            .Select(static x => new ColumnMetadata(x, x.GetCustomAttribute<NameAttribute>()?.Name ?? x.Name))
             .ToArray();
         var keyColumns = columns
-            .Select(x => new { Column = x, Attribute = x.Property.GetCustomAttribute<PrimaryKeyAttribute>() })
-            .Where(x => x.Attribute is not null)
-            .OrderBy(x => x.Attribute!.Order)
-            .Select(x => x.Column)
+            .Select(static x => new { Column = x, Attribute = x.Property.GetCustomAttribute<PrimaryKeyAttribute>() })
+            .Where(static x => x.Attribute is not null)
+            .OrderBy(static x => x.Attribute!.Order)
+            .Select(static x => x.Column)
             .ToArray();
         var nonKeyColumns = columns
-            .Where(x => x.Property.GetCustomAttribute<PrimaryKeyAttribute>() is null)
+            .Where(static x => x.Property.GetCustomAttribute<PrimaryKeyAttribute>() is null)
             .ToArray();
 
         return new TableMetadata(ResolveName(type), columns, keyColumns, nonKeyColumns);

@@ -7,7 +7,7 @@ using Smart.Mock.Data;
 
 using Xunit;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
 public class ObjectParameterBuilderFactoryTest
 {
     [Fact]
@@ -70,8 +70,8 @@ public class ObjectParameterBuilderFactoryTest
 
         public Value? Value6 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Ignore")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:MarkMembersAsStatic", Justification = "Ignore")]
         public int Value7
         {
             // ReSharper disable once ValueParameterNotUsed

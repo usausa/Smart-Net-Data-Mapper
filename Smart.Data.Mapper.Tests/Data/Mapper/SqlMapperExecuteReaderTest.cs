@@ -9,7 +9,7 @@ using Smart.Data.Mapper.Mocks;
 using Xunit;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
 public class SqlMapperExecuteReaderTest
 {
     //--------------------------------------------------------------------------------
@@ -43,12 +43,12 @@ public class SqlMapperExecuteReaderTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
+        using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
         Assert.True(reader.Read());
         Assert.Equal(1, reader.GetInt64(0));
         Assert.Equal("test1", reader.GetString(1));
@@ -94,7 +94,7 @@ public class SqlMapperExecuteReaderTest
     public async Task ExecuteReaderLifeAsync()
     {
         Prepare("ExecuteReaderLifeAsync.db");
-        using var reader = await new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id").ConfigureAwait(false);
+        using var reader = await new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db").ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
         Assert.True(reader.Read());
         Assert.Equal(1, reader.GetInt64(0));
         Assert.Equal("test1", reader.GetString(1));
@@ -117,16 +117,16 @@ public class SqlMapperExecuteReaderTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
         await Assert.ThrowsAsync<OperationCanceledException>(async () =>
         {
             var cancel = new CancellationToken(true);
-            using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel).ConfigureAwait(false))
+            using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel))
             {
             }
-        }).ConfigureAwait(false);
+        });
     }
 
     //--------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ public class SqlMapperExecuteReaderTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'").ConfigureAwait(false))
+        using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'"))
         {
             Assert.Equal(ConnectionState.Open, con.State);
             Assert.True(reader.Read());
@@ -230,10 +230,10 @@ public class SqlMapperExecuteReaderTest
 #pragma warning restore CA2007
         await Assert.ThrowsAsync<SqliteException>(async () =>
         {
-            using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
+            using (await con.ExecuteReaderAsync("x"))
             {
             }
-        }).ConfigureAwait(false);
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -247,10 +247,10 @@ public class SqlMapperExecuteReaderTest
 #pragma warning restore CA2007
         await Assert.ThrowsAsync<NotSupportedException>(async () =>
         {
-            using (await con.ExecuteReaderAsync("x").ConfigureAwait(false))
+            using (await con.ExecuteReaderAsync("x"))
             {
             }
-        }).ConfigureAwait(false);
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -271,10 +271,10 @@ public class SqlMapperExecuteReaderTest
 #pragma warning restore CA2007
         await Assert.ThrowsAsync<NotSupportedException>(async () =>
         {
-            using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
+            using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
             {
             }
-        }).ConfigureAwait(false);
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -340,7 +340,7 @@ public class SqlMapperExecuteReaderTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()).ConfigureAwait(false))
+        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
         {
         }
 
@@ -363,7 +363,7 @@ public class SqlMapperExecuteReaderTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'").ConfigureAwait(false))
+        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'"))
         {
         }
 

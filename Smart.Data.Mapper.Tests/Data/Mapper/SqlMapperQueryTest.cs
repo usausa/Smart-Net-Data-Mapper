@@ -41,12 +41,12 @@ public class SqlMapperQueryTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        var list = await con.QueryAsync<DataEntity>("SELECT * FROM Data ORDER BY Id").ToListAsync().ConfigureAwait(false);
+        var list = await con.QueryAsync<DataEntity>("SELECT * FROM Data ORDER BY Id").ToListAsync();
 
         Assert.Equal(2, list.Count);
         Assert.Equal(1, list[0].Id);
@@ -66,7 +66,7 @@ public class SqlMapperQueryTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await con.OpenAsync().ConfigureAwait(false);
+        await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
         await Assert.ThrowsAsync<OperationCanceledException>(async () =>
@@ -76,8 +76,8 @@ public class SqlMapperQueryTest
                     "SELECT * FROM Data ORDER BY Id",
                     cancel: cancel)
                 .ToListAsync(cancel)
-                .ConfigureAwait(false);
-        }).ConfigureAwait(false);
+                ;
+        });
     }
 
     //--------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ public class SqlMapperQueryTest
 #pragma warning restore CA2007
         var list = con.QueryAsync<DataEntity>("SELECT 1, 'test1'");
 
-        Assert.Single(await list.ToListAsync().ConfigureAwait(false));
+        Assert.Single(await list.ToListAsync());
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
@@ -156,7 +156,7 @@ public class SqlMapperQueryTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync().ConfigureAwait(false)).ConfigureAwait(false);
+        await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync());
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -168,7 +168,7 @@ public class SqlMapperQueryTest
 #pragma warning disable CA2007
         await using var con = new CommandUnsupportedConnection();
 #pragma warning restore CA2007
-        await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync().ConfigureAwait(false)).ConfigureAwait(false);
+        await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>("x").ToListAsync());
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -187,7 +187,7 @@ public class SqlMapperQueryTest
 #pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
 #pragma warning restore CA2007
-        await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ToListAsync().ConfigureAwait(false)).ConfigureAwait(false);
+        await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()).ToListAsync());
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -253,7 +253,7 @@ public class SqlMapperQueryTest
 #pragma warning restore CA2007
         var list = con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
-        Assert.Single(await list.ToListAsync().ConfigureAwait(false));
+        Assert.Single(await list.ToListAsync());
         Assert.True(factory.BuildCalled);
         Assert.True(factory.PostProcessCalled);
     }
@@ -275,7 +275,7 @@ public class SqlMapperQueryTest
 #pragma warning restore CA2007
         var list = con.QueryAsync<DataEntity>(config, "SELECT 1, 'test1'");
 
-        Assert.Single(await list.ToListAsync().ConfigureAwait(false));
+        Assert.Single(await list.ToListAsync());
         Assert.False(factory.BuildCalled);
         Assert.False(factory.PostProcessCalled);
     }

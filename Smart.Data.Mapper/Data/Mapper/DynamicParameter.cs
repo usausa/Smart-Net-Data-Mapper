@@ -48,7 +48,7 @@ public sealed class DynamicParameter : IDynamicParameter
         return (T)value;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public void Build(ISqlMapperConfig config, DbCommand cmd)
     {
         foreach (var parameter in parameters.Values)
