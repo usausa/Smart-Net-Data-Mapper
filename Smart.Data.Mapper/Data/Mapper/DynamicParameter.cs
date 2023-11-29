@@ -5,9 +5,9 @@ using System.Data.Common;
 
 public sealed class DynamicParameter : IDynamicParameter
 {
-    private readonly Dictionary<string, ParameterInfo> parameters = new();
+    private readonly Dictionary<string, ParameterInfo> parameters = [];
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+#pragma warning disable SA1401
     private sealed class ParameterInfo
     {
         public readonly string Name;
@@ -31,6 +31,7 @@ public sealed class DynamicParameter : IDynamicParameter
             Direction = direction;
         }
     }
+#pragma warning restore SA1401
 
     public void Add(string name, object? value, DbType? dbType = null, int? size = null, ParameterDirection direction = ParameterDirection.Input)
     {

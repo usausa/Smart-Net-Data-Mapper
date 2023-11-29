@@ -16,7 +16,6 @@
     <PackageId>Usa.Smart.Data.Mapper</PackageId>
     <Title>Smart.Data.Mapper</Title>
     <Description>Smart data mapper library</Description>
-    <Summary>Smart data mapper library</Summary>
     <PackageTags>smart ado.net orm micro-orm</PackageTags>
   </PropertyGroup>
 

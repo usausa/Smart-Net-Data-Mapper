@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
 internal sealed class ResultMapperCache
 {
-    private static readonly Node EmptyNode = new(typeof(EmptyKey), Array.Empty<ColumnInfo>(), default!, 0);
+    private static readonly Node EmptyNode = new(typeof(EmptyKey), [], default!, 0);
 
     private const int InitialSize = 64;
 

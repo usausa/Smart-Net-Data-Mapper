@@ -16,7 +16,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
     private readonly MethodInfo getValueWithConvertMethod;
 
-    private readonly HashSet<string> targetAssemblies = new();
+    private readonly HashSet<string> targetAssemblies = [];
 
     private int typeNo;
 
@@ -43,7 +43,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
                 "EmitObjectResultMapperFactoryModule");
 
             assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
-                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new[] { typeof(string) })!,
+                typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
                 new object[] { typeof(EmitObjectResultMapperFactory).Assembly.GetName().Name! }));
         }
 
@@ -51,7 +51,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         if ((assemblyName is not null) && !targetAssemblies.Contains(assemblyName))
         {
             assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
-                typeof(IgnoresAccessChecksToAttribute).GetConstructor(new[] { typeof(string) })!,
+                typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
                 new object[] { assemblyName }));
 
             targetAssemblies.Add(assemblyName);
@@ -86,7 +86,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
             nameof(ResultMapper<T>.Map),
             MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig,
             type,
-            new[] { typeof(IDataRecord) });
+            [typeof(IDataRecord)]);
 
         var ilGenerator = methodBuilder.GetILGenerator();
 
@@ -156,7 +156,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
             list.Add(new MapEntry(i, pi, config.CreateParser(column.Type, pi.PropertyType)));
         }
 
-        return list.ToArray();
+        return [.. list];
     }
 
     private static bool IsTargetProperty(PropertyInfo pi)

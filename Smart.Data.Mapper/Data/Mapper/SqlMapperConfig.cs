@@ -14,17 +14,17 @@ using Smart.Reflection;
 public sealed class SqlMapperConfig : ISqlMapperConfig
 {
     private static readonly IParameterBuilderFactory[] DefaultParameterBuilderFactories =
-    {
+    [
         DynamicParameterBuilderFactory.Instance,
         DictionaryParameterBuilderFactory.Instance,
         ObjectParameterBuilderFactory.Instance
-    };
+    ];
 
     private static readonly IResultMapperFactory[] DefaultResultMapperFactories =
-    {
+    [
         new SingleResultMapperFactory(),
         ReflectionHelper.IsCodegenAllowed ? EmitObjectResultMapperFactory.Instance : ObjectResultMapperFactory.Instance
-    };
+    ];
 
     private static readonly Dictionary<Type, DbType> DefaultTypeMap = new()
     {
@@ -50,7 +50,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         { typeof(object), DbType.Object }
     };
 
-    private static readonly Dictionary<Type, ITypeHandler> DefaultTypeHandlers = new();
+    private static readonly Dictionary<Type, ITypeHandler> DefaultTypeHandlers = [];
 
     [ThreadStatic]
     private static ColumnInfo[]? columnInfoPool;
@@ -183,7 +183,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
     {
         var list = new List<IParameterBuilderFactory>(parameterBuilderFactories);
         action(list);
-        parameterBuilderFactories = list.ToArray();
+        parameterBuilderFactories = [.. list];
         parameterBuilderCache.Clear();
         return this;
     }
@@ -200,7 +200,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
     {
         var list = new List<IResultMapperFactory>(resultMapperFactories);
         action(list);
-        resultMapperFactories = list.ToArray();
+        resultMapperFactories = [.. list];
         resultMapperCache.Clear();
         return this;
     }

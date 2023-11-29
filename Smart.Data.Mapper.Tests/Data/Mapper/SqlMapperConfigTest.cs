@@ -30,7 +30,7 @@ public class SqlMapperConfigTest
     public void CountResultMapperCache()
     {
         var config = new SqlMapperConfig();
-        ((ISqlMapperConfig)config).CreateResultMapper<object>(new MockDataReader(new[] { new MockColumn(typeof(int), "Id") }, new List<object[]>()));
+        ((ISqlMapperConfig)config).CreateResultMapper<object>(new MockDataReader([new MockColumn(typeof(int), "Id")], new List<object[]>()));
 
         Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
@@ -79,7 +79,7 @@ public class SqlMapperConfigTest
         var config = new SqlMapperConfig();
         config.ConfigureResultMapperFactories(opt => opt.Clear());
 
-        var reader = new MockDataReader(new[] { new MockColumn(typeof(int), "Id") }, new List<object[]>());
+        var reader = new MockDataReader([new MockColumn(typeof(int), "Id")], new List<object[]>());
         Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).CreateResultMapper<object>(reader));
     }
 

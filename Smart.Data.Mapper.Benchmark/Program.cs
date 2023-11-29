@@ -62,11 +62,10 @@ public class DataMapperBenchmark
         mockExecuteScalar = new MockRepeatDbConnection(1L);
 
         mockQuery = new MockRepeatDbConnection(new MockDataReader(
-            new[]
-            {
+            [
                 new MockColumn(typeof(long), "Id"),
                 new MockColumn(typeof(string), "Name")
-            },
+            ],
             Enumerable.Range(1, 100).Select(x => new object[]
             {
                 (long)x,
@@ -74,8 +73,7 @@ public class DataMapperBenchmark
             })));
 
         mockQueryFirst = new MockRepeatDbConnection(new MockDataReader(
-            new[]
-            {
+            [
                 new MockColumn(typeof(long), "Id"),
                 new MockColumn(typeof(string), "Name"),
                 new MockColumn(typeof(int), "Amount"),
@@ -86,7 +84,7 @@ public class DataMapperBenchmark
                 new MockColumn(typeof(string), "CreatedBy"),
                 new MockColumn(typeof(DateTimeOffset?), "UpdatedAt"),
                 new MockColumn(typeof(string), "UpdatedBy")
-            },
+            ],
             Enumerable.Range(1, 1).Select(x => new object[]
             {
                 (long)x,

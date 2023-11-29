@@ -18,7 +18,6 @@
     <PackageId>Usa.Smart.Data.Mapper.Builders</PackageId>
     <Title>Smart.Data.Mapper.Builders</Title>
     <Description>Smart data mapper library builder option</Description>
-    <Summary>Smart data mapper library builder option</Summary>
     <PackageTags>smart ado.net orm micro-orm</PackageTags>
   </PropertyGroup>
 
