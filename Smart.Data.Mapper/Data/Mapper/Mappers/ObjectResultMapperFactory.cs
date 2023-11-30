@@ -46,7 +46,7 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
                 : new MapEntry(i, CreateParser(setter!, defaultValue, parser)));
         }
 
-        return [.. list];
+        return list.ToArray();
     }
 
     private static Action<object, object> CreateParser(Action<object?, object?> setter, object? defaultValue)
