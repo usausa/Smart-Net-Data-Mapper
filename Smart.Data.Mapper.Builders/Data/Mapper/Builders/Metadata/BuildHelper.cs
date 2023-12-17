@@ -4,7 +4,7 @@ using System.Text;
 
 public static class BuildHelper
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
     public static void BuildKeyCondition(StringBuilder sql, TableMetadata tableInfo)
     {
         foreach (var column in tableInfo.KeyColumns)
@@ -18,4 +18,5 @@ public static class BuildHelper
 
         sql.Length -= 5;
     }
+#pragma warning restore CA1062
 }

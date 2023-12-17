@@ -8,10 +8,7 @@ using Smart.Data.Mapper.Selector;
 using Smart.Mock.Data;
 using Smart.Reflection;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
-public class SqlMapperConfigTest
+public sealed class SqlMapperConfigTest
 {
     [Fact]
     public void CountParameterBuilderCache()
@@ -30,7 +27,9 @@ public class SqlMapperConfigTest
     public void CountResultMapperCache()
     {
         var config = new SqlMapperConfig();
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<object>(new MockDataReader([new MockColumn(typeof(int), "Id")], new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
@@ -79,7 +78,9 @@ public class SqlMapperConfigTest
         var config = new SqlMapperConfig();
         config.ConfigureResultMapperFactories(opt => opt.Clear());
 
+#pragma warning disable CA2000
         var reader = new MockDataReader([new MockColumn(typeof(int), "Id")], new List<object[]>());
+#pragma warning restore CA2000
         Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).CreateResultMapper<object>(reader));
     }
 

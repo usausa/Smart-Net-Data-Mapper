@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper.Builders;
 
 using Smart.Data.Mapper.Attributes;
 
-public class KeyOnlyEntity
+public sealed class KeyOnlyEntity
 {
     [PrimaryKey(1)]
     public int Key1 { get; set; }

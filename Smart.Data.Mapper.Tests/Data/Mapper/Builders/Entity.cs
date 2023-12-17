@@ -3,7 +3,7 @@ namespace Smart.Data.Mapper.Builders;
 using Smart.Data.Mapper.Attributes;
 
 [Name("Table")]
-public class Entity
+public sealed class Entity
 {
     [PrimaryKey(1)]
     public int Key1 { get; set; }
@@ -20,9 +20,10 @@ public class Entity
     [Ignore]
     public int IgnoreValue { get; set; }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
+#pragma warning disable CA1044
     public int WriteOnlyValue
     {
         set => IgnoreValue = value;
     }
+#pragma warning restore CA1044
 }

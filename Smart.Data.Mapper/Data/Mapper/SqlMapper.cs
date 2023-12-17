@@ -20,7 +20,7 @@ public static class SqlMapper
     // Core
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA2100:ReviewSqlQueriesForSecurityVulnerabilities", Justification = "Extension")]
+#pragma warning disable CA2100
     private static DbCommand SetupCommand(DbConnection con, DbTransaction? transaction, string sql, int? commandTimeout, CommandType? commandType)
     {
         var cmd = con.CreateCommand();
@@ -44,12 +44,13 @@ public static class SqlMapper
 
         return cmd;
     }
+#pragma warning restore CA2100
 
     //--------------------------------------------------------------------------------
     // Execute
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static int Execute(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -79,6 +80,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Execute(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
@@ -86,7 +88,7 @@ public static class SqlMapper
         return Execute(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static async ValueTask<int> ExecuteAsync(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -118,6 +120,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<int> ExecuteAsync(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
@@ -129,7 +132,7 @@ public static class SqlMapper
     // ExecuteScalar
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static T ExecuteScalar<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -169,6 +172,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T ExecuteScalar<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
@@ -176,7 +180,7 @@ public static class SqlMapper
         return ExecuteScalar<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static async ValueTask<T> ExecuteScalarAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -218,6 +222,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<T> ExecuteScalarAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
@@ -229,7 +234,7 @@ public static class SqlMapper
     // ExecuteReader
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static IDataReader ExecuteReader(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -268,6 +273,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IDataReader ExecuteReader(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
@@ -275,7 +281,7 @@ public static class SqlMapper
         return ExecuteReader(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static async ValueTask<IDataReader> ExecuteReaderAsync(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -317,6 +323,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<IDataReader> ExecuteReaderAsync(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
@@ -328,7 +335,7 @@ public static class SqlMapper
     // Query
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static IEnumerable<T> Query<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -367,6 +374,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> Query<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
@@ -374,7 +382,7 @@ public static class SqlMapper
         return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static async IAsyncEnumerable<T> QueryAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, [EnumeratorCancellation] CancellationToken cancel = default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -417,6 +425,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
@@ -428,8 +437,8 @@ public static class SqlMapper
     // QueryList
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:DoNotExposeGenericLists", Justification = "Performance")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1002
+#pragma warning disable CA1062
     public static List<T> QueryList<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -471,15 +480,18 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
+#pragma warning restore CA1002
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1002:DoNotExposeGenericLists", Justification = "Performance")]
+#pragma warning disable CA1002
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static List<T> QueryList<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
         return QueryList<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
+#pragma warning restore CA1002
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static async ValueTask<List<T>> QueryListAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -525,6 +537,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<List<T>> QueryListAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
@@ -536,7 +549,7 @@ public static class SqlMapper
     // QueryFirstOrDefault
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static T? QueryFirstOrDefault<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -572,6 +585,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T? QueryFirstOrDefault<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
@@ -579,7 +593,7 @@ public static class SqlMapper
         return QueryFirstOrDefault<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public static async ValueTask<T?> QueryFirstOrDefaultAsync<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
@@ -619,6 +633,7 @@ public static class SqlMapper
             }
         }
     }
+#pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<T?> QueryFirstOrDefaultAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)

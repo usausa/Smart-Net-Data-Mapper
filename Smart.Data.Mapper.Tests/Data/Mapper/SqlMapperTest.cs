@@ -4,9 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Mock.Data;
 
-using Xunit;
-
-public class SqlMapperTest
+public sealed class SqlMapperTest
 {
     [Fact]
 

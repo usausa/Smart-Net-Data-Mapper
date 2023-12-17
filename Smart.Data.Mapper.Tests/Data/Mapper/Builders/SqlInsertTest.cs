@@ -1,8 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-using Xunit;
-
-public class SqlInsertTest
+public sealed class SqlInsertTest
 {
     [Fact]
     public void Values()

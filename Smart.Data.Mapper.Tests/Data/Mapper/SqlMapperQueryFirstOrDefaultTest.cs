@@ -1,3 +1,4 @@
+// ReSharper disable MethodHasAsyncOverload
 namespace Smart.Data.Mapper;
 
 using System.Data;
@@ -6,10 +7,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
-public class SqlMapperQueryFirstOrDefaultTest
+public sealed class SqlMapperQueryFirstOrDefaultTest
 {
     //--------------------------------------------------------------------------------
     // Query
@@ -39,9 +37,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     public async Task QueryFirstOrDefaultAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -65,9 +61,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     public async Task QueryFirstOrDefaultCancelAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.OpenAsync();
 
         var cancel = new CancellationToken(true);
@@ -97,9 +91,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     public async Task WithoutOpenAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT 1, 'test1'");
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -123,9 +115,7 @@ public class SqlMapperQueryFirstOrDefaultTest
 
     public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryFirstOrDefaultAsync<DataEntity>("x"));
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -185,9 +175,7 @@ public class SqlMapperQueryFirstOrDefaultTest
             opt.Add(factory);
         });
 
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
         Assert.True(factory.BuildCalled);
@@ -206,16 +194,14 @@ public class SqlMapperQueryFirstOrDefaultTest
             opt.Add(factory);
         });
 
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'");
 
         Assert.False(factory.BuildCalled);
         Assert.False(factory.PostProcessCalled);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public int Id { get; set; }
 

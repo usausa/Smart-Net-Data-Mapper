@@ -4,9 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;
 
-using Xunit;
-
-public class TypeHandlerTest
+public sealed class TypeHandlerTest
 {
     [Fact]
 
@@ -33,7 +31,7 @@ public class TypeHandlerTest
         Assert.Equal(date.Ticks, rawValue);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public int Id { get; set; }
 

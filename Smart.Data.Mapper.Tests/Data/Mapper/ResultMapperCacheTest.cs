@@ -2,10 +2,7 @@ namespace Smart.Data.Mapper;
 
 using Smart.Mock.Data;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
-public class ResultMapperCacheTest
+public sealed class ResultMapperCacheTest
 {
     [Fact]
     public void ResultMapperCached()
@@ -18,11 +15,15 @@ public class ResultMapperCacheTest
             new MockColumn(typeof(string), "Name")
         };
 
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
     }
@@ -36,7 +37,9 @@ public class ResultMapperCacheTest
         {
             new MockColumn(typeof(long), "Id")
         };
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns1, new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
@@ -44,7 +47,9 @@ public class ResultMapperCacheTest
         {
             new MockColumn(typeof(string), "Name")
         };
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns2, new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(2, config.Diagnostics.ResultMapperCacheCount);
 
@@ -53,7 +58,9 @@ public class ResultMapperCacheTest
             new MockColumn(typeof(long), "Id"),
             new MockColumn(typeof(string), "Name")
         };
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns3, new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(3, config.Diagnostics.ResultMapperCacheCount);
     }
@@ -69,23 +76,27 @@ public class ResultMapperCacheTest
             new MockColumn(typeof(string), "Name")
         };
 
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<DataEntity>(new MockDataReader(columns, new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(1, config.Diagnostics.ResultMapperCacheCount);
 
+#pragma warning disable CA2000
         ((ISqlMapperConfig)config).CreateResultMapper<Data2Entity>(new MockDataReader(columns, new List<object[]>()));
+#pragma warning restore CA2000
 
         Assert.Equal(2, config.Diagnostics.ResultMapperCacheCount);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public long Id { get; set; }
 
         public string? Name { get; set; }
     }
 
-    protected class Data2Entity
+    public sealed class Data2Entity
     {
         public long Id { get; set; }
 

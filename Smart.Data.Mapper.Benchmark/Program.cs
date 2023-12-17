@@ -19,7 +19,7 @@ public static class Program
     }
 }
 
-public class BenchmarkConfig : ManualConfig
+public sealed class BenchmarkConfig : ManualConfig
 {
     public BenchmarkConfig()
     {
@@ -39,10 +39,9 @@ public class BenchmarkConfig : ManualConfig
     }
 }
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Ignore")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
 [Config(typeof(BenchmarkConfig))]
-public class DataMapperBenchmark
+#pragma warning disable CA1001
+public sealed class DataMapperBenchmark
 {
     private const int N = 1000;
 
@@ -54,6 +53,7 @@ public class DataMapperBenchmark
 
     private MockRepeatDbConnection mockQueryFirst = default!;
 
+#pragma warning disable CA2000
     [GlobalSetup]
     public void Setup()
     {
@@ -99,6 +99,7 @@ public class DataMapperBenchmark
                 DBNull.Value
             })));
     }
+#pragma warning restore CA2000
 
     [GlobalCleanup]
     public void Cleanup()
@@ -305,14 +306,14 @@ public class DataMapperBenchmark
     }
 }
 
-public class DataEntity
+public sealed class DataEntity
 {
     public long Id { get; set; }
 
     public string? Name { get; set; }
 }
 
-public class LargeDataEntity
+public sealed class LargeDataEntity
 {
     public long Id { get; set; }
 
@@ -334,3 +335,4 @@ public class LargeDataEntity
 
     public string? UpdatedBy { get; set; }
 }
+#pragma warning restore CA1001

@@ -1,6 +1,6 @@
 namespace Smart.Data.Mapper;
 
-public class SqlMapperException : Exception
+public sealed class SqlMapperException : Exception
 {
     public SqlMapperException()
     {

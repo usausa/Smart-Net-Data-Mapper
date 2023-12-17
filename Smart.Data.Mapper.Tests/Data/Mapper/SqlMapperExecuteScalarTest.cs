@@ -1,3 +1,4 @@
+// ReSharper disable MethodHasAsyncOverload
 namespace Smart.Data.Mapper;
 
 using System.Data;
@@ -6,10 +7,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("ReSharper", "MethodHasAsyncOverload", Justification = "Ignore")]
-public class SqlMapperExecuteScalarTest
+public sealed class SqlMapperExecuteScalarTest
 {
     //--------------------------------------------------------------------------------
     // Execute
@@ -34,9 +32,7 @@ public class SqlMapperExecuteScalarTest
 
     public async Task ExecuteScalarByObjectParameterAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -63,9 +59,7 @@ public class SqlMapperExecuteScalarTest
 
     public async Task ResultIsNullAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.OpenAsync();
 
         var value = await con.ExecuteScalarAsync<long>("SELECT NULL");
@@ -89,9 +83,7 @@ public class SqlMapperExecuteScalarTest
 
     public async Task ResultIsConvertedAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.OpenAsync();
 
         var value = await con.ExecuteScalarAsync<string>("SELECT 0");
@@ -107,9 +99,7 @@ public class SqlMapperExecuteScalarTest
 
     public async Task ExecuteScalarCancelAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -141,9 +131,7 @@ public class SqlMapperExecuteScalarTest
 
     public async Task WithoutOpenAsync()
     {
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         var value = await con.ExecuteScalarAsync<long>("SELECT 1");
 
         Assert.Equal(1L, value);
@@ -204,9 +192,7 @@ public class SqlMapperExecuteScalarTest
             opt.Add(factory);
         });
 
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object());
 
         Assert.True(factory.BuildCalled);
@@ -225,9 +211,7 @@ public class SqlMapperExecuteScalarTest
             opt.Add(factory);
         });
 
-#pragma warning disable CA2007
         await using var con = new SqliteConnection("Data Source=:memory:");
-#pragma warning restore CA2007
         await con.ExecuteScalarAsync<long>(config, "SELECT 1");
 
         Assert.False(factory.BuildCalled);

@@ -1,8 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-using Xunit;
-
-public class SqlSelectTest
+public sealed class SqlSelectTest
 {
     //--------------------------------------------------------------------------------
     // Entity

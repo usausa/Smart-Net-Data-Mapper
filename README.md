@@ -26,7 +26,7 @@ foreach (var entity in con.Query<Data>("SELECT * FROM Data ORDER BY Id"))
 var entity = con.QueryFirstOrDefault<Data>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
 
 // Execute procedure
-public class TestProcParameter
+public sealed class TestProcParameter
 {
     public int InParam { get; set; }
 

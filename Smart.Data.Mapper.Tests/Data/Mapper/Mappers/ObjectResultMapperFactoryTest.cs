@@ -3,10 +3,7 @@ namespace Smart.Data.Mapper.Mappers;
 using Smart.Data.Mapper.Attributes;
 using Smart.Mock.Data;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
-public class ObjectResultMapperFactoryTest
+public sealed class ObjectResultMapperFactoryTest
 {
     [Fact]
     public void MapProperty()
@@ -29,7 +26,9 @@ public class ObjectResultMapperFactoryTest
             new object[] { DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value }
         };
 
+#pragma warning disable CA2000
         var reader = new MockDataReader(columns, values);
+#pragma warning restore CA2000
         con.SetupCommand(cmd => cmd.SetupResult(reader));
 
         var config = new SqlMapperConfig();
@@ -57,7 +56,7 @@ public class ObjectResultMapperFactoryTest
         Assert.Equal(0, list[1].Column7);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public int Column1 { get; set; }
 
@@ -75,10 +74,11 @@ public class ObjectResultMapperFactoryTest
         public int Column7 { get; set; }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1602:EnumerationItemsMustBeDocumented", Justification = "Ignore")]
-    protected enum Value
+#pragma warning disable SA1602
+    public enum Value
     {
         Zero = 0,
         One = 1
     }
+#pragma warning restore SA1602
 }

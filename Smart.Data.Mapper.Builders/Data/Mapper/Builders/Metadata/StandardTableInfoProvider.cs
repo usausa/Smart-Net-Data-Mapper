@@ -10,7 +10,7 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
 
     public IList<string> RemoveSuffix { get; } = new List<string>(new[] { "Entity" });
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
     public TableMetadata Create(Type type)
     {
         var columns = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
@@ -29,6 +29,7 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
 
         return new TableMetadata(ResolveName(type), columns, keyColumns, nonKeyColumns);
     }
+#pragma warning restore CA1062
 
     private static bool IsTargetProperty(PropertyInfo pi)
     {

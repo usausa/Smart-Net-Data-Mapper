@@ -1,8 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-using Xunit;
-
-public class SqlCountTest
+public sealed class SqlCountTest
 {
     [Fact]
     public void All()

@@ -1,6 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-public class NonKeyEntity
+public sealed class NonKeyEntity
 {
     public int Key1 { get; set; }
 

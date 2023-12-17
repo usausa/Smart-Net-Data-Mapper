@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper.Builders.Metadata;
 
 using System.Reflection;
 
-public class ColumnMetadata
+public sealed class ColumnMetadata
 {
     public PropertyInfo Property { get; }
 

@@ -47,7 +47,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
         return supportedTypes.Contains(targetType!);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Extension")]
+#pragma warning disable CA1062
     public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         var parser = config.CreateParser(columns[0].Type, typeof(T));
@@ -55,6 +55,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
             ? new Mapper<T>()
             : new ParserMapper<T>(parser);
     }
+#pragma warning restore CA1062
 
     private sealed class Mapper<T> : ResultMapper<T>
     {

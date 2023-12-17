@@ -2,9 +2,7 @@ namespace Smart.Data.Mapper;
 
 using Microsoft.Data.Sqlite;
 
-using Xunit;
-
-public class MapTypeTest
+public sealed class MapTypeTest
 {
     //--------------------------------------------------------------------------------
     // Record
@@ -25,7 +23,7 @@ public class MapTypeTest
         Assert.Equal("test1", entity.Name);
     }
 
-    protected record RecordEntity
+    public sealed record RecordEntity
     {
         public long Id { get; set; }
 
@@ -51,7 +49,7 @@ public class MapTypeTest
         Assert.Equal("test1", entity.Name);
     }
 
-    protected class InitOnlyEntity
+    public sealed class InitOnlyEntity
     {
         public long Id { get; init; }
 

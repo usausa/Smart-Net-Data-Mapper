@@ -5,9 +5,7 @@ using System.Data;
 using Smart.Data.Mapper.Attributes;
 using Smart.Mock.Data;
 
-using Xunit;
-
-public class AttributeParameterTest
+public sealed class AttributeParameterTest
 {
     [Fact]
 
@@ -28,7 +26,7 @@ public class AttributeParameterTest
         Assert.Equal(ParameterDirection.InputOutput, param.Direction);
     }
 
-    protected class Parameter
+    public sealed class Parameter
     {
         [DbType(DbType.Int64)]
         [Size(10)]

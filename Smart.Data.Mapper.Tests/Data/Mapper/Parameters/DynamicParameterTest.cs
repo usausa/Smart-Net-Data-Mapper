@@ -7,9 +7,7 @@ using Microsoft.Data.Sqlite;
 using Smart.Data.Mapper.Mocks;
 using Smart.Mock.Data;
 
-using Xunit;
-
-public class DynamicParameterTest
+public sealed class DynamicParameterTest
 {
     [Fact]
 
@@ -84,7 +82,7 @@ public class DynamicParameterTest
         Assert.Equal(new DateTime(2000, 1, 1), entity.Date);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public int Id { get; set; }
 

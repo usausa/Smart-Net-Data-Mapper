@@ -4,9 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Attributes;
 
-using Xunit;
-
-public class PropertySelectorTest
+public sealed class PropertySelectorTest
 {
     [Fact]
     public void MapProperty()
@@ -31,7 +29,7 @@ public class PropertySelectorTest
         Assert.Equal(0, entity.ColumnName6);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public int ColumnName1 { get; set; }
 

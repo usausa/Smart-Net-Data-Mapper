@@ -4,9 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;
 
-using Xunit;
-
-public class DictionaryParameterTest
+public sealed class DictionaryParameterTest
 {
     [Fact]
 
@@ -36,7 +34,7 @@ public class DictionaryParameterTest
         Assert.Equal(new DateTime(2000, 1, 1), entity.Date);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public int Id { get; set; }
 

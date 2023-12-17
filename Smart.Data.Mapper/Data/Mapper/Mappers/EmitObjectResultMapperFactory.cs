@@ -58,7 +58,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
     public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         PrepareAssembly(type);
@@ -135,6 +135,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
         return holder;
     }
+#pragma warning restore CA1062
 
     private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
@@ -178,7 +179,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         return value is DBNull ? default! : (T)parser(value);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+#pragma warning disable SA1401
     private sealed class MapEntry
     {
         public readonly int Index;
@@ -194,4 +195,5 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
             Parser = parser;
         }
     }
+#pragma warning restore SA1401
 }

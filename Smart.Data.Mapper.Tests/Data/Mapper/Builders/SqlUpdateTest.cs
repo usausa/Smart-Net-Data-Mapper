@@ -1,8 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-using Xunit;
-
-public class SqlUpdateTest
+public sealed class SqlUpdateTest
 {
     //--------------------------------------------------------------------------------
     // Entity

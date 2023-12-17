@@ -4,9 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Attributes;
 
-using Xunit;
-
-public class AttributeResultTest
+public sealed class AttributeResultTest
 {
     [Fact]
 
@@ -23,7 +21,7 @@ public class AttributeResultTest
         Assert.Equal("test", entity.Text);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         [Name("Id")]
         public long No { get; set; }

@@ -17,13 +17,14 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
 
     public bool IsMatch(Type type) => true;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
     public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
     {
         var entries = CreateParameterEntries(config, type);
 
         return new ParameterBuilder(CreateBuildAction(entries), CreatePostProcessAction(entries));
     }
+#pragma warning restore CA1062
 
     private static ParameterEntry[] CreateParameterEntries(ISqlMapperConfig config, Type type)
     {
@@ -133,7 +134,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
         return null;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+#pragma warning disable SA1401
     private sealed class ParameterEntry
     {
         public readonly string Name;
@@ -161,4 +162,5 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
             Direction = direction;
         }
     }
+#pragma warning restore SA1401
 }

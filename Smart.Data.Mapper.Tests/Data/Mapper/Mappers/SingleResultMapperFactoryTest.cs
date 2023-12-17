@@ -2,9 +2,7 @@ namespace Smart.Data.Mapper.Mappers;
 
 using Microsoft.Data.Sqlite;
 
-using Xunit;
-
-public class SingleResultMapperFactoryTest
+public sealed class SingleResultMapperFactoryTest
 {
     //--------------------------------------------------------------------------------
     // Query
@@ -32,7 +30,7 @@ public class SingleResultMapperFactoryTest
         Assert.Equal("test2", list2[1]);
     }
 
-    protected class DataEntity
+    public sealed class DataEntity
     {
         public int Id { get; set; }
 

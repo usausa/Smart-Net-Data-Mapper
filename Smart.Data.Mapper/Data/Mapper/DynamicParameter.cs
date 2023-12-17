@@ -49,7 +49,7 @@ public sealed class DynamicParameter : IDynamicParameter
         return (T)value;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
     public void Build(ISqlMapperConfig config, DbCommand cmd)
     {
         foreach (var parameter in parameters.Values)
@@ -92,4 +92,5 @@ public sealed class DynamicParameter : IDynamicParameter
             parameter.AttachedParam = param;
         }
     }
+#pragma warning restore CA1062
 }

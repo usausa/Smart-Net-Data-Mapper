@@ -5,16 +5,13 @@ using System.Data;
 using Smart.Data.Mapper.Attributes;
 using Smart.Mock.Data;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
-public class ObjectParameterBuilderFactoryTest
+public sealed class ObjectParameterBuilderFactoryTest
 {
     [Fact]
     public void BuildParameter()
     {
         using var con = new MockDbConnection();
-        var cmd = new MockDbCommand();
+        using var cmd = new MockDbCommand();
         cmd.SetupResult(0);
         cmd.Executing = ec =>
         {
@@ -56,7 +53,7 @@ public class ObjectParameterBuilderFactoryTest
         Assert.Equal("1", parameter.Output7);
     }
 
-    protected class Parameter
+    public sealed class Parameter
     {
         public int Value1 { get; set; }
 
@@ -70,8 +67,8 @@ public class ObjectParameterBuilderFactoryTest
 
         public Value? Value6 { get; set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1044:PropertiesShouldNotBeWriteOnly", Justification = "Ignore")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:MarkMembersAsStatic", Justification = "Ignore")]
+#pragma warning disable CA1044
+#pragma warning disable CA1822
         public int Value7
         {
             // ReSharper disable once ValueParameterNotUsed
@@ -79,6 +76,8 @@ public class ObjectParameterBuilderFactoryTest
             {
             }
         }
+#pragma warning restore CA1822
+#pragma warning restore CA1044
 
         [Ignore]
         public int Value8 { get; set; }
@@ -105,10 +104,11 @@ public class ObjectParameterBuilderFactoryTest
         public string? Output7 { get; set; }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1602:EnumerationItemsMustBeDocumented", Justification = "Ignore")]
-    protected enum Value
+#pragma warning disable SA1602
+    public enum Value
     {
         Zero = 0,
         One = 1
     }
+#pragma warning restore SA1602
 }

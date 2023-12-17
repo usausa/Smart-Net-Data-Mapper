@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper.Mocks;
 
 using Smart.Converter;
 
-public class DummyObjectConverter : IObjectConverter
+public sealed class DummyObjectConverter : IObjectConverter
 {
     public bool CanConvert<T>(object value) => false;
 

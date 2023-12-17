@@ -15,11 +15,12 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
 
     public bool IsMatch(Type type) => true;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
     public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         return new Mapper<T>(config.CreateFactory<T>(), CreateMapEntries(config, type, columns));
     }
+#pragma warning restore CA1062
 
     private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
@@ -64,7 +65,7 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
         return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+#pragma warning disable SA1401
     private sealed class MapEntry
     {
         public readonly int Index;
@@ -77,6 +78,7 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
             Setter = setter;
         }
     }
+#pragma warning restore SA1401
 
     private sealed class Mapper<T> : ResultMapper<T>
     {

@@ -1,8 +1,6 @@
 namespace Smart.Data.Mapper;
 
-using Xunit;
-
-public class SqlMapperExceptionTest
+public sealed class SqlMapperExceptionTest
 {
     [Fact]
     public void CoverageFix()
