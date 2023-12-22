@@ -44,7 +44,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
             assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
                 typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
-                new object[] { typeof(EmitObjectResultMapperFactory).Assembly.GetName().Name! }));
+                [typeof(EmitObjectResultMapperFactory).Assembly.GetName().Name!]));
         }
 
         var assemblyName = type.Assembly.GetName().Name;
@@ -52,7 +52,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         {
             assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
                 typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
-                new object[] { assemblyName }));
+                [assemblyName]));
 
             targetAssemblies.Add(assemblyName);
         }
