@@ -41,7 +41,7 @@ public sealed class BenchmarkConfig : ManualConfig
 
 [Config(typeof(BenchmarkConfig))]
 #pragma warning disable CA1001
-public sealed class DataMapperBenchmark
+public class DataMapperBenchmark
 {
     private const int N = 1000;
 
