@@ -6,8 +6,8 @@ using System.Data;
 
 public sealed class SingleResultMapperFactory : IResultMapperFactory
 {
-    private static IEnumerable<Type> SupportedTypes { get; } = new[]
-    {
+    private static IEnumerable<Type> SupportedTypes { get; } =
+    [
         typeof(byte),
         typeof(sbyte),
         typeof(short),
@@ -27,7 +27,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
         typeof(DateTimeOffset),
         typeof(TimeSpan),
         typeof(byte[])
-    };
+    ];
 
     private readonly HashSet<Type> supportedTypes;
 
