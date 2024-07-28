@@ -38,7 +38,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
 
     public SingleResultMapperFactory(IEnumerable<Type> types)
     {
-        supportedTypes = new HashSet<Type>(types);
+        supportedTypes = [..types];
     }
 
     public bool IsMatch(Type type)
