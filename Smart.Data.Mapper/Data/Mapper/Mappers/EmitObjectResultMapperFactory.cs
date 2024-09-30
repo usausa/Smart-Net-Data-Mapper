@@ -157,7 +157,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
             list.Add(new MapEntry(i, pi, config.CreateParser(column.Type, pi.PropertyType)));
         }
 
-        return list.ToArray();
+        return [.. list];
     }
 
     private static bool IsTargetProperty(PropertyInfo pi)

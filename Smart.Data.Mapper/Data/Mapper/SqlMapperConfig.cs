@@ -183,7 +183,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
     {
         var list = new List<IParameterBuilderFactory>(parameterBuilderFactories);
         action(list);
-        parameterBuilderFactories = list.ToArray();
+        parameterBuilderFactories = [.. list];
         parameterBuilderCache.Clear();
         return this;
     }
@@ -201,7 +201,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
     {
         var list = new List<IResultMapperFactory>(resultMapperFactories);
         action(list);
-        resultMapperFactories = list.ToArray();
+        resultMapperFactories = [.. list];
         resultMapperCache.Clear();
         return this;
     }
