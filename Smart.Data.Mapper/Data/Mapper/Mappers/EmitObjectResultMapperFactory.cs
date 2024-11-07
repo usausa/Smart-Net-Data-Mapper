@@ -12,6 +12,8 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 {
     public static EmitObjectResultMapperFactory Instance { get; } = new();
 
+    private readonly object sync = new();
+
     private readonly MethodInfo getValueMethod;
 
     private readonly MethodInfo getValueWithConvertMethod;
@@ -32,37 +34,45 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
     public bool IsMatch(Type type) => true;
 
-    private void PrepareAssembly(Type type)
+    private TypeBuilder DefineType(Type type)
     {
-        if (assemblyBuilder is null)
+        lock (sync)
         {
-            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
-                new AssemblyName("EmitObjectResultMapperFactoryAssembly"),
-                AssemblyBuilderAccess.Run);
-            moduleBuilder = assemblyBuilder.DefineDynamicModule(
-                "EmitObjectResultMapperFactoryModule");
+            if (assemblyBuilder is null)
+            {
+                assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(
+                    new AssemblyName("EmitObjectResultMapperFactoryAssembly"),
+                    AssemblyBuilderAccess.Run);
+                moduleBuilder = assemblyBuilder.DefineDynamicModule(
+                    "EmitObjectResultMapperFactoryModule");
 
-            assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
-                typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
-                [typeof(EmitObjectResultMapperFactory).Assembly.GetName().Name!]));
+                assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
+                    typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
+                    [typeof(EmitObjectResultMapperFactory).Assembly.GetName().Name!]));
+            }
+
+            var assemblyName = type.Assembly.GetName().Name;
+            if ((assemblyName is not null) && !targetAssemblies.Contains(assemblyName))
+            {
+                assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
+                    typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
+                    [assemblyName]));
+
+                targetAssemblies.Add(assemblyName);
+            }
         }
 
-        var assemblyName = type.Assembly.GetName().Name;
-        if ((assemblyName is not null) && !targetAssemblies.Contains(assemblyName))
-        {
-            assemblyBuilder!.SetCustomAttribute(new CustomAttributeBuilder(
-                typeof(IgnoresAccessChecksToAttribute).GetConstructor([typeof(string)])!,
-                [assemblyName]));
+        var typeBuilder = moduleBuilder.DefineType(
+            $"Holder_{typeNo}",
+            TypeAttributes.Public | TypeAttributes.AutoLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
+        typeNo++;
 
-            targetAssemblies.Add(assemblyName);
-        }
+        return typeBuilder;
     }
 
 #pragma warning disable CA1062
     public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
-        PrepareAssembly(type);
-
         var ci = type.GetConstructor(Type.EmptyTypes);
         if (ci is null)
         {
@@ -72,10 +82,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         var entries = CreateMapEntries(config, type, columns);
 
         // Define type
-        var typeBuilder = moduleBuilder.DefineType(
-            $"Holder_{typeNo}",
-            TypeAttributes.Public | TypeAttributes.AutoLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
-        typeNo++;
+        var typeBuilder = DefineType(type);
 
         // Set base type
         var baseType = typeof(ResultMapper<>).MakeGenericType(type);
