@@ -13,7 +13,7 @@ public sealed class ObjectParameterBuilderFactoryTest
         using var con = new MockDbConnection();
         using var cmd = new MockDbCommand();
         cmd.SetupResult(0);
-        cmd.Executing = ec =>
+        cmd.Executing = static ec =>
         {
             Assert.Equal(13, ec.Parameters.Count);
             Assert.Equal(1, ec.Parameters[nameof(Parameter.Value1)].Value);

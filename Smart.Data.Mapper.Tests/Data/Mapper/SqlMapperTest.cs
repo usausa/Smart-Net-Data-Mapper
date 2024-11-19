@@ -33,7 +33,7 @@ public sealed class SqlMapperTest
     public void WithTimeout()
     {
         using var con = new MockDbConnection();
-        con.SetupCommand(cmd => cmd.SetupResult(0));
+        con.SetupCommand(static cmd => cmd.SetupResult(0));
 
         con.Execute("TEST", commandTimeout: 10);
 

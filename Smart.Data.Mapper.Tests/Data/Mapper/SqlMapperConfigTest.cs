@@ -55,8 +55,8 @@ public sealed class SqlMapperConfigTest
     public void CreateParserFailed()
     {
         var config = new SqlMapperConfig();
-        config.ConfigureTypeHandlers(opt => opt.Clear());
-        config.ConfigureTypeMap(opt => opt.Clear());
+        config.ConfigureTypeHandlers(static opt => opt.Clear());
+        config.ConfigureTypeMap(static opt => opt.Clear());
         config.Converter = new DummyObjectConverter();
 
         Assert.Null(((ISqlMapperConfig)config).CreateParser(typeof(int), typeof(long)));
@@ -66,8 +66,8 @@ public sealed class SqlMapperConfigTest
     public void LookupTypeHandleFailed()
     {
         var config = new SqlMapperConfig();
-        config.ConfigureTypeHandlers(opt => opt.Clear());
-        config.ConfigureTypeMap(opt => opt.Clear());
+        config.ConfigureTypeHandlers(static opt => opt.Clear());
+        config.ConfigureTypeMap(static opt => opt.Clear());
 
         Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).LookupTypeHandle(typeof(ParameterDirection)));
     }
@@ -76,7 +76,7 @@ public sealed class SqlMapperConfigTest
     public void CreateMapperFailed()
     {
         var config = new SqlMapperConfig();
-        config.ConfigureResultMapperFactories(opt => opt.Clear());
+        config.ConfigureResultMapperFactories(static opt => opt.Clear());
 
 #pragma warning disable CA2000
         var reader = new MockDataReader([new MockColumn(typeof(int), "Id")], new List<object[]>());
@@ -88,7 +88,7 @@ public sealed class SqlMapperConfigTest
     public void CreateParameterBuilderFailed()
     {
         var config = new SqlMapperConfig();
-        config.ConfigureParameterBuilderFactories(opt => opt.Clear());
+        config.ConfigureParameterBuilderFactories(static opt => opt.Clear());
 
         Assert.Throws<SqlMapperException>(() => ((ISqlMapperConfig)config).CreateParameterBuilder(typeof(object)));
     }

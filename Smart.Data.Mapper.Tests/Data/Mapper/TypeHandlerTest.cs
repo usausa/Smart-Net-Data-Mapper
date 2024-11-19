@@ -10,7 +10,7 @@ public sealed class TypeHandlerTest
 
     public void ExecuteScalarByObjectParameter()
     {
-        SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
+        SqlMapperConfig.Default.ConfigureTypeHandlers(static config =>
         {
             config[typeof(DateTime)] = new DateTimeTypeHandler();
         });

@@ -12,7 +12,7 @@ public sealed class AttributeParameterTest
     public void ParameterByAttribute()
     {
         using var con = new MockDbConnection();
-        con.SetupCommand(c => c.SetupResult(0));
+        con.SetupCommand(static cmd => cmd.SetupResult(0));
 
         var parameter = new Parameter { Value = 1 };
         con.Execute("PROC", parameter, commandType: CommandType.StoredProcedure);

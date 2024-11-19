@@ -14,7 +14,7 @@ public sealed class DynamicParameterTest
     public void Parameters()
     {
         using var con = new MockDbConnection();
-        con.SetupCommand(c => c.SetupResult(0));
+        con.SetupCommand(static cmd => cmd.SetupResult(0));
 
         var parameter = new DynamicParameter();
         parameter.Add("Parameter1", 1, direction: ParameterDirection.Output);
@@ -40,7 +40,7 @@ public sealed class DynamicParameterTest
     public void ParameterGet()
     {
         using var con = new MockDbConnection();
-        con.SetupCommand(c => c.SetupResult(0));
+        con.SetupCommand(static cmd => cmd.SetupResult(0));
 
         var parameter = new DynamicParameter();
         parameter.Add("Integer1", 1);
@@ -60,7 +60,7 @@ public sealed class DynamicParameterTest
 
     public void ParameterByDynamicParameter()
     {
-        SqlMapperConfig.Default.ConfigureTypeHandlers(config =>
+        SqlMapperConfig.Default.ConfigureTypeHandlers(static config =>
         {
             config[typeof(DateTime)] = new DateTimeTypeHandler();
         });

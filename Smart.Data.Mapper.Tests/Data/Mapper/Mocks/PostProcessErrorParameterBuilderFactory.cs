@@ -8,6 +8,6 @@ public sealed class PostProcessErrorParameterBuilderFactory : IParameterBuilderF
 
     public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
     {
-        return new(null, (_, _) => throw new NotSupportedException());
+        return new(null, static (_, _) => throw new NotSupportedException());
     }
 }
