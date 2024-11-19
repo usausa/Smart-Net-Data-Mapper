@@ -1,6 +1,6 @@
 # Smart.Data.Mapper .NET - micro-orm library for .NET
 
-[![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.Data.Mapper)](https://www.nuget.org/packages/Usa.Smart.Data.Mapper/)
+[![NuGet](https://img.shields.io/nuget/v/Usa.Smart.Data.Mapper.svg)](https://www.nuget.org/packages/Usa.Smart.Data.Mapper)
 
 ## What is this?
 
