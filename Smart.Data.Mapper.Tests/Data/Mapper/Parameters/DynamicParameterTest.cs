@@ -25,13 +25,13 @@ public sealed class DynamicParameterTest
         con.Execute("PROC", parameter, commandType: CommandType.StoredProcedure);
 
         var cmd = con.Commands[0];
-        var param1 = (IDbDataParameter)cmd.Parameters[0];
+        var param1 = cmd.Parameters[0];
         Assert.Equal(ParameterDirection.Output, param1.Direction);
-        var param2 = (IDbDataParameter)cmd.Parameters[1];
+        var param2 = cmd.Parameters[1];
         Assert.Equal(DBNull.Value, param2.Value);
-        var param3 = (IDbDataParameter)cmd.Parameters[2];
+        var param3 = cmd.Parameters[2];
         Assert.Equal(DbType.Int16, param3.DbType);
-        var param4 = (IDbDataParameter)cmd.Parameters[3];
+        var param4 = cmd.Parameters[3];
         Assert.Equal(1, param4.Size);
     }
 

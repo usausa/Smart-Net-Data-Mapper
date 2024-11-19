@@ -20,7 +20,7 @@ public sealed class DynamicParameter : IDynamicParameter
 
         public readonly ParameterDirection Direction;
 
-        public IDbDataParameter? AttachedParam;
+        public DbParameter? AttachedParam;
 
         public ParameterInfo(string name, object? value, DbType? dbType, int? size, ParameterDirection direction)
         {
