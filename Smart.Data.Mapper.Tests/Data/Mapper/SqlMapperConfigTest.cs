@@ -99,16 +99,16 @@ public sealed class SqlMapperConfigTest
         var config = new SqlMapperConfig();
 
         config.ResetParameterBuilderFactories();
-        config.ConfigureParameterBuilderFactories(_ => { });
+        config.ConfigureParameterBuilderFactories(static _ => { });
 
         config.ResetResultMapperFactories();
-        config.ConfigureResultMapperFactories(_ => { });
+        config.ConfigureResultMapperFactories(static _ => { });
 
         config.ResetTypeMap();
-        config.ConfigureTypeMap(_ => { });
+        config.ConfigureTypeMap(static _ => { });
 
         config.ResetTypeHandlers();
-        config.ConfigureTypeHandlers(_ => { });
+        config.ConfigureTypeHandlers(static _ => { });
 
         config.DelegateFactory = DelegateFactory.Default;
         Assert.Equal(DelegateFactory.Default, config.DelegateFactory);
