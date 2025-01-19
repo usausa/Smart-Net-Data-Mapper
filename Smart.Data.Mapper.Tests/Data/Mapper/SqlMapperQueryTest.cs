@@ -7,6 +7,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;
 
+#pragma warning disable xUnit1051
 public sealed class SqlMapperQueryTest
 {
     //--------------------------------------------------------------------------------

@@ -20,6 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		README.md = README.md
 		Smart.Data.Mapper.sln.DotSettings = Smart.Data.Mapper.sln.DotSettings
+		test.runsettings = test.runsettings
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{BFD0252B-6097-4310-9D8B-FB8B56B42A5D}"
