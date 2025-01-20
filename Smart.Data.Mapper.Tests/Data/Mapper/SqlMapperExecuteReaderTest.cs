@@ -170,6 +170,7 @@ public sealed class SqlMapperExecuteReaderTest
         using var con = new SqliteConnection("Data Source=:memory:");
         Assert.Throws<SqliteException>(() =>
         {
+            // ReSharper disable once AccessToDisposedClosure
             using (con.ExecuteReader("x"))
             {
             }
@@ -185,6 +186,7 @@ public sealed class SqlMapperExecuteReaderTest
         using var con = new CommandUnsupportedConnection();
         Assert.Throws<NotSupportedException>(() =>
         {
+            // ReSharper disable once AccessToDisposedClosure
             using (con.ExecuteReader("x"))
             {
             }
@@ -207,6 +209,7 @@ public sealed class SqlMapperExecuteReaderTest
         using var con = new SqliteConnection("Data Source=:memory:");
         Assert.Throws<NotSupportedException>(() =>
         {
+            // ReSharper disable once AccessToDisposedClosure
             using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
             {
             }

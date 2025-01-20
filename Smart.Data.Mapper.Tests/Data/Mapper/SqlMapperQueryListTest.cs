@@ -107,6 +107,7 @@ public sealed class SqlMapperQueryListTest
     public void ClosedConnectionMustClosedWhenQueryListError()
     {
         using var con = new SqliteConnection("Data Source=:memory:");
+        // ReSharper disable once AccessToDisposedClosure
         Assert.Throws<SqliteException>(() => con.QueryList<DataEntity>("x"));
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -117,6 +118,7 @@ public sealed class SqlMapperQueryListTest
     public void ClosedConnectionMustClosedWhenCreateCommandError()
     {
         using var con = new CommandUnsupportedConnection();
+        // ReSharper disable once AccessToDisposedClosure
         Assert.Throws<NotSupportedException>(() => con.QueryList<DataEntity>("x"));
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -134,6 +136,7 @@ public sealed class SqlMapperQueryListTest
         });
 
         using var con = new SqliteConnection("Data Source=:memory:");
+        // ReSharper disable once AccessToDisposedClosure
         Assert.Throws<NotSupportedException>(() => con.QueryList<DataEntity>(config, "SELECT 1, 'test1'", new object()));
 
         Assert.Equal(ConnectionState.Closed, con.State);

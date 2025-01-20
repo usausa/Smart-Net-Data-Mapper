@@ -107,6 +107,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
     public void ClosedConnectionMustClosedWhenQueryError()
     {
         using var con = new SqliteConnection("Data Source=:memory:");
+        // ReSharper disable once AccessToDisposedClosure
         Assert.Throws<SqliteException>(() => con.QueryFirstOrDefault<DataEntity>("x"));
 
         Assert.Equal(ConnectionState.Closed, con.State);
