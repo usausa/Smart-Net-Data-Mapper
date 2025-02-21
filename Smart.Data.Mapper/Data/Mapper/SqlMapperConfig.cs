@@ -2,6 +2,7 @@ namespace Smart.Data.Mapper;
 
 using System.Data;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Smart.Collections.Concurrent;
 using Smart.Converter;
@@ -330,10 +331,10 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
 
         if (resultMapperCache.TryGetValue(type, columns, hash, out var value))
         {
-            return (ResultMapper<T>)value;
+            return Unsafe.As<ResultMapper<T>>(value);
         }
 
-        return (ResultMapper<T>)resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>);
+        return Unsafe.As<ResultMapper<T>>(resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>));
     }
 
     private ResultMapper<T> CreateMapperInternal<T>(Type type, ColumnInfo[] columns)
