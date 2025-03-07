@@ -323,7 +323,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         {
             var name = reader.GetName(i);
             var fieldType = reader.GetFieldType(i);
-            hash = unchecked((hash * 31) + (name.GetHashCode(StringComparison.Ordinal) ^ fieldType.GetHashCode()));
+            hash = unchecked((hash * 31) + (CalcNameHash(name) ^ fieldType.GetHashCode()));
             columnInfoPool[i] = new ColumnInfo(name, fieldType);
         }
 
@@ -335,6 +335,20 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         }
 
         return Unsafe.As<ResultMapper<T>>(resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>));
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int CalcNameHash(string value)
+    {
+        unchecked
+        {
+            var hash = 2166136261u;
+            foreach (var c in value)
+            {
+                hash = (c ^ hash) * 16777619;
+            }
+            return (int)hash;
+        }
     }
 
     private ResultMapper<T> CreateMapperInternal<T>(Type type, ColumnInfo[] columns)
