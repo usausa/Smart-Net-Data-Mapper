@@ -9,7 +9,7 @@ public sealed class PropertySelectorTest
     [Fact]
     public void MapProperty()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         var entity = con.QueryFirstOrDefault<DataEntity>(
             "SELECT " +
             "1 AS ColumnName1, " +

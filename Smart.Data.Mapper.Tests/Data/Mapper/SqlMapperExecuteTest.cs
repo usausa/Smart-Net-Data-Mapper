@@ -18,7 +18,7 @@ public sealed class SqlMapperExecuteTest
 
     public void ExecuteByObjectParameter()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -31,7 +31,7 @@ public sealed class SqlMapperExecuteTest
 
     public async Task ExecuteByObjectParameterAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -48,7 +48,7 @@ public sealed class SqlMapperExecuteTest
 
     public async Task ExecuteCancelAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -69,7 +69,7 @@ public sealed class SqlMapperExecuteTest
 
     public void WithoutOpen()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Execute("PRAGMA AUTO_VACUUM=1");
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -79,7 +79,7 @@ public sealed class SqlMapperExecuteTest
 
     public async Task WithoutOpenAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1");
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -101,7 +101,7 @@ public sealed class SqlMapperExecuteTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Execute(config, "PRAGMA AUTO_VACUUM=1", new object());
 
         Assert.True(factory.BuildCalled);
@@ -120,7 +120,7 @@ public sealed class SqlMapperExecuteTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Execute(config, "PRAGMA AUTO_VACUUM=1");
 
         Assert.False(factory.BuildCalled);
@@ -139,7 +139,7 @@ public sealed class SqlMapperExecuteTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object());
 
         Assert.True(factory.BuildCalled);
@@ -158,7 +158,7 @@ public sealed class SqlMapperExecuteTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1");
 
         Assert.False(factory.BuildCalled);

@@ -15,7 +15,7 @@ public sealed class TypeHandlerTest
             config[typeof(DateTime)] = new DateTimeTypeHandler();
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Date int)");
 

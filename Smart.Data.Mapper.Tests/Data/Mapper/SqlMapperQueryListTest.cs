@@ -18,7 +18,7 @@ public sealed class SqlMapperQueryListTest
 
     public void QueryList()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -37,7 +37,7 @@ public sealed class SqlMapperQueryListTest
 
     public async Task QueryListAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -60,7 +60,7 @@ public sealed class SqlMapperQueryListTest
 
     public async Task QueryListCancelAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -82,7 +82,7 @@ public sealed class SqlMapperQueryListTest
 
     public void WithoutOpen()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.QueryList<DataEntity>("SELECT 1, 'test1'");
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -92,7 +92,7 @@ public sealed class SqlMapperQueryListTest
 
     public async Task WithoutOpenAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.QueryListAsync<DataEntity>("SELECT 1, 'test1'");
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -106,7 +106,7 @@ public sealed class SqlMapperQueryListTest
 
     public void ClosedConnectionMustClosedWhenQueryListError()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         // ReSharper disable once AccessToDisposedClosure
         Assert.Throws<SqliteException>(() => con.QueryList<DataEntity>("x"));
 
@@ -135,7 +135,7 @@ public sealed class SqlMapperQueryListTest
             opt.Add(new PostProcessErrorParameterBuilderFactory());
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         // ReSharper disable once AccessToDisposedClosure
         Assert.Throws<NotSupportedException>(() => con.QueryList<DataEntity>(config, "SELECT 1, 'test1'", new object()));
 
@@ -146,7 +146,7 @@ public sealed class SqlMapperQueryListTest
 
     public async Task ClosedConnectionMustClosedWhenQueryListErrorAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryListAsync<DataEntity>("x"));
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -173,7 +173,7 @@ public sealed class SqlMapperQueryListTest
             opt.Add(new PostProcessErrorParameterBuilderFactory());
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()));
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -195,7 +195,7 @@ public sealed class SqlMapperQueryListTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         var list = con.QueryList<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
         Assert.Single(list);
@@ -215,7 +215,7 @@ public sealed class SqlMapperQueryListTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         var list = con.QueryList<DataEntity>(config, "SELECT 1, 'test1'");
 
         Assert.Single(list);
@@ -235,7 +235,7 @@ public sealed class SqlMapperQueryListTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         var list = await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
         Assert.Single(list);
@@ -255,7 +255,7 @@ public sealed class SqlMapperQueryListTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         var list = await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'");
 
         Assert.Single(list);

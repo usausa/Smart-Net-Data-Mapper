@@ -18,7 +18,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
     public void QueryFirstOrDefault()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -38,7 +38,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
     public async Task QueryFirstOrDefaultAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -62,7 +62,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
     public async Task QueryFirstOrDefaultCancelAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
 
         var cancel = new CancellationToken(true);
@@ -82,7 +82,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
     public void WithoutOpen()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.QueryFirstOrDefault<DataEntity>("SELECT 1, 'test1'");
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -92,7 +92,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
     public async Task WithoutOpenAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT 1, 'test1'");
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -106,7 +106,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
     public void ClosedConnectionMustClosedWhenQueryError()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         // ReSharper disable once AccessToDisposedClosure
         Assert.Throws<SqliteException>(() => con.QueryFirstOrDefault<DataEntity>("x"));
 
@@ -117,7 +117,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
     public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryFirstOrDefaultAsync<DataEntity>("x"));
 
         Assert.Equal(ConnectionState.Closed, con.State);
@@ -139,7 +139,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.QueryFirstOrDefault<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
         Assert.True(factory.BuildCalled);
@@ -158,7 +158,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.QueryFirstOrDefault<DataEntity>(config, "SELECT 1, 'test1'");
 
         Assert.False(factory.BuildCalled);
@@ -177,7 +177,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'", new object());
 
         Assert.True(factory.BuildCalled);
@@ -196,7 +196,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.QueryFirstOrDefaultAsync<DataEntity>(config, "SELECT 1, 'test1'");
 
         Assert.False(factory.BuildCalled);

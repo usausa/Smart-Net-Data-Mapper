@@ -17,7 +17,7 @@ public sealed class SqlMapperExecuteReaderTest
     [Fact]
     public void ExecuteReader()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -38,7 +38,7 @@ public sealed class SqlMapperExecuteReaderTest
     [Fact]
     public async Task ExecuteReaderAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -112,7 +112,7 @@ public sealed class SqlMapperExecuteReaderTest
 
     public async Task ExecuteReaderCancelAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -133,7 +133,7 @@ public sealed class SqlMapperExecuteReaderTest
 
     public void WithoutOpen()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         using (var reader = con.ExecuteReader("SELECT 1, 'test1'"))
         {
             Assert.Equal(ConnectionState.Open, con.State);
@@ -148,7 +148,7 @@ public sealed class SqlMapperExecuteReaderTest
 
     public async Task WithoutOpenAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'"))
         {
             Assert.Equal(ConnectionState.Open, con.State);
@@ -167,7 +167,7 @@ public sealed class SqlMapperExecuteReaderTest
 
     public void ClosedConnectionMustClosedWhenQueryError()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         Assert.Throws<SqliteException>(() =>
         {
             // ReSharper disable once AccessToDisposedClosure
@@ -206,7 +206,7 @@ public sealed class SqlMapperExecuteReaderTest
             opt.Add(new PostProcessErrorParameterBuilderFactory());
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         Assert.Throws<NotSupportedException>(() =>
         {
             // ReSharper disable once AccessToDisposedClosure
@@ -222,7 +222,7 @@ public sealed class SqlMapperExecuteReaderTest
 
     public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await Assert.ThrowsAsync<SqliteException>(async () =>
         {
             using (await con.ExecuteReaderAsync("x"))
@@ -259,7 +259,7 @@ public sealed class SqlMapperExecuteReaderTest
             opt.Add(new PostProcessErrorParameterBuilderFactory());
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await Assert.ThrowsAsync<NotSupportedException>(async () =>
         {
             using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
@@ -286,7 +286,7 @@ public sealed class SqlMapperExecuteReaderTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
         {
         }
@@ -307,7 +307,7 @@ public sealed class SqlMapperExecuteReaderTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         using (con.ExecuteReader(config, "SELECT 1, 'test1'"))
         {
         }
@@ -328,7 +328,7 @@ public sealed class SqlMapperExecuteReaderTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
         {
         }
@@ -349,7 +349,7 @@ public sealed class SqlMapperExecuteReaderTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'"))
         {
         }

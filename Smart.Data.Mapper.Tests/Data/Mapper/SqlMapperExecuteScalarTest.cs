@@ -18,7 +18,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public void ExecuteScalarByObjectParameter()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -33,7 +33,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public async Task ExecuteScalarByObjectParameterAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
@@ -48,7 +48,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public void ResultIsNull()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
 
         var value = con.ExecuteScalar<long>("SELECT NULL");
@@ -60,7 +60,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public async Task ResultIsNullAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
 
         var value = await con.ExecuteScalarAsync<long>("SELECT NULL");
@@ -72,7 +72,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public void ResultIsConverted()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
 
         var value = con.ExecuteScalar<string>("SELECT 0");
@@ -84,7 +84,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public async Task ResultIsConvertedAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
 
         var value = await con.ExecuteScalarAsync<string>("SELECT 0");
@@ -100,7 +100,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public async Task ExecuteScalarCancelAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
 
@@ -121,7 +121,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public void WithoutOpen()
     {
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         var value = con.ExecuteScalar<long>("SELECT 1");
 
         Assert.Equal(1L, value);
@@ -132,7 +132,7 @@ public sealed class SqlMapperExecuteScalarTest
 
     public async Task WithoutOpenAsync()
     {
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         var value = await con.ExecuteScalarAsync<long>("SELECT 1");
 
         Assert.Equal(1L, value);
@@ -155,7 +155,7 @@ public sealed class SqlMapperExecuteScalarTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.ExecuteScalar<long>(config, "SELECT 1", new object());
 
         Assert.True(factory.BuildCalled);
@@ -174,7 +174,7 @@ public sealed class SqlMapperExecuteScalarTest
             opt.Add(factory);
         });
 
-        using var con = new SqliteConnection("Data Source=:memory:");
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.ExecuteScalar<long>(config, "SELECT 1");
 
         Assert.False(factory.BuildCalled);
@@ -193,7 +193,7 @@ public sealed class SqlMapperExecuteScalarTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object());
 
         Assert.True(factory.BuildCalled);
@@ -212,7 +212,7 @@ public sealed class SqlMapperExecuteScalarTest
             opt.Add(factory);
         });
 
-        await using var con = new SqliteConnection("Data Source=:memory:");
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.ExecuteScalarAsync<long>(config, "SELECT 1");
 
         Assert.False(factory.BuildCalled);
