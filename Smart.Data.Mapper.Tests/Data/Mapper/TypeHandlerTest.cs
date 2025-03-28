@@ -17,7 +17,7 @@ public sealed class TypeHandlerTest
 
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Date int)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Date int)");
 
         var date = new DateTime(2000, 1, 1);
         con.Execute("INSERT INTO Data (Id, Date) VALUES (@Id, @Date)", new DataEntity { Id = 1, Date = date });

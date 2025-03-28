@@ -20,7 +20,7 @@ public sealed class SqlMapperQueryTest
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
@@ -39,7 +39,7 @@ public sealed class SqlMapperQueryTest
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
@@ -62,7 +62,7 @@ public sealed class SqlMapperQueryTest
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
 
         await Assert.ThrowsAsync<OperationCanceledException>(async () =>
         {

@@ -20,7 +20,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
 
         var entity = con.QueryFirstOrDefault<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });
@@ -40,7 +40,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
 
         var entity = await con.QueryFirstOrDefaultAsync<DataEntity>("SELECT * FROM Data WHERE Id = @Id", new { Id = 1 });

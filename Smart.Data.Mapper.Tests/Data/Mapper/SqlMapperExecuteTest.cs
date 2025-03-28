@@ -20,7 +20,7 @@ public sealed class SqlMapperExecuteTest
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
 
         var effect = con.Execute("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
 
@@ -33,7 +33,7 @@ public sealed class SqlMapperExecuteTest
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
 
         var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
 
@@ -50,7 +50,7 @@ public sealed class SqlMapperExecuteTest
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
-        con.Execute("CREATE TABLE IF NOT EXISTS Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
 
         var cancel = new CancellationToken(true);
         await Assert.ThrowsAsync<TaskCanceledException>(async () =>
