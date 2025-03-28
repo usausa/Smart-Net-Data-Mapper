@@ -314,7 +314,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         var fieldCount = reader.FieldCount;
         if ((columnInfoPool is null) || (columnInfoPool.Length < fieldCount))
         {
-            columnInfoPool = new ColumnInfo[fieldCount];
+            columnInfoPool = new ColumnInfo[fieldCount + 8];
         }
 
         var type = typeof(T);
@@ -330,14 +330,12 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
             column.Type = fieldType;
         }
 
-        var columns = new Span<ColumnInfo>(columnInfoPool, 0, fieldCount);
-
-        if (resultMapperCache.TryGetValue(type, columns, hash, out var value))
+        if (resultMapperCache.TryGetValue(type, ref columnInfoPool, fieldCount, hash, out var value))
         {
             return Unsafe.As<ResultMapper<T>>(value);
         }
 
-        return Unsafe.As<ResultMapper<T>>(resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>));
+        return Unsafe.As<ResultMapper<T>>(resultMapperCache.AddIfNotExist(type, ref columnInfoPool, fieldCount, hash, CreateMapperInternal<T>));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -201,13 +201,10 @@ internal sealed class ResultMapperCache
         }
     }
 
-#pragma warning disable CA1307
-#pragma warning disable CA1309
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool IsMatchColumn(Span<ColumnInfo> columns1, Span<ColumnInfo> columns2)
+    private static bool IsMatchColumn(ref ColumnInfo[] columns1, ref ColumnInfo[] columns2, int length)
     {
-        var length = columns1.Length;
-        if (length != columns2.Length)
+        if (length != columns1.Length)
         {
             return false;
         }
@@ -225,17 +222,15 @@ internal sealed class ResultMapperCache
 
         return true;
     }
-#pragma warning restore CA1309
-#pragma warning restore CA1307
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetValue(Type targetType, Span<ColumnInfo> columns, int hash, [NotNullWhen(true)] out object? value)
+    public bool TryGetValue(Type targetType, ref ColumnInfo[] columns, int length, int hash, [NotNullWhen(true)] out object? value)
     {
         var temp = nodes;
         var node = temp[hash & (temp.Length - 1)];
         do
         {
-            if (node.TargetType == targetType && IsMatchColumn(node.Columns, columns))
+            if (node.TargetType == targetType && IsMatchColumn(ref node.Columns, ref columns, length))
             {
                 value = node.Value;
                 return true;
@@ -248,23 +243,23 @@ internal sealed class ResultMapperCache
         return false;
     }
 
-    public object AddIfNotExist(Type targetType, Span<ColumnInfo> columns, int hash, Func<Type, ColumnInfo[], object> valueFactory)
+    public object AddIfNotExist(Type targetType, ref ColumnInfo[] columns, int length, int hash, Func<Type, ColumnInfo[], object> valueFactory)
     {
         lock (sync)
         {
             // Double-checked locking
-            if (TryGetValue(targetType, columns, hash, out var currentValue))
+            if (TryGetValue(targetType, ref columns, length, hash, out var currentValue))
             {
                 return currentValue;
             }
 
-            var copyColumns = new ColumnInfo[columns.Length];
-            columns.CopyTo(new Span<ColumnInfo>(copyColumns));
+            var copyColumns = new ColumnInfo[length];
+            columns.AsSpan(0, length).CopyTo(new Span<ColumnInfo>(copyColumns));
 
             var value = valueFactory(targetType, copyColumns);
 
             // Check if added by recursive
-            if (TryGetValue(targetType, columns, hash, out currentValue))
+            if (TryGetValue(targetType, ref columns, length, hash, out currentValue))
             {
                 return currentValue;
             }
@@ -285,12 +280,13 @@ internal sealed class ResultMapperCache
     }
 #pragma warning restore CA1812
 
+#pragma warning disable SA1214
 #pragma warning disable SA1401
     private sealed class Node
     {
         public readonly Type TargetType;
 
-        public readonly ColumnInfo[] Columns;
+        public ColumnInfo[] Columns;
 
         public readonly int Hash;
 
@@ -307,6 +303,7 @@ internal sealed class ResultMapperCache
         }
     }
 #pragma warning restore SA1401
+#pragma warning restore SA1214
 
     //--------------------------------------------------------------------------------
     // Diagnostics
