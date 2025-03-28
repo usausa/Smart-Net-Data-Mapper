@@ -82,7 +82,7 @@ public sealed class DynamicParameterTest
         Assert.Equal(new DateTime(2000, 1, 1), entity.Date);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         public int Id { get; set; }
 

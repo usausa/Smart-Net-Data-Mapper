@@ -56,7 +56,7 @@ public sealed class ObjectResultMapperFactoryTest
         Assert.Equal(0, list[1].Column7);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         public int Column1 { get; set; }
 

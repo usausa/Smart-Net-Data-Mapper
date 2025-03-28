@@ -21,7 +21,7 @@ public sealed class AttributeResultTest
         Assert.Equal("test", entity.Text);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         [Name("Id")]
         public long No { get; set; }

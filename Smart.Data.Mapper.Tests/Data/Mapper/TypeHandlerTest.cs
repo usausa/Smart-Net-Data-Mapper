@@ -31,7 +31,7 @@ public sealed class TypeHandlerTest
         Assert.Equal(date.Ticks, rawValue);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         public int Id { get; set; }
 

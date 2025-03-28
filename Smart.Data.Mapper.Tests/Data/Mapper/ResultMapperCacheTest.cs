@@ -89,14 +89,14 @@ public sealed class ResultMapperCacheTest
         Assert.Equal(2, config.Diagnostics.ResultMapperCacheCount);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         public long Id { get; set; }
 
         public string? Name { get; set; }
     }
 
-    public sealed class Data2Entity
+    private sealed class Data2Entity
     {
         public long Id { get; set; }
 

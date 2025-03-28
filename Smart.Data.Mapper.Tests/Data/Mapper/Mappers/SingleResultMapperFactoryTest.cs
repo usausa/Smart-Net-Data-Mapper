@@ -30,7 +30,7 @@ public sealed class SingleResultMapperFactoryTest
         Assert.Equal("test2", list2[1]);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         public int Id { get; set; }
 

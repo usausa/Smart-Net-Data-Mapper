@@ -26,7 +26,7 @@ public sealed class AttributeParameterTest
         Assert.Equal(ParameterDirection.InputOutput, param.Direction);
     }
 
-    public sealed class Parameter
+    private sealed class Parameter
     {
         [DbType(DbType.Int64)]
         [Size(10)]

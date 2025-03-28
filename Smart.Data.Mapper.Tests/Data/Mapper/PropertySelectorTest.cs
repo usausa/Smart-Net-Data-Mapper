@@ -29,7 +29,7 @@ public sealed class PropertySelectorTest
         Assert.Equal(0, entity.ColumnName6);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         public int ColumnName1 { get; set; }
 

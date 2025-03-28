@@ -49,7 +49,7 @@ public sealed class MapTypeTest
         Assert.Equal("test1", entity.Name);
     }
 
-    public sealed class InitOnlyEntity
+    private sealed class InitOnlyEntity
     {
         public long Id { get; init; }
 

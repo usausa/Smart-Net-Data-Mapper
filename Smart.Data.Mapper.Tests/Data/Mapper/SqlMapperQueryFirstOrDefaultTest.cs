@@ -203,7 +203,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
         Assert.False(factory.PostProcessCalled);
     }
 
-    public sealed class DataEntity
+    private sealed class DataEntity
     {
         public int Id { get; set; }
 

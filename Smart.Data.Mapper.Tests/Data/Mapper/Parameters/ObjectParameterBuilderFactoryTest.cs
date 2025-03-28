@@ -53,7 +53,7 @@ public sealed class ObjectParameterBuilderFactoryTest
         Assert.Equal("1", parameter.Output7);
     }
 
-    public sealed class Parameter
+    private sealed class Parameter
     {
         public int Value1 { get; set; }
 
