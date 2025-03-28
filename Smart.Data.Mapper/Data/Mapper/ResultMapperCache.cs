@@ -3,7 +3,6 @@ namespace Smart.Data.Mapper;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
 internal sealed class ResultMapperCache
@@ -213,21 +212,15 @@ internal sealed class ResultMapperCache
             return false;
         }
 
-        ref var column1 = ref MemoryMarshal.GetReference(columns1);
-        ref var end = ref Unsafe.Add(ref column1, length);
-        ref var column2 = ref MemoryMarshal.GetReference(columns2);
-
-    Compare:
-        if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name))
+        for (var i = 0; i < length; i++)
         {
-            return false;
-        }
+            ref var column1 = ref columns1[i];
+            ref var column2 = ref columns2[i];
 
-        column1 = ref Unsafe.Add(ref column1, 1);
-        if (Unsafe.IsAddressLessThan(ref column1, ref end))
-        {
-            column2 = ref Unsafe.Add(ref column2, 1);
-            goto Compare;
+            if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name, StringComparison.Ordinal))
+            {
+                return false;
+            }
         }
 
         return true;
