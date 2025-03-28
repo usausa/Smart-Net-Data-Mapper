@@ -324,7 +324,10 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
             var name = reader.GetName(i);
             var fieldType = reader.GetFieldType(i);
             hash = unchecked((hash * 31) + (CalcNameHash(name) ^ fieldType.GetHashCode()));
-            columnInfoPool[i] = new ColumnInfo(name, fieldType);
+
+            ref var column = ref columnInfoPool[i];
+            column.Name = name;
+            column.Type = fieldType;
         }
 
         var columns = new Span<ColumnInfo>(columnInfoPool, 0, fieldCount);
