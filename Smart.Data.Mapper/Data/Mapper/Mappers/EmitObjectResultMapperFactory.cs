@@ -94,7 +94,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
         // Define method
         var methodBuilder = typeBuilder.DefineMethod(
-            nameof(ResultMapper<T>.Map),
+            nameof(ResultMapper<>.Map),
             MethodAttributes.Public | MethodAttributes.ReuseSlot | MethodAttributes.Virtual | MethodAttributes.HideBySig,
             type,
             [typeof(IDataRecord)]);
