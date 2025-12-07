@@ -312,7 +312,10 @@ public static class SqlMapper
             {
                 await reader.DisposeAsync().ConfigureAwait(false);
             }
-            cmd?.Dispose();
+            if (cmd is not null)
+            {
+                await cmd.DisposeAsync().ConfigureAwait(false);
+            }
             throw;
         }
         finally

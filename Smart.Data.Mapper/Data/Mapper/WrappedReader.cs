@@ -3,7 +3,7 @@ namespace Smart.Data.Mapper;
 using System.Data;
 using System.Data.Common;
 
-internal sealed class WrappedReader : IDataReader
+internal sealed class WrappedReader : IDataReader, IAsyncDisposable
 {
     private readonly DbCommand command;
 
@@ -31,6 +31,12 @@ internal sealed class WrappedReader : IDataReader
     {
         reader.Dispose();
         command.Dispose();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await reader.DisposeAsync().ConfigureAwait(false);
+        await command.DisposeAsync().ConfigureAwait(false);
     }
 
     public void Close() => reader.Close();

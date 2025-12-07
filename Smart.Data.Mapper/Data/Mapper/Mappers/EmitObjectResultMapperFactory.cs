@@ -64,14 +64,14 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
                 targetAssemblies.Add(assemblyName);
             }
+
+            var typeBuilder = moduleBuilder.DefineType(
+                $"Holder_{typeNo}",
+                TypeAttributes.Public | TypeAttributes.AutoLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
+            typeNo++;
+
+            return typeBuilder;
         }
-
-        var typeBuilder = moduleBuilder.DefineType(
-            $"Holder_{typeNo}",
-            TypeAttributes.Public | TypeAttributes.AutoLayout | TypeAttributes.AnsiClass | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit);
-        typeNo++;
-
-        return typeBuilder;
     }
 
 #pragma warning disable CA1062
