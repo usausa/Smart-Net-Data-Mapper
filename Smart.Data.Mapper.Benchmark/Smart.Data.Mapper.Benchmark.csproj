@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.15.6" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="Usa.Smart.Core" Version="2.5.0" />
     <PackageReference Include="Usa.Smart.Mock.Data" Version="2.6.0" />
