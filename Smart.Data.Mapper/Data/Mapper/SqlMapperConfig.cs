@@ -46,6 +46,8 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         { typeof(Guid), DbType.Guid },
         { typeof(DateTime), DbType.DateTime },
         { typeof(DateTimeOffset), DbType.DateTimeOffset },
+        { typeof(DateOnly), DbType.Date },
+        { typeof(TimeOnly), DbType.Time },
         { typeof(TimeSpan), DbType.Time },
         { typeof(byte[]), DbType.Binary },
         { typeof(object), DbType.Object }

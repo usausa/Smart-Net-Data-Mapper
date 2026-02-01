@@ -85,7 +85,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Execute(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
-        return Execute(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
+        return con.Execute(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
 #pragma warning disable CA1062
@@ -125,7 +125,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<int> ExecuteAsync(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
-        return ExecuteAsync(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
+        return con.ExecuteAsync(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
     }
 
     //--------------------------------------------------------------------------------
@@ -177,7 +177,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T ExecuteScalar<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
-        return ExecuteScalar<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
+        return con.ExecuteScalar<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
 #pragma warning disable CA1062
@@ -227,7 +227,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<T> ExecuteScalarAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
-        return ExecuteScalarAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
+        return con.ExecuteScalarAsync<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
     }
 
     //--------------------------------------------------------------------------------
@@ -235,7 +235,7 @@ public static class SqlMapper
     //--------------------------------------------------------------------------------
 
 #pragma warning disable CA1062
-    public static IDataReader ExecuteReader(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
+    public static DbDataReader ExecuteReader(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
         var cmd = default(DbCommand);
@@ -276,13 +276,13 @@ public static class SqlMapper
 #pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static IDataReader ExecuteReader(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
+    public static DbDataReader ExecuteReader(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default)
     {
-        return ExecuteReader(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior);
+        return con.ExecuteReader(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior);
     }
 
 #pragma warning disable CA1062
-    public static async ValueTask<IDataReader> ExecuteReaderAsync(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
+    public static async ValueTask<DbDataReader> ExecuteReaderAsync(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
     {
         var wasClosed = con.State == ConnectionState.Closed;
         var cmd = default(DbCommand);
@@ -329,9 +329,9 @@ public static class SqlMapper
 #pragma warning restore CA1062
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ValueTask<IDataReader> ExecuteReaderAsync(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
+    public static ValueTask<DbDataReader> ExecuteReaderAsync(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CommandBehavior commandBehavior = CommandBehavior.Default, CancellationToken cancel = default)
     {
-        return ExecuteReaderAsync(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior, cancel);
+        return con.ExecuteReaderAsync(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, commandBehavior, cancel);
     }
 
     //--------------------------------------------------------------------------------
@@ -382,7 +382,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IEnumerable<T> Query<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
-        return Query<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
+        return con.Query<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
 #pragma warning disable CA1062
@@ -433,7 +433,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static IAsyncEnumerable<T> QueryAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
-        return QueryAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
+        return con.QueryAsync<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
     }
 
     //--------------------------------------------------------------------------------
@@ -490,7 +490,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static List<T> QueryList<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
-        return QueryList<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
+        return con.QueryList<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 #pragma warning restore CA1002
 
@@ -545,7 +545,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<List<T>> QueryListAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
-        return QueryListAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
+        return con.QueryListAsync<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
     }
 
     //--------------------------------------------------------------------------------
@@ -593,7 +593,7 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static T? QueryFirstOrDefault<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
-        return QueryFirstOrDefault<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
+        return con.QueryFirstOrDefault<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType);
     }
 
 #pragma warning disable CA1062
@@ -641,6 +641,6 @@ public static class SqlMapper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueTask<T?> QueryFirstOrDefaultAsync<T>(this DbConnection con, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null, CancellationToken cancel = default)
     {
-        return QueryFirstOrDefaultAsync<T>(con, SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
+        return con.QueryFirstOrDefaultAsync<T>(SqlMapperConfig.Default, sql, param, transaction, commandTimeout, commandType, cancel);
     }
 }

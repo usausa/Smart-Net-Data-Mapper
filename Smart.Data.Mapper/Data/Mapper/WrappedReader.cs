@@ -3,23 +3,25 @@ namespace Smart.Data.Mapper;
 using System.Data;
 using System.Data.Common;
 
-internal sealed class WrappedReader : IDataReader, IAsyncDisposable
+internal sealed class WrappedReader : DbDataReader
 {
     private readonly DbCommand command;
 
     private readonly DbDataReader reader;
 
-    public int FieldCount => reader.FieldCount;
+    public override int FieldCount => reader.FieldCount;
 
-    public object this[int i] => reader[i];
+    public override object this[int ordinal] => reader[ordinal];
 
-    public object this[string name] => reader[name];
+    public override object this[string name] => reader[name];
 
-    public int Depth => reader.Depth;
+    public override int Depth => reader.Depth;
 
-    public bool IsClosed => reader.IsClosed;
+    public override bool IsClosed => reader.IsClosed;
 
-    public int RecordsAffected => reader.RecordsAffected;
+    public override int RecordsAffected => reader.RecordsAffected;
+
+    public override bool HasRows => reader.HasRows;
 
     public WrappedReader(DbCommand command, DbDataReader reader)
     {
@@ -27,67 +29,87 @@ internal sealed class WrappedReader : IDataReader, IAsyncDisposable
         this.reader = reader;
     }
 
-    public void Dispose()
+    protected override void Dispose(bool disposing)
     {
-        reader.Dispose();
-        command.Dispose();
+        if (disposing)
+        {
+            reader.Dispose();
+            command.Dispose();
+        }
+        base.Dispose(disposing);
     }
 
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await reader.DisposeAsync().ConfigureAwait(false);
         await command.DisposeAsync().ConfigureAwait(false);
+        await base.DisposeAsync().ConfigureAwait(false);
     }
 
-    public void Close() => reader.Close();
+    public override void Close() => reader.Close();
 
-    public bool GetBoolean(int i) => reader.GetBoolean(i);
+    public override Task CloseAsync() => reader.CloseAsync();
 
-    public byte GetByte(int i) => reader.GetByte(i);
+    public override DataTable? GetSchemaTable() => reader.GetSchemaTable();
 
-    public long GetBytes(int i, long fieldOffset, byte[]? buffer, int bufferoffset, int length) => reader.GetBytes(i, fieldOffset, buffer, bufferoffset, length);
+    public override Task<DataTable?> GetSchemaTableAsync(CancellationToken cancellationToken = default) => reader.GetSchemaTableAsync(cancellationToken);
 
-    public char GetChar(int i) => reader.GetChar(i);
+    public override bool NextResult() => reader.NextResult();
 
-    public long GetChars(int i, long fieldoffset, char[]? buffer, int bufferoffset, int length) => reader.GetChars(i, fieldoffset, buffer, bufferoffset, length);
+    public override Task<bool> NextResultAsync(CancellationToken cancellationToken) => reader.NextResultAsync(cancellationToken);
 
-    public IDataReader GetData(int i) => reader.GetData(i);
+    public override bool Read() => reader.Read();
 
-    public string GetDataTypeName(int i) => reader.GetDataTypeName(i);
+    public override Task<bool> ReadAsync(CancellationToken cancellationToken) => reader.ReadAsync(cancellationToken);
 
-    public DateTime GetDateTime(int i) => reader.GetDateTime(i);
+    // ReSharper disable once SuspiciousTypeConversion.Global
+    public override IEnumerator<object> GetEnumerator() => ((IEnumerable<object>)reader).GetEnumerator();
 
-    public decimal GetDecimal(int i) => reader.GetDecimal(i);
+    public override int GetOrdinal(string name) => reader.GetOrdinal(name);
 
-    public double GetDouble(int i) => reader.GetDouble(i);
+    public override string GetDataTypeName(int ordinal) => reader.GetDataTypeName(ordinal);
 
-    public Type GetFieldType(int i) => reader.GetFieldType(i);
+    public override Type GetFieldType(int ordinal) => reader.GetFieldType(ordinal);
 
-    public float GetFloat(int i) => reader.GetFloat(i);
+    public override string GetName(int ordinal) => reader.GetName(ordinal);
 
-    public Guid GetGuid(int i) => reader.GetGuid(i);
+    public override bool IsDBNull(int ordinal) => reader.IsDBNull(ordinal);
 
-    public short GetInt16(int i) => reader.GetInt16(i);
+    public override Task<bool> IsDBNullAsync(int ordinal, CancellationToken cancellationToken) => reader.IsDBNullAsync(ordinal, cancellationToken);
 
-    public int GetInt32(int i) => reader.GetInt32(i);
+    public override T GetFieldValue<T>(int ordinal) => reader.GetFieldValue<T>(ordinal);
 
-    public long GetInt64(int i) => reader.GetInt64(i);
+    public override Task<T> GetFieldValueAsync<T>(int ordinal, CancellationToken cancellationToken) => reader.GetFieldValueAsync<T>(ordinal, cancellationToken);
 
-    public string GetName(int i) => reader.GetName(i);
+    public override object GetValue(int ordinal) => reader.GetValue(ordinal);
 
-    public int GetOrdinal(string name) => reader.GetOrdinal(name);
+    public override int GetValues(object[] values) => reader.GetValues(values);
 
-    public string GetString(int i) => reader.GetString(i);
+    public override bool GetBoolean(int ordinal) => reader.GetBoolean(ordinal);
 
-    public object GetValue(int i) => reader.GetValue(i);
+    public override byte GetByte(int ordinal) => reader.GetByte(ordinal);
 
-    public int GetValues(object[] values) => reader.GetValues(values);
+    public override long GetBytes(int ordinal, long dataOffset, byte[]? buffer, int bufferOffset, int length) => reader.GetBytes(ordinal, dataOffset, buffer, bufferOffset, length);
 
-    public bool IsDBNull(int i) => reader.IsDBNull(i);
+    public override char GetChar(int ordinal) => reader.GetChar(ordinal);
 
-    public DataTable? GetSchemaTable() => reader.GetSchemaTable();
+    public override long GetChars(int ordinal, long dataOffset, char[]? buffer, int bufferOffset, int length) => reader.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
 
-    public bool NextResult() => reader.NextResult();
+    public override DateTime GetDateTime(int ordinal) => reader.GetDateTime(ordinal);
 
-    public bool Read() => reader.Read();
+    public override decimal GetDecimal(int ordinal) => reader.GetDecimal(ordinal);
+
+    public override double GetDouble(int ordinal) => reader.GetDouble(ordinal);
+
+    public override float GetFloat(int ordinal) => reader.GetFloat(ordinal);
+
+    public override Guid GetGuid(int ordinal) => reader.GetGuid(ordinal);
+
+    public override short GetInt16(int ordinal) => reader.GetInt16(ordinal);
+
+    public override int GetInt32(int ordinal) => reader.GetInt32(ordinal);
+
+    public override long GetInt64(int ordinal) => reader.GetInt64(ordinal);
+
+    public override string GetString(int ordinal) => reader.GetString(ordinal);
 }
