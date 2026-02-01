@@ -44,7 +44,7 @@ public sealed class SqlMapperExecuteReaderTest
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
+        await using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
         Assert.True(reader.Read());
         Assert.Equal(1, reader.GetInt64(0));
         Assert.Equal("test1", reader.GetString(1));
@@ -92,7 +92,7 @@ public sealed class SqlMapperExecuteReaderTest
     {
         Prepare("ExecuteReaderLifeAsync.db");
         await using var con = new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db");
-        using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
+        await using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
         Assert.True(reader.Read());
         Assert.Equal(1, reader.GetInt64(0));
         Assert.Equal("test1", reader.GetString(1));
@@ -119,7 +119,7 @@ public sealed class SqlMapperExecuteReaderTest
         await Assert.ThrowsAsync<OperationCanceledException>(async () =>
         {
             var cancel = new CancellationToken(true);
-            using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel))
+            await using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel))
             {
             }
         });
@@ -149,7 +149,7 @@ public sealed class SqlMapperExecuteReaderTest
     public async Task WithoutOpenAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'"))
+        await using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'"))
         {
             Assert.Equal(ConnectionState.Open, con.State);
             Assert.True(reader.Read());
@@ -225,7 +225,7 @@ public sealed class SqlMapperExecuteReaderTest
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await Assert.ThrowsAsync<SqliteException>(async () =>
         {
-            using (await con.ExecuteReaderAsync("x"))
+            await using (await con.ExecuteReaderAsync("x"))
             {
             }
         });
@@ -240,7 +240,7 @@ public sealed class SqlMapperExecuteReaderTest
         await using var con = new CommandUnsupportedConnection();
         await Assert.ThrowsAsync<NotSupportedException>(async () =>
         {
-            using (await con.ExecuteReaderAsync("x"))
+            await using (await con.ExecuteReaderAsync("x"))
             {
             }
         });
@@ -262,7 +262,7 @@ public sealed class SqlMapperExecuteReaderTest
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await Assert.ThrowsAsync<NotSupportedException>(async () =>
         {
-            using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
+            await using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
             {
             }
         });
@@ -329,7 +329,7 @@ public sealed class SqlMapperExecuteReaderTest
         });
 
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
+        await using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
         {
         }
 
@@ -350,7 +350,7 @@ public sealed class SqlMapperExecuteReaderTest
         });
 
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'"))
+        await using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'"))
         {
         }
 
