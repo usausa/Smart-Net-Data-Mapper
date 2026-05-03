@@ -3,6 +3,7 @@ namespace Smart.Data.Mapper.Mappers;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.CompilerServices;
 
 public sealed class SingleResultMapperFactory : IResultMapperFactory
 {
@@ -61,10 +62,11 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
 
     private sealed class Mapper<T> : ResultMapper<T>
     {
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public override T Map(IDataRecord record)
         {
             var value = record.GetValue(0);
-            return value is DBNull ? default! : (T)value;
+            return value is DBNull ? default! : UnsafeCastHelper.UnsafeCast<T>(value);
         }
     }
 
@@ -77,10 +79,11 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
             this.parser = parser;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public override T Map(IDataRecord record)
         {
             var value = record.GetValue(0);
-            return value is DBNull ? default! : (T)parser(value);
+            return value is DBNull ? default! : UnsafeCastHelper.UnsafeCast<T>(parser(value));
         }
     }
 }

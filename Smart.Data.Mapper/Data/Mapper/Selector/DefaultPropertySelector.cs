@@ -15,8 +15,7 @@ public sealed class DefaultPropertySelector : IPropertySelector
 
     public PropertyInfo? SelectProperty(PropertyInfo[] properties, string name)
     {
-        var pi = properties.FirstOrDefault(x => IsMatchName(x, name, false)) ??
-                 properties.FirstOrDefault(x => IsMatchName(x, name, true));
+        var pi = FindProperty(properties, name, false) ?? FindProperty(properties, name, true);
         if (pi is not null)
         {
             return pi;
@@ -25,9 +24,22 @@ public sealed class DefaultPropertySelector : IPropertySelector
         var pascalName = Inflector.Pascalize(name);
         if (pascalName != name)
         {
-            pi = properties.FirstOrDefault(x => IsMatchName(x, pascalName, false)) ??
-                 properties.FirstOrDefault(x => IsMatchName(x, pascalName, true));
+            pi = FindProperty(properties, pascalName, false) ?? FindProperty(properties, pascalName, true);
             if (pi is not null)
+            {
+                return pi;
+            }
+        }
+
+        return null;
+    }
+
+    private static PropertyInfo? FindProperty(PropertyInfo[] properties, string name, bool ignoreCase)
+    {
+        for (var i = 0; i < properties.Length; i++)
+        {
+            var pi = properties[i];
+            if (IsMatchName(pi, name, ignoreCase))
             {
                 return pi;
             }

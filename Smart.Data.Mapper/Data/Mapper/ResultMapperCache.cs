@@ -2,6 +2,7 @@ namespace Smart.Data.Mapper;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
@@ -19,7 +20,7 @@ internal sealed class ResultMapperCache
     private readonly object sync = new();
 #endif
 
-    private Node[] nodes;
+    private volatile Node[] nodes;
 
     private int depth;
 
@@ -69,25 +70,33 @@ internal sealed class ResultMapperCache
 
     private static int CalculateSize(int requestSize)
     {
-        uint size = 0;
+        return (int)BitOperations.RoundUpToPowerOf2((uint)requestSize);
+    }
 
-        for (var i = 1L; i < requestSize; i *= 2)
+    private static int CalculateCount(Node[] targetNodes)
+    {
+        var count = 0;
+        for (var i = 0; i < targetNodes.Length; i++)
         {
-            size = (size << 1) + 1;
+            var node = targetNodes[i];
+            if (node != EmptyNode)
+            {
+                do
+                {
+                    count++;
+                    node = node.Next;
+                }
+                while (node is not null);
+            }
         }
 
-        return (int)(size + 1);
+        return count;
     }
 
     private static Node[] CreateInitialTable()
     {
         var newNodes = new Node[InitialSize];
-
-        for (var i = 0; i < newNodes.Length; i++)
-        {
-            newNodes[i] = EmptyNode;
-        }
-
+        newNodes.AsSpan().Fill(EmptyNode);
         return newNodes;
     }
 
@@ -114,60 +123,54 @@ internal sealed class ResultMapperCache
         }
     }
 
-    private static void RelocateNodes(Node[] nodes, Node[] oldNodes)
+    private static void RelocateNodes(Node[] newNodes, Node[] oldNodes, int count)
     {
-        for (var i = 0; i < oldNodes.Length; i++)
+        var remaining = count;
+        for (var i = 0; (i < oldNodes.Length) && (remaining > 0); i++)
         {
-            var node = oldNodes[i];
-            if (node == EmptyNode)
+            var current = oldNodes[i];
+            if (current == EmptyNode)
             {
                 continue;
             }
 
             do
             {
-                var next = node.Next;
-                node.Next = null;
+                UpdateLink(ref newNodes[current.Hash & (newNodes.Length - 1)], new Node(current.TargetType, current.Columns, current.Hash, current.Value));
 
-                UpdateLink(ref nodes[node.Hash & (nodes.Length - 1)], node);
-
-                node = next;
+                current = current.Next;
+                remaining--;
             }
-            while (node is not null);
+            while (current is not null);
         }
     }
 
     private void AddNode(Node node)
     {
+        var currentNodes = nodes;
+
         var requestSize = Math.Max(InitialSize, (count + 1) * Factor);
         var size = CalculateSize(requestSize);
-        if (size > nodes.Length)
+        if (size > currentNodes.Length)
         {
             var newNodes = new Node[size];
-            for (var i = 0; i < newNodes.Length; i++)
-            {
-                newNodes[i] = EmptyNode;
-            }
+            newNodes.AsSpan().Fill(EmptyNode);
 
-            RelocateNodes(newNodes, nodes);
+            RelocateNodes(newNodes, currentNodes, count);
 
             UpdateLink(ref newNodes[node.Hash & (newNodes.Length - 1)], node);
 
-            Interlocked.MemoryBarrier();
-
             nodes = newNodes;
             depth = CalculateDepth(newNodes);
-            count++;
+            count = CalculateCount(newNodes);
         }
         else
         {
             Interlocked.MemoryBarrier();
 
-            var hash = node.Hash;
+            UpdateLink(ref currentNodes[node.Hash & (currentNodes.Length - 1)], node);
 
-            UpdateLink(ref nodes[hash & (nodes.Length - 1)], node);
-
-            depth = Math.Max(CalculateDepth(nodes[hash & (nodes.Length - 1)]), depth);
+            depth = Math.Max(CalculateDepth(currentNodes[node.Hash & (currentNodes.Length - 1)]), depth);
             count++;
         }
     }
@@ -201,18 +204,18 @@ internal sealed class ResultMapperCache
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool IsMatchColumn(ref ColumnInfo[] columns1, ref ColumnInfo[] columns2, int length)
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    private static bool IsMatchColumn(ReadOnlySpan<ColumnInfo> cached, ReadOnlySpan<ColumnInfo> current)
     {
-        if (length != columns1.Length)
+        if (cached.Length != current.Length)
         {
             return false;
         }
 
-        for (var i = 0; i < length; i++)
+        for (var i = 0; i < cached.Length; i++)
         {
-            ref var column1 = ref columns1[i];
-            ref var column2 = ref columns2[i];
+            ref readonly var column1 = ref cached[i];
+            ref readonly var column2 = ref current[i];
 
             if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name, StringComparison.Ordinal))
             {
@@ -223,14 +226,14 @@ internal sealed class ResultMapperCache
         return true;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool TryGetValue(Type targetType, ref ColumnInfo[] columns, int length, int hash, [NotNullWhen(true)] out object? value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool TryGetValue(Type targetType, ReadOnlySpan<ColumnInfo> columns, int hash, [NotNullWhen(true)] out object? value)
     {
         var temp = nodes;
         var node = temp[hash & (temp.Length - 1)];
         do
         {
-            if (node.TargetType == targetType && IsMatchColumn(ref node.Columns, ref columns, length))
+            if (node.TargetType == targetType && IsMatchColumn(node.Columns, columns))
             {
                 value = node.Value;
                 return true;
@@ -243,23 +246,22 @@ internal sealed class ResultMapperCache
         return false;
     }
 
-    public object AddIfNotExist(Type targetType, ref ColumnInfo[] columns, int length, int hash, Func<Type, ColumnInfo[], object> valueFactory)
+    public object AddIfNotExist(Type targetType, ReadOnlySpan<ColumnInfo> columns, int hash, Func<Type, ColumnInfo[], object> valueFactory)
     {
         lock (sync)
         {
             // Double-checked locking
-            if (TryGetValue(targetType, ref columns, length, hash, out var currentValue))
+            if (TryGetValue(targetType, columns, hash, out var currentValue))
             {
                 return currentValue;
             }
 
-            var copyColumns = new ColumnInfo[length];
-            columns.AsSpan(0, length).CopyTo(new Span<ColumnInfo>(copyColumns));
+            var copyColumns = columns.ToArray();
 
             var value = valueFactory(targetType, copyColumns);
 
             // Check if added by recursive
-            if (TryGetValue(targetType, ref columns, length, hash, out currentValue))
+            if (TryGetValue(targetType, columns, hash, out currentValue))
             {
                 return currentValue;
             }

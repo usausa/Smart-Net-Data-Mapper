@@ -176,18 +176,18 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     private static T GetValue<T>(IDataRecord reader, int index)
     {
         var value = reader.GetValue(index);
-        return value is DBNull ? default! : (T)value;
+        return value is DBNull ? default! : UnsafeCastHelper.UnsafeCast<T>(value);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     private static T GetValueWithConvert<T>(IDataRecord reader, int index, Func<object, object> parser)
     {
         var value = reader.GetValue(index);
-        return value is DBNull ? default! : (T)parser(value);
+        return value is DBNull ? default! : UnsafeCastHelper.UnsafeCast<T>(parser(value));
     }
 
 #pragma warning disable SA1401

@@ -2,6 +2,7 @@ namespace Smart.Data.Mapper.Mappers;
 
 using System.Data;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 using Smart.Data.Mapper.Attributes;
 
@@ -92,6 +93,7 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
             this.entries = entries;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
         public override T Map(IDataRecord record)
         {
             var obj = factory();

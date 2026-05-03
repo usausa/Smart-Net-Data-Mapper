@@ -332,23 +332,24 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
             column.Type = fieldType;
         }
 
-        if (resultMapperCache.TryGetValue(type, ref columnInfoPool, fieldCount, hash, out var value))
+        var columns = columnInfoPool.AsSpan(0, fieldCount);
+        if (resultMapperCache.TryGetValue(type, columns, hash, out var value))
         {
             return Unsafe.As<ResultMapper<T>>(value);
         }
 
-        return Unsafe.As<ResultMapper<T>>(resultMapperCache.AddIfNotExist(type, ref columnInfoPool, fieldCount, hash, CreateMapperInternal<T>));
+        return Unsafe.As<ResultMapper<T>>(resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>));
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static int CalcNameHash(string value)
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    private static int CalcNameHash(ReadOnlySpan<char> value)
     {
         unchecked
         {
             var hash = 2166136261u;
-            foreach (var c in value)
+            for (var i = 0; i < value.Length; i++)
             {
-                hash = (c ^ hash) * 16777619;
+                hash = (value[i] ^ hash) * 16777619;
             }
             return (int)hash;
         }

@@ -3,6 +3,8 @@ namespace Smart.Data.Mapper;
 using System.Data;
 using System.Data.Common;
 
+using Smart.Data.Mapper.Mappers;
+
 public sealed class DynamicParameter : IDynamicParameter
 {
     private readonly Dictionary<string, ParameterInfo> parameters = [];
@@ -46,7 +48,7 @@ public sealed class DynamicParameter : IDynamicParameter
             return default!;
         }
 
-        return (T)value;
+        return UnsafeCastHelper.UnsafeCast<T>(value);
     }
 
 #pragma warning disable CA1062
