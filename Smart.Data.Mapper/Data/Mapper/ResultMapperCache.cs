@@ -288,7 +288,7 @@ internal sealed class ResultMapperCache
     {
         public readonly Type TargetType;
 
-        public ColumnInfo[] Columns;
+        public readonly ColumnInfo[] Columns;
 
         public readonly int Hash;
 
