@@ -13,21 +13,40 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
 #pragma warning disable CA1062
     public TableMetadata Create(Type type)
     {
-        var columns = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(IsTargetProperty)
-            .Select(static x => new ColumnMetadata(x, x.GetCustomAttribute<NameAttribute>()?.Name ?? x.Name))
-            .ToArray();
-        var keyColumns = columns
-            .Select(static x => new { Column = x, Attribute = x.Property.GetCustomAttribute<PrimaryKeyAttribute>() })
-            .Where(static x => x.Attribute is not null)
-            .OrderBy(static x => x.Attribute!.Order)
-            .Select(static x => x.Column)
-            .ToArray();
-        var nonKeyColumns = columns
-            .Where(static x => x.Property.GetCustomAttribute<PrimaryKeyAttribute>() is null)
-            .ToArray();
+        var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        var columns = new List<ColumnMetadata>(properties.Length);
+        var keyColumns = new List<(ColumnMetadata Column, int Order)>();
+        var nonKeyColumns = new List<ColumnMetadata>(properties.Length);
 
-        return new TableMetadata(ResolveName(type), columns, keyColumns, nonKeyColumns);
+        for (var i = 0; i < properties.Length; i++)
+        {
+            var property = properties[i];
+            if (!IsTargetProperty(property))
+            {
+                continue;
+            }
+
+            var column = new ColumnMetadata(property, property.GetCustomAttribute<NameAttribute>()?.Name ?? property.Name);
+            columns.Add(column);
+
+            var primaryKey = property.GetCustomAttribute<PrimaryKeyAttribute>();
+            if (primaryKey is null)
+            {
+                nonKeyColumns.Add(column);
+            }
+            else
+            {
+                keyColumns.Add((column, primaryKey.Order));
+            }
+        }
+
+        keyColumns.Sort(static (x, y) => x.Order.CompareTo(y.Order));
+
+        return new TableMetadata(
+            ResolveName(type),
+            [.. columns],
+            keyColumns.ConvertAll(static x => x.Column),
+            [.. nonKeyColumns]);
     }
 #pragma warning restore CA1062
 
