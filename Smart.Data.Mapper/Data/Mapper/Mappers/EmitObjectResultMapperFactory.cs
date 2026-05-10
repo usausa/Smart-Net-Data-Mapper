@@ -155,7 +155,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
             .Where(IsTargetProperty)
             .ToArray();
 
-        var list = new List<MapEntry>();
+        var list = new List<MapEntry>(columns.Length);
         for (var i = 0; i < columns.Length; i++)
         {
             var column = columns[i];

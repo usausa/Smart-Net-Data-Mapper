@@ -341,39 +341,44 @@ public static class SqlMapper
 #pragma warning disable CA1062
     public static IEnumerable<T> Query<T>(this DbConnection con, ISqlMapperConfig config, string sql, object? param = null, DbTransaction? transaction = null, int? commandTimeout = null, CommandType? commandType = null)
     {
-        var wasClosed = con.State == ConnectionState.Closed;
-        using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
+        return QueryIterator(con, config, sql, param, transaction, commandTimeout, commandType);
 
-        var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
-        builder.Build?.Invoke(cmd, param!);
-
-        if (wasClosed)
+        static IEnumerable<T> QueryIterator(DbConnection con, ISqlMapperConfig config, string sql, object? param, DbTransaction? transaction, int? commandTimeout, CommandType? commandType)
         {
-            con.Open();
-        }
+            var wasClosed = con.State == ConnectionState.Closed;
+            using var cmd = SetupCommand(con, transaction, sql, commandTimeout, commandType);
 
-        try
-        {
-            using var reader = cmd.ExecuteReader(CommandBehaviorQuery);
+            var builder = param is not null ? config.CreateParameterBuilder(param.GetType()) : NullParameterBuilder;
+            builder.Build?.Invoke(cmd, param!);
 
-            builder.PostProcess?.Invoke(cmd, param!);
-
-            if (reader.Read())
-            {
-                var mapper = config.CreateResultMapper<T>(reader);
-
-                do
-                {
-                    yield return mapper.Map(reader);
-                }
-                while (reader.Read());
-            }
-        }
-        finally
-        {
             if (wasClosed)
             {
-                con.Close();
+                con.Open();
+            }
+
+            try
+            {
+                using var reader = cmd.ExecuteReader(CommandBehaviorQuery);
+
+                builder.PostProcess?.Invoke(cmd, param!);
+
+                if (reader.Read())
+                {
+                    var mapper = config.CreateResultMapper<T>(reader);
+
+                    do
+                    {
+                        yield return mapper.Map(reader);
+                    }
+                    while (reader.Read());
+                }
+            }
+            finally
+            {
+                if (wasClosed)
+                {
+                    con.Close();
+                }
             }
         }
     }

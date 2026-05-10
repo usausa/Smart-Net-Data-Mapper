@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
 internal sealed class ResultMapperCache
@@ -212,10 +213,12 @@ internal sealed class ResultMapperCache
             return false;
         }
 
+        ref var head1 = ref MemoryMarshal.GetReference(cached);
+        ref var head2 = ref MemoryMarshal.GetReference(current);
         for (var i = 0; i < cached.Length; i++)
         {
-            ref readonly var column1 = ref cached[i];
-            ref readonly var column2 = ref current[i];
+            ref readonly var column1 = ref Unsafe.Add(ref head1, i);
+            ref readonly var column2 = ref Unsafe.Add(ref head2, i);
 
             if ((column1.Type != column2.Type) || !String.Equals(column1.Name, column2.Name, StringComparison.Ordinal))
             {
