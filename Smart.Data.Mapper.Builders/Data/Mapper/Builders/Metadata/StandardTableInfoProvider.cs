@@ -8,7 +8,9 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
 {
     public static StandardTableInfoProvider Default { get; } = new();
 
+#pragma warning disable IDE0028
     public IList<string> RemoveSuffix { get; } = new List<string>(["Entity"]);
+#pragma warning restore IDE0028
 
 #pragma warning disable CA1062
     public TableMetadata Create(Type type)
