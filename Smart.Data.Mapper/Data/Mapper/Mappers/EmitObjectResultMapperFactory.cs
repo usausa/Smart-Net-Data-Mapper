@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper.Mappers;
 
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -8,6 +9,7 @@ using System.Runtime.CompilerServices;
 using Smart.Data.Mapper.Attributes;
 using Smart.Reflection.Emit;
 
+[RequiresDynamicCode("EmitObjectResultMapperFactory uses Reflection.Emit to generate types at runtime, which is not compatible with Native AOT.")]
 public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 {
     public static EmitObjectResultMapperFactory Instance { get; } = new();
@@ -75,7 +77,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
     }
 
 #pragma warning disable CA1062
-    public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    public ResultMapper<T> CreateMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         var ci = type.GetConstructor(Type.EmptyTypes);
         if (ci is null)
@@ -148,7 +150,7 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
     }
 #pragma warning restore CA1062
 
-    private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, ColumnInfo[] columns)
     {
         var selector = config.GetPropertySelector();
         var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)

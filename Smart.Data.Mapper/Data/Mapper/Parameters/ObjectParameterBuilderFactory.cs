@@ -2,6 +2,7 @@ namespace Smart.Data.Mapper.Parameters;
 
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using Smart.Data.Mapper.Attributes;
@@ -18,7 +19,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
     public bool IsMatch(Type type) => true;
 
 #pragma warning disable CA1062
-    public ParameterBuilder CreateBuilder(ISqlMapperConfig config, Type type)
+    public ParameterBuilder CreateBuilder(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] Type type)
     {
         var entries = CreateParameterEntries(config, type);
 
@@ -26,7 +27,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
     }
 #pragma warning restore CA1062
 
-    private static ParameterEntry[] CreateParameterEntries(ISqlMapperConfig config, Type type)
+    private static ParameterEntry[] CreateParameterEntries(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {
         return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
             .Where(IsTargetProperty)

@@ -1,5 +1,7 @@
 namespace Smart.Data.Mapper.Builders.Metadata;
 
+using System.Diagnostics.CodeAnalysis;
+
 public sealed class TableMetadata
 {
     public string Name { get; }
@@ -19,7 +21,7 @@ public sealed class TableMetadata
     }
 }
 
-public static class TableInfo<T>
+public static class TableInfo<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {
     public static TableMetadata Instance { get; }
 

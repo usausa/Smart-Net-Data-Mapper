@@ -3,6 +3,7 @@ namespace Smart.Data.Mapper.Mappers;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 public sealed class SingleResultMapperFactory : IResultMapperFactory
@@ -51,7 +52,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
     }
 
 #pragma warning disable CA1062
-    public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    public ResultMapper<T> CreateMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         var parser = config.CreateParser(columns[0].Type, typeof(T));
         return parser is null

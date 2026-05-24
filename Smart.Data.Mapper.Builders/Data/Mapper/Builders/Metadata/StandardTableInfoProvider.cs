@@ -1,5 +1,6 @@
 namespace Smart.Data.Mapper.Builders.Metadata;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 using Smart.Data.Mapper.Attributes;
@@ -13,7 +14,7 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
 #pragma warning restore IDE0028
 
 #pragma warning disable CA1062
-    public TableMetadata Create(Type type)
+    public TableMetadata Create([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {
         var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
         var columns = new List<ColumnMetadata>(properties.Length);

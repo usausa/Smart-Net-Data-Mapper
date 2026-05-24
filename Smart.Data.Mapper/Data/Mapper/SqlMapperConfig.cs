@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper;
 
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -24,7 +25,9 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
     private static readonly IResultMapperFactory[] DefaultResultMapperFactories =
     [
         new SingleResultMapperFactory(),
-        ReflectionHelper.IsCodegenAllowed ? EmitObjectResultMapperFactory.Instance : ObjectResultMapperFactory.Instance
+#pragma warning disable IL3050 // RequiresDynamicCode: guarded by RuntimeFeature.IsDynamicCodeSupported check
+        RuntimeFeature.IsDynamicCodeSupported ? EmitObjectResultMapperFactory.Instance : ObjectResultMapperFactory.Instance
+#pragma warning restore IL3050
     ];
 
     private static readonly Dictionary<Type, DbType> DefaultTypeMap = new()
@@ -256,7 +259,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
 
     Action<object?, object?>? ISqlMapperConfig.CreateSetter(PropertyInfo pi) => DelegateFactory.CreateSetter(pi);
 
-    public T Convert<T>(object source) => Converter.Convert<T>(source);
+    public T Convert<T>(object source) => Converter.Convert<T>(source)!;
 
     Func<PropertyInfo[], string, PropertyInfo?> ISqlMapperConfig.GetPropertySelector() => PropertySelector.SelectProperty;
 
@@ -269,7 +272,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
 
         if (entry.TypeHandler != null)
         {
-            return entry.TypeHandler.CreateParse(destinationType);
+            return (Func<object, object>?)entry.TypeHandler.CreateParse(destinationType);
         }
 
         if ((destinationType == sourceType) ||
@@ -278,7 +281,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
             return null;
         }
 
-        return Converter.CreateConverter(sourceType, destinationType);
+        return (Func<object, object>?)Converter.CreateConverter(sourceType, destinationType);
     }
 
     TypeHandleEntry ISqlMapperConfig.LookupTypeHandle(Type type)
@@ -311,7 +314,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return new TypeHandleEntry(findDbType || (handler != null), dbType, handler);
     }
 
-    ResultMapper<T> ISqlMapperConfig.CreateResultMapper<T>(IDataReader reader)
+    ResultMapper<T> ISqlMapperConfig.CreateResultMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(IDataReader reader)
     {
         var fieldCount = reader.FieldCount;
         if ((columnInfoPool is null) || (columnInfoPool.Length < fieldCount))
@@ -355,7 +358,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         }
     }
 
-    private ResultMapper<T> CreateMapperInternal<T>(Type type, ColumnInfo[] columns)
+    private ResultMapper<T> CreateMapperInternal<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(Type type, ColumnInfo[] columns)
     {
         foreach (var factory in resultMapperFactories)
         {
@@ -368,7 +371,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         throw new SqlMapperException($"Result type is not supported. type=[{type.FullName}]");
     }
 
-    ParameterBuilder ISqlMapperConfig.CreateParameterBuilder(Type type)
+    ParameterBuilder ISqlMapperConfig.CreateParameterBuilder([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] Type type)
     {
         if (!parameterBuilderCache.TryGetValue(type, out var parameterBuilder))
         {
@@ -378,7 +381,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return parameterBuilder;
     }
 
-    private ParameterBuilder CreateParameterBuilderInternal(Type type)
+    private ParameterBuilder CreateParameterBuilderInternal([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] Type type)
     {
         foreach (var factory in parameterBuilderFactories)
         {

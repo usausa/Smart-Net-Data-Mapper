@@ -1,6 +1,7 @@
 namespace Smart.Data.Mapper.Mappers;
 
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -17,13 +18,13 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
     public bool IsMatch(Type type) => true;
 
 #pragma warning disable CA1062
-    public ResultMapper<T> CreateMapper<T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    public ResultMapper<T> CreateMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         return new Mapper<T>(config.CreateFactory<T>(), CreateMapEntries(config, type, columns));
     }
 #pragma warning restore CA1062
 
-    private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
+    private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, ColumnInfo[] columns)
     {
         var selector = config.GetPropertySelector();
         var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
