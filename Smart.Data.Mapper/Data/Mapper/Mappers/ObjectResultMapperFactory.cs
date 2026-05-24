@@ -94,7 +94,7 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
             this.entries = entries;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
         public override T Map(IDataRecord record)
         {
             var obj = factory();
