@@ -21,6 +21,6 @@
     <Project Path="Smart.Data.Mapper.Tests/Smart.Data.Mapper.Tests.csproj" />
   </Folder>
   <Folder Name="/Benchmark/">
-    <Project Path="Smart.Data.Mapper.Benchmark/Smart.Data.Mapper.Benchmark.csproj" />
+    <Project Path="Smart.Data.Mapper.Benchmark/Smart.Data.Mapper.Benchmark.csproj" DefaultStartup="true" />
   </Folder>
 </Solution>
