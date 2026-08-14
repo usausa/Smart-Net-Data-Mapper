@@ -323,12 +323,12 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         }
 
         var type = typeof(T);
-        var hash = type.GetHashCode();
+        var hash = RuntimeHelpers.GetHashCode(type);
         for (var i = 0; i < reader.FieldCount; i++)
         {
             var name = reader.GetName(i);
             var fieldType = reader.GetFieldType(i);
-            hash = unchecked((hash * 31) + (CalcNameHash(name) ^ fieldType.GetHashCode()));
+            hash = unchecked((hash * 31) + (CalcNameHash(name) ^ RuntimeHelpers.GetHashCode(fieldType)));
 
             ref var column = ref columnInfoPool[i];
             column.Name = name;
