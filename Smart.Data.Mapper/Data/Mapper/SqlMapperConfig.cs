@@ -323,12 +323,12 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         }
 
         var type = typeof(T);
-        var hash = RuntimeHelpers.GetHashCode(type);
+        var hash = TypeHash(type);
         for (var i = 0; i < reader.FieldCount; i++)
         {
             var name = reader.GetName(i);
             var fieldType = reader.GetFieldType(i);
-            hash = unchecked((hash * 31) + (CalcNameHash(name) ^ RuntimeHelpers.GetHashCode(fieldType)));
+            hash = unchecked((hash * 31) + (CalcNameHash(name) ^ TypeHash(fieldType)));
 
             ref var column = ref columnInfoPool[i];
             column.Name = name;
@@ -343,6 +343,9 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
 
         return Unsafe.As<ResultMapper<T>>(resultMapperCache.AddIfNotExist(type, columns, hash, CreateMapperInternal<T>));
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int TypeHash(Type type) => (int)(type.TypeHandle.Value >> 4);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     private static int CalcNameHash(ReadOnlySpan<char> value)
