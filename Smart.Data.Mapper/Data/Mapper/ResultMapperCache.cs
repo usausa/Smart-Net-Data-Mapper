@@ -205,7 +205,7 @@ internal sealed class ResultMapperCache
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsMatchColumn(ReadOnlySpan<ColumnInfo> cached, ReadOnlySpan<ColumnInfo> current)
     {
         if (cached.Length != current.Length)
@@ -229,7 +229,7 @@ internal sealed class ResultMapperCache
         return true;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(Type targetType, ReadOnlySpan<ColumnInfo> columns, int hash, [NotNullWhen(true)] out object? value)
     {
         var temp = nodes;

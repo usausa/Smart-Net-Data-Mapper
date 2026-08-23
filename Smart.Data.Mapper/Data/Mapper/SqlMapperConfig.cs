@@ -347,7 +347,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int TypeHash(Type type) => (int)(type.TypeHandle.Value >> 4);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int CalcNameHash(ReadOnlySpan<char> value)
     {
         unchecked

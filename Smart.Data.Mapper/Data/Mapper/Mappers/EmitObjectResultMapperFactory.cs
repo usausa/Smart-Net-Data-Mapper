@@ -178,14 +178,14 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         return pi.CanWrite && (pi.GetCustomAttribute<IgnoreAttribute>() is null);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static T GetValue<T>(IDataRecord reader, int index)
     {
         var value = reader.GetValue(index);
         return value is DBNull ? default! : UnsafeCastHelper.UnsafeCast<T>(value);
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static T GetValueWithConvert<T>(IDataRecord reader, int index, Func<object, object> parser)
     {
         var value = reader.GetValue(index);

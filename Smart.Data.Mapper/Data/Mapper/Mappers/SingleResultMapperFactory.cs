@@ -63,7 +63,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
 
     private sealed class Mapper<T> : ResultMapper<T>
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override T Map(IDataRecord record)
         {
             var value = record.GetValue(0);
@@ -80,7 +80,7 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
             this.parser = parser;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public override T Map(IDataRecord record)
         {
             var value = record.GetValue(0);
