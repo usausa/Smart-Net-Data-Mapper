@@ -33,6 +33,7 @@ public sealed class SqlMapperQueryTest
         Assert.Equal("test2", list[1].Name);
     }
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task QueryAsync()
@@ -51,11 +52,13 @@ public sealed class SqlMapperQueryTest
         Assert.Equal(2, list[1].Id);
         Assert.Equal("test2", list[1].Name);
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Cancel
     //--------------------------------------------------------------------------------
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task QueryCancelAsync()
@@ -74,6 +77,7 @@ public sealed class SqlMapperQueryTest
                 ;
         });
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Open

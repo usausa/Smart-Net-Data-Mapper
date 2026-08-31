@@ -21,6 +21,7 @@ public sealed class TableMetadata
     }
 }
 
+#pragma warning disable CA1000
 public static class TableInfo<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {
     public static TableMetadata Instance { get; }
@@ -30,3 +31,4 @@ public static class TableInfo<[DynamicallyAccessedMembers(DynamicallyAccessedMem
         Instance = TableMetadataFactory.Provider.Create(typeof(T));
     }
 }
+#pragma warning restore CA1000

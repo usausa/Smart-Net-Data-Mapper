@@ -13,6 +13,7 @@ using Smart.Data.Mapper.Parameters;
 using Smart.Data.Mapper.Selector;
 using Smart.Reflection;
 
+#pragma warning disable CA1034
 public sealed class SqlMapperConfig : ISqlMapperConfig
 {
     private static readonly IParameterBuilderFactory[] DefaultParameterBuilderFactories =
@@ -184,7 +185,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-#pragma warning disable CA1062
     public SqlMapperConfig ConfigureParameterBuilderFactories(Action<IList<IParameterBuilderFactory>> action)
     {
         var list = new List<IParameterBuilderFactory>(parameterBuilderFactories);
@@ -193,7 +193,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         parameterBuilderCache.Clear();
         return this;
     }
-#pragma warning restore CA1062
 
     public SqlMapperConfig ResetResultMapperFactories()
     {
@@ -202,7 +201,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-#pragma warning disable CA1062
     public SqlMapperConfig ConfigureResultMapperFactories(Action<IList<IResultMapperFactory>> action)
     {
         var list = new List<IResultMapperFactory>(resultMapperFactories);
@@ -211,7 +209,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         resultMapperCache.Clear();
         return this;
     }
-#pragma warning restore CA1062
 
     public SqlMapperConfig ResetTypeMap()
     {
@@ -220,7 +217,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-#pragma warning disable CA1062
     public SqlMapperConfig ConfigureTypeMap(Action<IDictionary<Type, DbType>> action)
     {
         var dictionary = new Dictionary<Type, DbType>(typeMap);
@@ -229,7 +225,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         typeHandleEntriesCache.Clear();
         return this;
     }
-#pragma warning restore CA1062
 
     public SqlMapperConfig ResetTypeHandlers()
     {
@@ -238,7 +233,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         return this;
     }
 
-#pragma warning disable CA1062
     public SqlMapperConfig ConfigureTypeHandlers(Action<IDictionary<Type, ITypeHandler>> action)
     {
         var dictionary = new Dictionary<Type, ITypeHandler>(typeHandlers);
@@ -247,7 +241,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         typeHandleEntriesCache.Clear();
         return this;
     }
-#pragma warning restore CA1062
 
     //--------------------------------------------------------------------------------
     // ISqlMapperConfig
@@ -397,3 +390,4 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         throw new SqlMapperException($"Parameter type is not supported. type=[{type.FullName}]");
     }
 }
+#pragma warning restore CA1034

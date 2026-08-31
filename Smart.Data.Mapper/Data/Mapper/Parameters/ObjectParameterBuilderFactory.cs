@@ -18,14 +18,12 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
 
     public bool IsMatch(Type type) => true;
 
-#pragma warning disable CA1062
     public ParameterBuilder CreateBuilder(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] Type type)
     {
         var entries = CreateParameterEntries(config, type);
 
         return new ParameterBuilder(CreateBuildAction(entries), CreatePostProcessAction(entries));
     }
-#pragma warning restore CA1062
 
     private static ParameterEntry[] CreateParameterEntries(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {

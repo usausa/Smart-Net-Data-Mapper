@@ -13,7 +13,6 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
     public IList<string> RemoveSuffix { get; } = new List<string>(["Entity"]);
 #pragma warning restore IDE0028
 
-#pragma warning disable CA1062
     public TableMetadata Create([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {
         var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -51,7 +50,6 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
             keyColumns.ConvertAll(static x => x.Column),
             [.. nonKeyColumns]);
     }
-#pragma warning restore CA1062
 
     private static bool IsTargetProperty(PropertyInfo pi)
     {

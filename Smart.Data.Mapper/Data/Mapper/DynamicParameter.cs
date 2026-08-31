@@ -51,7 +51,6 @@ public sealed class DynamicParameter : IDynamicParameter
         return UnsafeCastHelper.UnsafeCast<T>(value);
     }
 
-#pragma warning disable CA1062
     public void Build(ISqlMapperConfig config, DbCommand cmd)
     {
         foreach (var parameter in parameters.Values)
@@ -94,5 +93,4 @@ public sealed class DynamicParameter : IDynamicParameter
             parameter.AttachedParam = param;
         }
     }
-#pragma warning restore CA1062
 }

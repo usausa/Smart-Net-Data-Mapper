@@ -17,12 +17,10 @@ public sealed class ObjectResultMapperFactory : IResultMapperFactory
 
     public bool IsMatch(Type type) => true;
 
-#pragma warning disable CA1062
     public ResultMapper<T> CreateMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         return new Mapper<T>(config.CreateFactory<T>(), CreateMapEntries(config, type, columns));
     }
-#pragma warning restore CA1062
 
     private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, ColumnInfo[] columns)
     {

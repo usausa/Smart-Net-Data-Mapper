@@ -76,7 +76,6 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
         }
     }
 
-#pragma warning disable CA1062
     public ResultMapper<T> CreateMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         var ci = type.GetConstructor(Type.EmptyTypes);
@@ -148,7 +147,6 @@ public sealed class EmitObjectResultMapperFactory : IResultMapperFactory
 
         return holder;
     }
-#pragma warning restore CA1062
 
     private static MapEntry[] CreateMapEntries(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type, ColumnInfo[] columns)
     {

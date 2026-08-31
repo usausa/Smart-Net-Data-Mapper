@@ -51,7 +51,6 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
         return supportedTypes.Contains(targetType!);
     }
 
-#pragma warning disable CA1062
     public ResultMapper<T> CreateMapper<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties | DynamicallyAccessedMemberTypes.PublicConstructors)] T>(ISqlMapperConfig config, Type type, ColumnInfo[] columns)
     {
         var parser = config.CreateParser(columns[0].Type, typeof(T));
@@ -59,7 +58,6 @@ public sealed class SingleResultMapperFactory : IResultMapperFactory
             ? new Mapper<T>()
             : new ParserMapper<T>(parser);
     }
-#pragma warning restore CA1062
 
     private sealed class Mapper<T> : ResultMapper<T>
     {

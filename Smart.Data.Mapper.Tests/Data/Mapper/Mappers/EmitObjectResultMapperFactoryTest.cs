@@ -68,11 +68,9 @@ public sealed class EmitObjectResultMapperFactoryTest
         public int Column7 { get; set; }
     }
 
-#pragma warning disable SA1602
     public enum Value
     {
         Zero = 0,
         One = 1
     }
-#pragma warning restore SA1602
 }

@@ -35,6 +35,7 @@ public sealed class SqlMapperExecuteReaderTest
         Assert.False(reader.Read());
     }
 
+#pragma warning disable CA1849
     [Fact]
     public async Task ExecuteReaderAsync()
     {
@@ -55,6 +56,7 @@ public sealed class SqlMapperExecuteReaderTest
 
         Assert.False(reader.Read());
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Lifecycle
@@ -87,6 +89,7 @@ public sealed class SqlMapperExecuteReaderTest
         Assert.False(reader.Read());
     }
 
+#pragma warning disable CA1849
     [Fact]
     public async Task ExecuteReaderLifeAsync()
     {
@@ -103,11 +106,13 @@ public sealed class SqlMapperExecuteReaderTest
 
         Assert.False(reader.Read());
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Cancel
     //--------------------------------------------------------------------------------
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task ExecuteReaderCancelAsync()
@@ -124,6 +129,7 @@ public sealed class SqlMapperExecuteReaderTest
             }
         });
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Open
@@ -144,6 +150,7 @@ public sealed class SqlMapperExecuteReaderTest
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task WithoutOpenAsync()
@@ -158,6 +165,7 @@ public sealed class SqlMapperExecuteReaderTest
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Close

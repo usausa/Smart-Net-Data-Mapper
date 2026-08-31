@@ -27,6 +27,7 @@ public sealed class SqlMapperExecuteTest
         Assert.Equal(1, effect);
     }
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task ExecuteByObjectParameterAsync()
@@ -39,11 +40,13 @@ public sealed class SqlMapperExecuteTest
 
         Assert.Equal(1, effect);
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Cancel
     //--------------------------------------------------------------------------------
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task ExecuteCancelAsync()
@@ -60,6 +63,7 @@ public sealed class SqlMapperExecuteTest
                     cancel: cancel))
             ;
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Open

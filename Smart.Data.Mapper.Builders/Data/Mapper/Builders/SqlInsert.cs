@@ -4,6 +4,8 @@ using System.Text;
 
 using Smart.Data.Mapper.Builders.Metadata;
 
+#pragma warning disable CA1000
+#pragma warning disable CA1810
 public static class SqlInsert<T>
 {
     private static readonly string ValuesSql;
@@ -37,3 +39,5 @@ public static class SqlInsert<T>
 
     public static string Values() => ValuesSql;
 }
+#pragma warning restore CA1810
+#pragma warning restore CA1000

@@ -34,6 +34,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
         Assert.Null(entity);
     }
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task QueryFirstOrDefaultAsync()
@@ -53,6 +54,7 @@ public sealed class SqlMapperQueryFirstOrDefaultTest
 
         Assert.Null(entity);
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Cancel

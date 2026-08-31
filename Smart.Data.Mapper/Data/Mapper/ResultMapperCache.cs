@@ -9,11 +9,11 @@ using System.Runtime.InteropServices;
 [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
 internal sealed class ResultMapperCache
 {
-    private static readonly Node EmptyNode = new(typeof(EmptyKey), [], default!, 0);
-
     private const int InitialSize = 64;
 
     private const int Factor = 3;
+
+    private static readonly Node EmptyNode = new(typeof(EmptyKey), [], default, 0);
 
 #if NET9_0_OR_GREATER
     private readonly Lock sync = new();
@@ -236,7 +236,7 @@ internal sealed class ResultMapperCache
         var node = temp[hash & (temp.Length - 1)];
         do
         {
-            if (node.TargetType == targetType && IsMatchColumn(node.Columns, columns))
+            if ((node.TargetType == targetType) && IsMatchColumn(node.Columns, columns))
             {
                 value = node.Value;
                 return true;

@@ -4,6 +4,8 @@ using System.Text;
 
 using Smart.Data.Mapper.Builders.Metadata;
 
+#pragma warning disable CA1000
+#pragma warning disable CA1810
 public static class SqlUpdate<T>
 {
     private static readonly string ByKeySql;
@@ -55,3 +57,5 @@ public static class SqlUpdate<T>
 
     public static string Set(string set, string condition) => String.Concat(UpdateSql, set, " WHERE ", condition);
 }
+#pragma warning restore CA1810
+#pragma warning restore CA1000

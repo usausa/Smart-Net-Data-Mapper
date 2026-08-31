@@ -29,6 +29,7 @@ public sealed class SqlMapperExecuteScalarTest
         Assert.Equal(1L, count);
     }
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task ExecuteScalarByObjectParameterAsync()
@@ -43,6 +44,7 @@ public sealed class SqlMapperExecuteScalarTest
 
         Assert.Equal(1L, count);
     }
+#pragma warning restore CA1849
 
     [Fact]
 
@@ -96,6 +98,7 @@ public sealed class SqlMapperExecuteScalarTest
     // Cancel
     //--------------------------------------------------------------------------------
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task ExecuteScalarCancelAsync()
@@ -112,6 +115,7 @@ public sealed class SqlMapperExecuteScalarTest
                     cancel: cancel))
             ;
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Open

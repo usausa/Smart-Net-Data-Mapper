@@ -4,6 +4,8 @@ using System.Text;
 
 using Smart.Data.Mapper.Builders.Metadata;
 
+#pragma warning disable CA1000
+#pragma warning disable CA1810
 public static class SqlCount<T>
 {
     private static readonly string AllSql;
@@ -29,3 +31,5 @@ public static class SqlCount<T>
 
     public static string Where(string condition) => ByConditionSqlBase + condition;
 }
+#pragma warning restore CA1810
+#pragma warning restore CA1000
