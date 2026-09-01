@@ -114,7 +114,6 @@ public class DataMapperBenchmark
     // Execute
     //--------------------------------------------------------------------------------
 
-#pragma warning disable SA1203
     private const string ExecuteSql =
         "INSERT INTO Table (Id, Data) VALUES (@Id, @Data)";
 
@@ -126,7 +125,6 @@ public class DataMapperBenchmark
             Dapper.SqlMapper.Execute(mockExecute, ExecuteSql, new { Id = 1, Data = "test" });
         }
     }
-#pragma warning restore SA1203
 
     [Benchmark(OperationsPerInvoke = N)]
     public void SmartExecute()

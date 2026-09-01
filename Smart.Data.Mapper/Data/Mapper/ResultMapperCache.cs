@@ -285,7 +285,6 @@ internal sealed class ResultMapperCache
     }
 #pragma warning restore CA1812
 
-#pragma warning disable SA1214
 #pragma warning disable SA1401
     private sealed class Node
     {
@@ -308,7 +307,6 @@ internal sealed class ResultMapperCache
         }
     }
 #pragma warning restore SA1401
-#pragma warning restore SA1214
 
     //--------------------------------------------------------------------------------
     // Diagnostics
