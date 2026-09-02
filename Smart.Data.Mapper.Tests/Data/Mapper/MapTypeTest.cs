@@ -2,7 +2,6 @@ namespace Smart.Data.Mapper;
 
 using Microsoft.Data.Sqlite;
 
-#pragma warning disable CA1034
 public sealed class MapTypeTest
 {
     //--------------------------------------------------------------------------------
@@ -57,4 +56,3 @@ public sealed class MapTypeTest
         public string? Name { get; init; }
     }
 }
-#pragma warning restore CA1034
