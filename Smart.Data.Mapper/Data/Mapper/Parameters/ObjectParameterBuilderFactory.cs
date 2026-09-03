@@ -27,6 +27,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
 
     private static ParameterEntry[] CreateParameterEntries(ISqlMapperConfig config, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] Type type)
     {
+#pragma warning disable IDE0028
         return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
             .Where(IsTargetProperty)
             .Select(x =>
@@ -40,6 +41,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
                 return new ParameterEntry(x.Name, getter, setter, dbType ?? entry.DbType, entry.TypeHandler, size, direction);
             })
             .ToArray();
+#pragma warning restore IDE0028
     }
 
     private static bool IsTargetProperty(PropertyInfo pi)
@@ -76,6 +78,7 @@ public sealed class ObjectParameterBuilderFactory : IParameterBuilderFactory
     {
         return (cmd, parameter) =>
         {
+            // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < entries.Length; i++)
             {
                 var entry = entries[i];
