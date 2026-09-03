@@ -4,6 +4,7 @@ using System.Text;
 
 using Smart.Data.Mapper.Builders.Metadata;
 
+// ReSharper disable StaticMemberInGenericType
 #pragma warning disable CA1000
 #pragma warning disable CA1810
 public static class SqlDelete<T>

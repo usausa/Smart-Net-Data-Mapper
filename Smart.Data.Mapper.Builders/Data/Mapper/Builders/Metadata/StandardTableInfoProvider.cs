@@ -20,6 +20,7 @@ public sealed class StandardTableInfoProvider : ITableMetadataProvider
         var keyColumns = new List<(ColumnMetadata Column, int Order)>();
         var nonKeyColumns = new List<ColumnMetadata>(properties.Length);
 
+        // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < properties.Length; i++)
         {
             var property = properties[i];

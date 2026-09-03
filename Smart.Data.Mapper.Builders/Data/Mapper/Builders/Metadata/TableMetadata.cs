@@ -21,6 +21,7 @@ public sealed class TableMetadata
     }
 }
 
+// ReSharper disable StaticMemberInGenericType
 #pragma warning disable CA1000
 public static class TableInfo<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>
 {
@@ -32,3 +33,4 @@ public static class TableInfo<[DynamicallyAccessedMembers(DynamicallyAccessedMem
     }
 }
 #pragma warning restore CA1000
+// ReSharper restore StaticMemberInGenericType
