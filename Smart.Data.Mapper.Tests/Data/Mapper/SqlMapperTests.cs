@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Mock.Data;
 
-public sealed class SqlMapperTest
+public sealed class SqlMapperTests
 {
     [Fact]
 

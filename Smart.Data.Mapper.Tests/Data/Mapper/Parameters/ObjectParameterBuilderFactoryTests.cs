@@ -5,7 +5,7 @@ using System.Data;
 using Smart.Data.Mapper.Attributes;
 using Smart.Mock.Data;
 
-public sealed class ObjectParameterBuilderFactoryTest
+public sealed class ObjectParameterBuilderFactoryTests
 {
     [Fact]
     public void BuildParameter()

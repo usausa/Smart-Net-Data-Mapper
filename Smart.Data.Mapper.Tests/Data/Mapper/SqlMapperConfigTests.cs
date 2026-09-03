@@ -8,7 +8,7 @@ using Smart.Data.Mapper.Selector;
 using Smart.Mock.Data;
 using Smart.Reflection;
 
-public sealed class SqlMapperConfigTest
+public sealed class SqlMapperConfigTests
 {
     [Fact]
     public void CountParameterBuilderCache()

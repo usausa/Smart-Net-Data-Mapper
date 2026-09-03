@@ -1,6 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-public sealed class SqlDeleteTest
+public sealed class SqlDeleteTests
 {
     //--------------------------------------------------------------------------------
     // Entity

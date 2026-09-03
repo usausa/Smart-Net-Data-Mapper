@@ -1,6 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-public sealed class SqlUpdateTest
+public sealed class SqlUpdateTests
 {
     //--------------------------------------------------------------------------------
     // Entity

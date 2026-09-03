@@ -5,7 +5,7 @@ using System.Data;
 using Smart.Data.Mapper.Attributes;
 using Smart.Mock.Data;
 
-public sealed class AttributeParameterTest
+public sealed class AttributeParameterTests
 {
     [Fact]
 

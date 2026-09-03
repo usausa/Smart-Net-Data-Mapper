@@ -3,7 +3,7 @@ namespace Smart.Data.Mapper.Mappers;
 using Smart.Data.Mapper.Attributes;
 using Smart.Mock.Data;
 
-public sealed class EmitObjectResultMapperFactoryTest
+public sealed class ObjectResultMapperFactoryTests
 {
     [Fact]
     public void MapProperty()
@@ -31,7 +31,13 @@ public sealed class EmitObjectResultMapperFactoryTest
 #pragma warning restore CA2000
         con.SetupCommand(cmd => cmd.SetupResult(reader));
 
-        var list = con.Query<DataEntity>("SELECT * FROM Data").ToList();
+        var config = new SqlMapperConfig();
+        config.ConfigureResultMapperFactories(c =>
+        {
+            c.Clear();
+            c.Add(ObjectResultMapperFactory.Instance);
+        });
+        var list = con.Query<DataEntity>(config, "SELECT * FROM Data").ToList();
 
         Assert.Equal(2, list.Count);
         Assert.Equal(1, list[0].Column1);

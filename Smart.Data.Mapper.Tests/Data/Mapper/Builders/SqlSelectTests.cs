@@ -1,6 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-public sealed class SqlSelectTest
+public sealed class SqlSelectTests
 {
     //--------------------------------------------------------------------------------
     // Entity

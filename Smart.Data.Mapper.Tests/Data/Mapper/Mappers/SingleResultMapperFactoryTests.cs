@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper.Mappers;
 
 using Microsoft.Data.Sqlite;
 
-public sealed class SingleResultMapperFactoryTest
+public sealed class SingleResultMapperFactoryTests
 {
     //--------------------------------------------------------------------------------
     // Query

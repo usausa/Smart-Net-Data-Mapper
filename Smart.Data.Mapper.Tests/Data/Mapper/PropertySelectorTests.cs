@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Attributes;
 
-public sealed class PropertySelectorTest
+public sealed class PropertySelectorTests
 {
     [Fact]
     public void MapProperty()

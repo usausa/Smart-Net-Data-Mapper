@@ -7,7 +7,7 @@ using Microsoft.Data.Sqlite;
 using Smart.Data.Mapper.Mocks;
 using Smart.Mock.Data;
 
-public sealed class DynamicParameterTest
+public sealed class DynamicParameterTests
 {
     [Fact]
 

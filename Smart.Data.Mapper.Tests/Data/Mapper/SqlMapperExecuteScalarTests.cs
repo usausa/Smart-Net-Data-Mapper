@@ -8,7 +8,7 @@ using Microsoft.Data.Sqlite;
 using Smart.Data.Mapper.Mocks;
 
 #pragma warning disable xUnit1051
-public sealed class SqlMapperExecuteTest
+public sealed class SqlMapperExecuteScalarTests
 {
     //--------------------------------------------------------------------------------
     // Execute
@@ -16,31 +16,83 @@ public sealed class SqlMapperExecuteTest
 
     [Fact]
 
-    public void ExecuteByObjectParameter()
+    public void ExecuteScalarByObjectParameter()
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
         con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        var effect = con.Execute("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
+        var count = con.ExecuteScalar<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
 
-        Assert.Equal(1, effect);
+        Assert.Equal(1L, count);
     }
 
 #pragma warning disable CA1849
     [Fact]
 
-    public async Task ExecuteByObjectParameterAsync()
+    public async Task ExecuteScalarByObjectParameterAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
         con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        var effect = await con.ExecuteAsync("INSERT INTO Data (Id, Name) VALUES (@Id, @Name)", new { Id = 1, Name = "test" });
+        var count = await con.ExecuteScalarAsync<long>("SELECT COUNT(*) FROM Data WHERE Id = @Id", new { Id = 1 });
 
-        Assert.Equal(1, effect);
+        Assert.Equal(1L, count);
     }
 #pragma warning restore CA1849
+
+    [Fact]
+
+    public void ResultIsNull()
+    {
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
+        con.Open();
+
+        var value = con.ExecuteScalar<long>("SELECT NULL");
+
+        Assert.Equal(default, value);
+    }
+
+    [Fact]
+
+    public async Task ResultIsNullAsync()
+    {
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
+        await con.OpenAsync();
+
+        var value = await con.ExecuteScalarAsync<long>("SELECT NULL");
+
+        Assert.Equal(default, value);
+    }
+
+    [Fact]
+
+    public void ResultIsConverted()
+    {
+        using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
+        con.Open();
+
+        var value = con.ExecuteScalar<string>("SELECT 0");
+
+        Assert.Equal("0", value);
+    }
+
+    [Fact]
+
+    public async Task ResultIsConvertedAsync()
+    {
+        await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
+        await con.OpenAsync();
+
+        var value = await con.ExecuteScalarAsync<string>("SELECT 0");
+
+        Assert.Equal("0", value);
+    }
 
     //--------------------------------------------------------------------------------
     // Cancel
@@ -49,7 +101,7 @@ public sealed class SqlMapperExecuteTest
 #pragma warning disable CA1849
     [Fact]
 
-    public async Task ExecuteCancelAsync()
+    public async Task ExecuteScalarCancelAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
@@ -57,9 +109,9 @@ public sealed class SqlMapperExecuteTest
 
         var cancel = new CancellationToken(true);
         await Assert.ThrowsAsync<TaskCanceledException>(async () =>
-                await con.ExecuteAsync(
-                    "INSERT INTO Data (Id, Name) VALUES (@Id, @Name)",
-                    new { Id = 1, Name = "test" },
+                await con.ExecuteScalarAsync<long>(
+                    "SELECT COUNT(*) FROM Data WHERE Id = @Id",
+                    new { Id = 1 },
                     cancel: cancel))
             ;
     }
@@ -74,8 +126,9 @@ public sealed class SqlMapperExecuteTest
     public void WithoutOpen()
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        con.Execute("PRAGMA AUTO_VACUUM=1");
+        var value = con.ExecuteScalar<long>("SELECT 1");
 
+        Assert.Equal(1L, value);
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
@@ -84,8 +137,9 @@ public sealed class SqlMapperExecuteTest
     public async Task WithoutOpenAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        await con.ExecuteAsync("PRAGMA AUTO_VACUUM=1");
+        var value = await con.ExecuteScalarAsync<long>("SELECT 1");
 
+        Assert.Equal(1L, value);
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
@@ -106,7 +160,7 @@ public sealed class SqlMapperExecuteTest
         });
 
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        con.Execute(config, "PRAGMA AUTO_VACUUM=1", new object());
+        con.ExecuteScalar<long>(config, "SELECT 1", new object());
 
         Assert.True(factory.BuildCalled);
         Assert.True(factory.PostProcessCalled);
@@ -125,7 +179,7 @@ public sealed class SqlMapperExecuteTest
         });
 
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        con.Execute(config, "PRAGMA AUTO_VACUUM=1");
+        con.ExecuteScalar<long>(config, "SELECT 1");
 
         Assert.False(factory.BuildCalled);
         Assert.False(factory.PostProcessCalled);
@@ -144,7 +198,7 @@ public sealed class SqlMapperExecuteTest
         });
 
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1", new object());
+        await con.ExecuteScalarAsync<long>(config, "SELECT 1", new object());
 
         Assert.True(factory.BuildCalled);
         Assert.True(factory.PostProcessCalled);
@@ -163,7 +217,7 @@ public sealed class SqlMapperExecuteTest
         });
 
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        await con.ExecuteAsync(config, "PRAGMA AUTO_VACUUM=1");
+        await con.ExecuteScalarAsync<long>(config, "SELECT 1");
 
         Assert.False(factory.BuildCalled);
         Assert.False(factory.PostProcessCalled);

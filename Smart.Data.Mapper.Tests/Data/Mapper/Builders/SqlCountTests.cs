@@ -1,6 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-public sealed class SqlCountTest
+public sealed class SqlCountTests
 {
     [Fact]
     public void All()

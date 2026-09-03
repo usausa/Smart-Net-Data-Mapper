@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;
 
-public sealed class DictionaryParameterTest
+public sealed class DictionaryParameterTests
 {
     [Fact]
 

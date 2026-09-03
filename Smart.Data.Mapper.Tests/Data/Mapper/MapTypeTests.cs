@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper;
 
 using Microsoft.Data.Sqlite;
 
-public sealed class MapTypeTest
+public sealed class MapTypeTests
 {
     //--------------------------------------------------------------------------------
     // Record

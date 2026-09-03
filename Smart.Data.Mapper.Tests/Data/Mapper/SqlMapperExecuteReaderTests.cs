@@ -8,15 +8,14 @@ using Microsoft.Data.Sqlite;
 using Smart.Data.Mapper.Mocks;
 
 #pragma warning disable xUnit1051
-public sealed class SqlMapperQueryListTest
+public sealed class SqlMapperExecuteReaderTests
 {
     //--------------------------------------------------------------------------------
-    // QueryList
+    // Execute
     //--------------------------------------------------------------------------------
 
     [Fact]
-
-    public void QueryList()
+    public void ExecuteReader()
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         con.Open();
@@ -24,19 +23,21 @@ public sealed class SqlMapperQueryListTest
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        var list = con.QueryList<DataEntity>("SELECT * FROM Data ORDER BY Id");
+        using var reader = con.ExecuteReader("SELECT * FROM Data ORDER BY Id");
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
 
-        Assert.Equal(2, list.Count);
-        Assert.Equal(1, list[0].Id);
-        Assert.Equal("test1", list[0].Name);
-        Assert.Equal(2, list[1].Id);
-        Assert.Equal("test2", list[1].Name);
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
+
+        Assert.False(reader.Read());
     }
 
 #pragma warning disable CA1849
     [Fact]
-
-    public async Task QueryListAsync()
+    public async Task ExecuteReaderAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
@@ -44,13 +45,66 @@ public sealed class SqlMapperQueryListTest
         con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
         con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
 
-        var list = await con.QueryListAsync<DataEntity>("SELECT * FROM Data ORDER BY Id");
+        await using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
 
-        Assert.Equal(2, list.Count);
-        Assert.Equal(1, list[0].Id);
-        Assert.Equal("test1", list[0].Name);
-        Assert.Equal(2, list[1].Id);
-        Assert.Equal("test2", list[1].Name);
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
+
+        Assert.False(reader.Read());
+    }
+#pragma warning restore CA1849
+
+    //--------------------------------------------------------------------------------
+    // Lifecycle
+    //--------------------------------------------------------------------------------
+
+    private static void Prepare(string database)
+    {
+        File.Delete(database);
+        using var con = new SqliteConnection($"Data Source={database}");
+        con.Open();
+        con.Execute("CREATE TABLE Data (Id int PRIMARY KEY, Name text)");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (1, 'test1')");
+        con.Execute("INSERT INTO Data (Id, Name) VALUES (2, 'test2')");
+    }
+
+    [Fact]
+    public void ExecuteReaderLife()
+    {
+        Prepare("ExecuteReaderLife.db");
+        using var con = new SqliteConnection("Data Source=ExecuteReaderLife.db");
+        using var reader = con.ExecuteReader("SELECT * FROM Data ORDER BY Id");
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
+
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
+
+        Assert.False(reader.Read());
+    }
+
+#pragma warning disable CA1849
+    [Fact]
+    public async Task ExecuteReaderLifeAsync()
+    {
+        Prepare("ExecuteReaderLifeAsync.db");
+        await using var con = new SqliteConnection("Data Source=ExecuteReaderLifeAsync.db");
+        await using var reader = await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id");
+        Assert.True(reader.Read());
+        Assert.Equal(1, reader.GetInt64(0));
+        Assert.Equal("test1", reader.GetString(1));
+
+        Assert.True(reader.Read());
+        Assert.Equal(2, reader.GetInt64(0));
+        Assert.Equal("test2", reader.GetString(1));
+
+        Assert.False(reader.Read());
     }
 #pragma warning restore CA1849
 
@@ -61,7 +115,7 @@ public sealed class SqlMapperQueryListTest
 #pragma warning disable CA1849
     [Fact]
 
-    public async Task QueryListCancelAsync()
+    public async Task ExecuteReaderCancelAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
         await con.OpenAsync();
@@ -70,10 +124,9 @@ public sealed class SqlMapperQueryListTest
         await Assert.ThrowsAsync<OperationCanceledException>(async () =>
         {
             var cancel = new CancellationToken(true);
-            await con.QueryListAsync<DataEntity>(
-                    "SELECT * FROM Data ORDER BY Id",
-                    cancel: cancel)
-                ;
+            await using (await con.ExecuteReaderAsync("SELECT * FROM Data ORDER BY Id", cancel: cancel))
+            {
+            }
         });
     }
 #pragma warning restore CA1849
@@ -87,20 +140,32 @@ public sealed class SqlMapperQueryListTest
     public void WithoutOpen()
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        con.QueryList<DataEntity>("SELECT 1, 'test1'");
+        using (var reader = con.ExecuteReader("SELECT 1, 'test1'"))
+        {
+            Assert.Equal(ConnectionState.Open, con.State);
+            Assert.True(reader.Read());
+            Assert.False(reader.Read());
+        }
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
+#pragma warning disable CA1849
     [Fact]
 
     public async Task WithoutOpenAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        await con.QueryListAsync<DataEntity>("SELECT 1, 'test1'");
+        await using (var reader = await con.ExecuteReaderAsync("SELECT 1, 'test1'"))
+        {
+            Assert.Equal(ConnectionState.Open, con.State);
+            Assert.True(reader.Read());
+            Assert.False(reader.Read());
+        }
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
+#pragma warning restore CA1849
 
     //--------------------------------------------------------------------------------
     // Close
@@ -108,22 +173,32 @@ public sealed class SqlMapperQueryListTest
 
     [Fact]
 
-    public void ClosedConnectionMustClosedWhenQueryListError()
+    public void ClosedConnectionMustClosedWhenQueryError()
     {
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        // ReSharper disable once AccessToDisposedClosure
-        Assert.Throws<SqliteException>(() => con.QueryList<DataEntity>("x"));
+        Assert.Throws<SqliteException>(() =>
+        {
+            // ReSharper disable once AccessToDisposedClosure
+            using (con.ExecuteReader("x"))
+            {
+            }
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
     [Fact]
 
-    public void ClosedConnectionMustClosedWhenCreateCommandError()
+    public void ClosedConnectionMustClosedWhenWhenCommandError()
     {
         using var con = new CommandUnsupportedConnection();
-        // ReSharper disable once AccessToDisposedClosure
-        Assert.Throws<NotSupportedException>(() => con.QueryList<DataEntity>("x"));
+        Assert.Throws<NotSupportedException>(() =>
+        {
+            // ReSharper disable once AccessToDisposedClosure
+            using (con.ExecuteReader("x"))
+            {
+            }
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -140,28 +215,43 @@ public sealed class SqlMapperQueryListTest
         });
 
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        // ReSharper disable once AccessToDisposedClosure
-        Assert.Throws<NotSupportedException>(() => con.QueryList<DataEntity>(config, "SELECT 1, 'test1'", new object()));
+        Assert.Throws<NotSupportedException>(() =>
+        {
+            // ReSharper disable once AccessToDisposedClosure
+            using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
+            {
+            }
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
     [Fact]
 
-    public async Task ClosedConnectionMustClosedWhenQueryListErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenQueryErrorAsync()
     {
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        await Assert.ThrowsAsync<SqliteException>(async () => await con.QueryListAsync<DataEntity>("x"));
+        await Assert.ThrowsAsync<SqliteException>(async () =>
+        {
+            await using (await con.ExecuteReaderAsync("x"))
+            {
+            }
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
 
     [Fact]
 
-    public async Task ClosedConnectionMustClosedWhenCreateCommandErrorAsync()
+    public async Task ClosedConnectionMustClosedWhenWhenCommandErrorAsync()
     {
         await using var con = new CommandUnsupportedConnection();
-        await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryListAsync<DataEntity>("x"));
+        await Assert.ThrowsAsync<NotSupportedException>(async () =>
+        {
+            await using (await con.ExecuteReaderAsync("x"))
+            {
+            }
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -178,7 +268,12 @@ public sealed class SqlMapperQueryListTest
         });
 
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        await Assert.ThrowsAsync<NotSupportedException>(async () => await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'", new object()));
+        await Assert.ThrowsAsync<NotSupportedException>(async () =>
+        {
+            await using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
+            {
+            }
+        });
 
         Assert.Equal(ConnectionState.Closed, con.State);
     }
@@ -200,9 +295,10 @@ public sealed class SqlMapperQueryListTest
         });
 
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        var list = con.QueryList<DataEntity>(config, "SELECT 1, 'test1'", new object());
+        using (con.ExecuteReader(config, "SELECT 1, 'test1'", new object()))
+        {
+        }
 
-        Assert.Single(list);
         Assert.True(factory.BuildCalled);
         Assert.True(factory.PostProcessCalled);
     }
@@ -220,9 +316,10 @@ public sealed class SqlMapperQueryListTest
         });
 
         using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        var list = con.QueryList<DataEntity>(config, "SELECT 1, 'test1'");
+        using (con.ExecuteReader(config, "SELECT 1, 'test1'"))
+        {
+        }
 
-        Assert.Single(list);
         Assert.False(factory.BuildCalled);
         Assert.False(factory.PostProcessCalled);
     }
@@ -240,9 +337,10 @@ public sealed class SqlMapperQueryListTest
         });
 
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        var list = await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'", new object());
+        await using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'", new object()))
+        {
+        }
 
-        Assert.Single(list);
         Assert.True(factory.BuildCalled);
         Assert.True(factory.PostProcessCalled);
     }
@@ -260,17 +358,11 @@ public sealed class SqlMapperQueryListTest
         });
 
         await using var con = new SqliteConnection($"Data Source=file:{Guid.NewGuid():N}?mode=memory&cache=shared");
-        var list = await con.QueryListAsync<DataEntity>(config, "SELECT 1, 'test1'");
+        await using (await con.ExecuteReaderAsync(config, "SELECT 1, 'test1'"))
+        {
+        }
 
-        Assert.Single(list);
         Assert.False(factory.BuildCalled);
         Assert.False(factory.PostProcessCalled);
-    }
-
-    private sealed class DataEntity
-    {
-        public int Id { get; set; }
-
-        public string? Name { get; set; }
     }
 }

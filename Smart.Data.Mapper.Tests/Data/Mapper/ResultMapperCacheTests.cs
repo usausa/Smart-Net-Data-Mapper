@@ -2,7 +2,7 @@ namespace Smart.Data.Mapper;
 
 using Smart.Mock.Data;
 
-public sealed class ResultMapperCacheTest
+public sealed class ResultMapperCacheTests
 {
     [Fact]
     public void ResultMapperCached()

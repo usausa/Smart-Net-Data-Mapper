@@ -1,6 +1,6 @@
 namespace Smart.Data.Mapper.Builders;
 
-public sealed class SqlInsertTest
+public sealed class SqlInsertTests
 {
     [Fact]
     public void Values()

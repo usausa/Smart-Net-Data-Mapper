@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Mocks;
 
-public sealed class TypeHandlerTest
+public sealed class TypeHandlerTests
 {
     [Fact]
 

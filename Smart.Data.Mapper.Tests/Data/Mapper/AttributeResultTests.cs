@@ -4,7 +4,7 @@ using Microsoft.Data.Sqlite;
 
 using Smart.Data.Mapper.Attributes;
 
-public sealed class AttributeResultTest
+public sealed class AttributeResultTests
 {
     [Fact]
 
