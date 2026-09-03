@@ -21,20 +21,11 @@ internal sealed class ResultMapperCache
     private readonly object sync = new();
 #endif
 
-    private volatile Node[] nodes;
+    private volatile Node[] nodes = CreateInitialTable();
 
     private int depth;
 
     private int count;
-
-    //--------------------------------------------------------------------------------
-    // Constructor
-    //--------------------------------------------------------------------------------
-
-    public ResultMapperCache()
-    {
-        nodes = CreateInitialTable();
-    }
 
     //--------------------------------------------------------------------------------
     // Private
@@ -57,6 +48,7 @@ internal sealed class ResultMapperCache
     {
         var depth = 0;
 
+        // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < targetNodes.Length; i++)
         {
             var node = targetNodes[i];
@@ -77,6 +69,7 @@ internal sealed class ResultMapperCache
     private static int CalculateCount(Node[] targetNodes)
     {
         var count = 0;
+        // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < targetNodes.Length; i++)
         {
             var node = targetNodes[i];
