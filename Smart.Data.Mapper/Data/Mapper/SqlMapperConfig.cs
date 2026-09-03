@@ -68,13 +68,13 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
 
     private readonly ThreadsafeTypeHashArrayMap<TypeHandleEntry> typeHandleEntriesCache = new();
 
-    private IParameterBuilderFactory[] parameterBuilderFactories;
+    private IParameterBuilderFactory[] parameterBuilderFactories = DefaultParameterBuilderFactories;
 
-    private IResultMapperFactory[] resultMapperFactories;
+    private IResultMapperFactory[] resultMapperFactories = DefaultResultMapperFactories;
 
-    private Dictionary<Type, DbType> typeMap;
+    private Dictionary<Type, DbType> typeMap = DefaultTypeMap;
 
-    private Dictionary<Type, ITypeHandler> typeHandlers;
+    private Dictionary<Type, ITypeHandler> typeHandlers = DefaultTypeHandlers;
 
     //--------------------------------------------------------------------------------
     // Property
@@ -87,18 +87,6 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
     public IObjectConverter Converter { get; set; } = ObjectConverter.Default;
 
     public IPropertySelector PropertySelector { get; set; } = DefaultPropertySelector.Instance;
-
-    //--------------------------------------------------------------------------------
-    // Constructor
-    //--------------------------------------------------------------------------------
-
-    public SqlMapperConfig()
-    {
-        parameterBuilderFactories = DefaultParameterBuilderFactories;
-        resultMapperFactories = DefaultResultMapperFactories;
-        typeMap = DefaultTypeMap;
-        typeHandlers = DefaultTypeHandlers;
-    }
 
     //--------------------------------------------------------------------------------
     // Diagnostics
@@ -346,6 +334,7 @@ public sealed class SqlMapperConfig : ISqlMapperConfig
         unchecked
         {
             var hash = 2166136261u;
+            // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < value.Length; i++)
             {
                 hash = (value[i] ^ hash) * 16777619;

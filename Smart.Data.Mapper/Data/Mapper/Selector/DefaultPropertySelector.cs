@@ -36,6 +36,7 @@ public sealed class DefaultPropertySelector : IPropertySelector
 
     private static PropertyInfo? FindProperty(PropertyInfo[] properties, string name, bool ignoreCase)
     {
+        // ReSharper disable once ForCanBeConvertedToForeach
         for (var i = 0; i < properties.Length; i++)
         {
             var pi = properties[i];
