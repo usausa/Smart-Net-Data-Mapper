@@ -108,12 +108,12 @@ internal sealed class ResultMapperCache
     {
         if (node == EmptyNode)
         {
-            node = addNode;
+            Volatile.Write(ref node, addNode);
         }
         else
         {
             var last = FindLastNode(node);
-            last.Next = addNode;
+            Volatile.Write(ref last.Next, addNode);
         }
     }
 
@@ -160,8 +160,6 @@ internal sealed class ResultMapperCache
         }
         else
         {
-            Interlocked.MemoryBarrier();
-
             UpdateLink(ref currentNodes[node.Hash & (currentNodes.Length - 1)], node);
 
             depth = Math.Max(CalculateDepth(currentNodes[node.Hash & (currentNodes.Length - 1)]), depth);
@@ -189,8 +187,6 @@ internal sealed class ResultMapperCache
         lock (sync)
         {
             var newNodes = CreateInitialTable();
-
-            Interlocked.MemoryBarrier();
 
             nodes = newNodes;
             depth = 0;
