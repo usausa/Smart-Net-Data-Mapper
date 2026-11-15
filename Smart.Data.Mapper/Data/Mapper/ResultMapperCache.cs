@@ -15,11 +15,7 @@ internal sealed class ResultMapperCache
 
     private static readonly Node EmptyNode = new(typeof(EmptyKey), [], default, 0);
 
-#if NET9_0_OR_GREATER
     private readonly Lock sync = new();
-#else
-    private readonly object sync = new();
-#endif
 
     private volatile Node[] nodes = CreateInitialTable();
 
